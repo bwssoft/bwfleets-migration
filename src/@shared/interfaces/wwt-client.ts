@@ -1,4 +1,4 @@
-export interface AccountStats {
+export interface WWTAccountStats {
   deviceTotalNo: number;
   deviceNo: number;
   onlineDeviceNo: number;
@@ -13,7 +13,7 @@ export interface SubAccount {
   userName: string;
   type: number;
   parentId: number;
-  accountStatsBean: AccountStats;
+  accountStatsBean: WWTAccountStats;
   isLeaf: number;
   success: boolean;
 }
@@ -32,7 +32,7 @@ export interface WWTAccount {
   address: string;
   isReceiveOfflineMessage: number;
   isReceiveWaring: number;
-  accountStatsBean: AccountStats;
+  accountStatsBean: WWTAccountStats;
   isLeaf: number;
   subAccountBeanList?: SubAccount[];
 }
