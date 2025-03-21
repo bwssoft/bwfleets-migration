@@ -27,6 +27,6 @@ const columns: Array<ColumnDef<WWTAccountStats>> = [
   },
 ];
 
-export function WWTClientDevicesStatsTable() {
-  return <DataTable data={[]} columns={columns} />;
+export function WWTClientDevicesStatsTable({ data = [] }: { data?: Array<WWTAccountStats> } = {}) {
+  return <DataTable data={data} columns={columns} />;
 }

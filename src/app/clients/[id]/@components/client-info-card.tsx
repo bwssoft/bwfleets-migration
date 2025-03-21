@@ -24,13 +24,13 @@ export function ClientInfoCard({ data }: ClientInfoCardProps) {
       </CardHeader>
       <CardContent>
         <ContainedLabelValue>
-          <ContainedLabelValueItem label="Nome" value={undefined} />
-          <ContainedLabelValueItem label="Username" />
-          <ContainedLabelValueItem label="Email" />
-          <ContainedLabelValueItem label="Contato (usuario)" />
-          <ContainedLabelValueItem label="Contato (telefone)" />
-          <ContainedLabelValueItem label="Endereço" />
-          <ContainedLabelValueItem label="Qnt. de subclientes" />
+          <ContainedLabelValueItem label="Nome" value={data.accountName} />
+          <ContainedLabelValueItem label="Username" value={data.userName} />
+          <ContainedLabelValueItem label="Email" value={data.email} />
+          <ContainedLabelValueItem label="Contato (usuario)" value={data.contactUser} />
+          <ContainedLabelValueItem label="Contato (telefone)" value={data.contactTel} />
+          <ContainedLabelValueItem label="Endereço" value={data.address} />
+          <ContainedLabelValueItem label="Qnt. de subclientes" value={data.isLeaf} />
         </ContainedLabelValue>
       </CardContent>
       <CardFooter></CardFooter>
