@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/@shared/utils/tw-merge";
 import { ComponentProps } from "react";
 
 type ContainedLabelValueContainerProps = ComponentProps<"div">;
