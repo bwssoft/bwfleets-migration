@@ -1,5 +1,7 @@
 "use client";
 
+import React from "react";
+import { useQueryParam } from "@/@shared/hooks/use-query-param";
 import {
   Pagination,
   PaginationContent,
@@ -9,9 +11,6 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { ChevronsLeftIcon, ChevronsRightIcon } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
-import { parseAsInteger, useQueryState } from "nuqs";
-import React from "react";
 
 interface DataTablePaginationProps {
   pageSize: number;
@@ -24,13 +23,13 @@ export function DataTablePagination({
   count,
   pageUrlParam = "page",
 }: DataTablePaginationProps) {
-  const pathname = usePathname();
-  const router = useRouter();
+  const pageQueryParam = useQueryParam({
+    key: pageUrlParam,
+  });
 
-  const [currentPage, setCurrentPage] = useQueryState(
-    pageUrlParam,
-    parseAsInteger.withDefault(1)
-  );
+  const currentPage = React.useMemo(() => {
+    return Number(pageQueryParam.state);
+  }, [pageQueryParam.state]);
 
   const totalPages = React.useMemo(() => {
     return Math.ceil(count / pageSize);
@@ -49,7 +48,7 @@ export function DataTablePagination({
     const newCurrentPage = currentPage - 1;
 
     if (newCurrentPage <= totalPages) {
-      setCurrentPage(newCurrentPage);
+      pageQueryParam.push(newCurrentPage);
     }
   }
 
@@ -57,17 +56,12 @@ export function DataTablePagination({
     const newCurrentPage = currentPage + 1;
 
     if (newCurrentPage <= totalPages) {
-      setCurrentPage(newCurrentPage);
+      pageQueryParam.push(newCurrentPage);
     }
   }
 
   function handlePageNumberClick(page: number) {
-    console.log("🚀 ~ handlePageNumberClick ~ page:", page);
-    const params = new URLSearchParams();
-    params.set("page", page.toString());
-
-    router.push(`${pathname}?${params}`);
-    // setCurrentPage(page);
+    pageQueryParam.push(page);
   }
 
   return (
