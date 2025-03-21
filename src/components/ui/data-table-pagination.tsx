@@ -9,11 +9,11 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { ChevronsLeftIcon, ChevronsRightIcon } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 import { parseAsInteger, useQueryState } from "nuqs";
 import React from "react";
 
 interface DataTablePaginationProps {
-  currentPage: number;
   pageSize: number;
   count: number;
   pageUrlParam?: string;
@@ -24,6 +24,9 @@ export function DataTablePagination({
   count,
   pageUrlParam = "page",
 }: DataTablePaginationProps) {
+  const pathname = usePathname();
+  const router = useRouter();
+
   const [currentPage, setCurrentPage] = useQueryState(
     pageUrlParam,
     parseAsInteger.withDefault(1)
@@ -59,7 +62,12 @@ export function DataTablePagination({
   }
 
   function handlePageNumberClick(page: number) {
-    setCurrentPage(page);
+    console.log("🚀 ~ handlePageNumberClick ~ page:", page);
+    const params = new URLSearchParams();
+    params.set("page", page.toString());
+
+    router.push(`${pathname}?${params}`);
+    // setCurrentPage(page);
   }
 
   return (
@@ -93,7 +101,10 @@ export function DataTablePagination({
               <PaginationItem key={button}>
                 <PaginationLink
                   isActive={currentPage === button}
-                  onClick={() => handlePageNumberClick(button)}
+                  onClick={() => {
+                    console.log("on click trigger");
+                    handlePageNumberClick(button);
+                  }}
                 >
                   {button}
                 </PaginationLink>

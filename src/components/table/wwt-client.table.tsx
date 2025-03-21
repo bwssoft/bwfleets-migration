@@ -34,13 +34,23 @@ const columns: Array<ColumnDef<WWTClient>> = [
 
 interface WWTClientTableProps {
   data: Array<WWTClient>;
+  pagination?: {
+    count: number;
+    pageSize: number;
+  };
 }
 
-export function WWTClientTable({ data }: WWTClientTableProps) {
+export function WWTClientTable({ data, pagination }: WWTClientTableProps) {
   return (
     <section className="space-y-4">
       <DataTable data={data} columns={columns} />
-      <DataTablePagination count={25000} pageSize={100} currentPage={1} />
+
+      {pagination && (
+        <DataTablePagination
+          count={pagination.count}
+          pageSize={pagination.pageSize}
+        />
+      )}
     </section>
   );
 }
