@@ -23,7 +23,7 @@ export interface WWTAccount {
   accountName: string;
   userName: string;
   type: number;
-  email?: string;
+  email?: string | null;
   parentId: number;
   rootId: number;
   createTime: number;
@@ -34,9 +34,9 @@ export interface WWTAccount {
   isReceiveWaring: number;
   accountStatsBean: WWTAccountStats;
   isLeaf: number;
-  subAccountBeanList?: SubAccount[];
+  // subAccountBeanList?: SubAccount[];
 }
 
 export type WWTClient = Omit<WWTAccount, "subAccountBeanList"> & {
-  subAccountBeanList: WWTClient[];
+  // subAccountBeanList: WWTClient[];
 };
