@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,4 +5,147 @@ generator client {
 datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
+}
+
+type ClientAccountStatsBean {
+  accountId       Int
+  deviceNo        Int
+  deviceTotalNo   Int
+  offlineDeviceNo Int
+  onlineDeviceNo  Int
+  success         Boolean
+  unUsedDeviceNo  Int
+}
+
+type ClientResultBean {
+  code Int
+}
+
+type DeviceDeviceTypeBean {
+  deviceTypeId Int
+  parameter    Int
+  success      Boolean
+  typeName     String
+  wireless     Boolean
+}
+
+type DeviceImportOwner {
+  accountId               Int
+  accountName             String
+  accountStatsBean        DeviceImportOwnerAccountStatsBean?
+  accountType             Int
+  address                 String
+  contactTel              String
+  contactUser             String
+  createTime              Float
+  email                   String?
+  isReceiveOfflineMessage Int
+  isReceiveWaring         Int
+  parentId                Int
+  payUrl                  String?
+  roles                   Int
+  rootId                  Int
+  success                 Boolean
+  type                    Int
+  userName                String
+}
+
+type DeviceImportOwnerAccountStatsBean {
+  deviceNo        Int
+  deviceTotalNo   Int
+  offlineDeviceNo Int
+  onlineDeviceNo  Int
+  success         Boolean
+  unUsedDeviceNo  Int
+}
+
+type DeviceOwnerBean {
+  accountId               Int
+  accountName             String
+  accountStatsBean        DeviceOwnerBeanAccountStatsBean?
+  accountType             Int
+  address                 String
+  contactTel              String
+  contactUser             String
+  createTime              Float
+  email                   String?
+  isReceiveOfflineMessage Int
+  isReceiveWaring         Int
+  parentId                Int
+  payUrl                  String?
+  roles                   Int
+  rootId                  Int
+  success                 Boolean
+  type                    Int
+  userName                String
+}
+
+type DeviceOwnerBeanAccountStatsBean {
+  deviceNo        Int
+  deviceTotalNo   Int
+  offlineDeviceNo Int
+  onlineDeviceNo  Int
+  success         Boolean
+  unUsedDeviceNo  Int
+}
+
+model client {
+  id                      String                 @id @default(auto()) @map("_id") @db.ObjectId
+  accountId               Int
+  accountName             String
+  accountStatsBean        ClientAccountStatsBean
+  accountType             Int
+  address                 String
+  contactTel              String
+  contactUser             String
+  createTime              Float
+  email                   String?
+  isLeaf                  Int
+  isReceiveOfflineMessage Int
+  isReceiveWaring         Int
+  parentId                Int
+  payUrl                  String?
+  resultBean              ClientResultBean
+  roles                   Int
+  rootId                  Int
+  success                 Boolean
+  type                    Int
+  userName                String
+}
+
+model device {
+  id              String               @id @default(auto()) @map("_id") @db.ObjectId
+  activateTime    Float?
+  carOwner        String?
+  contactTel      String?
+  contactUser     String?
+  deviceMobile    String?
+  deviceTypeBean  DeviceDeviceTypeBean
+  endTime         Float?
+  iconId          Int?
+  imei            String
+  importOwner     DeviceImportOwner?
+  importOwnerId   Int?
+  importTime      Float
+  isNeedPay       Int?
+  isWireless      Int
+  licenseNumber   String?
+  name            String
+  note            String?
+  ownerBean       DeviceOwnerBean
+  ownerId         Int
+  platformEndtime Float?
+  postCode        String?
+  saleTime        Float?
+  success         Boolean
+  useStatus       Int
+  vehicleId       Int?
+  vin             String?
+}
+
+model extractionAudit {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  extracted_at DateTime @db.Date
+  filename     String
+  path         String
 }
