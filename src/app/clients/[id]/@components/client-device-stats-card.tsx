@@ -1,3 +1,4 @@
+import { WWTAccountStats } from "@/@shared/interfaces/wwt-client";
 import { WWTClientDevicesStatsTable } from "@/components/table/wwt-client-devices-stats.table";
 import {
   Card,
@@ -7,7 +8,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export function ClientDeviceStatsCard() {
+export interface ClientDeviceStatsCardProps {
+  data: WWTAccountStats[]
+} 
+
+export function ClientDeviceStatsCard(params: ClientDeviceStatsCardProps) {
   return (
     <Card>
       <CardHeader>
@@ -17,7 +22,7 @@ export function ClientDeviceStatsCard() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <WWTClientDevicesStatsTable />
+        <WWTClientDevicesStatsTable {...params}  />
       </CardContent>
     </Card>
   );

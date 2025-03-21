@@ -13,6 +13,7 @@ import { findOneClient } from "@/actions/clients/find-one.action";
 import { ClientInfoCard } from "./@components/client-info-card";
 import { ClientDeviceStatsCard } from "./@components/client-device-stats-card";
 import { ClientSubclientsCard } from "./@components/client-subclients-card";
+import { findByParentId } from "@/actions/clients/find-by-parent.action";
 
 interface PageProps {
   params: {
@@ -23,6 +24,7 @@ interface PageProps {
 export default async function ClientDetailsPage(pageProps: PageProps) {
   const { id } = await pageProps.params;
   const client = await findOneClient(Number(id));
+  const subClients = await findByParentId(Number(id));
 
   return (
     <main className="w-screen h-screen container text-sm">
@@ -48,8 +50,8 @@ export default async function ClientDetailsPage(pageProps: PageProps) {
         </header>
 
         <ClientInfoCard data={client} />
-        <ClientDeviceStatsCard />
-        <ClientSubclientsCard />
+        <ClientDeviceStatsCard data={[client.accountStatsBean]} />
+        <ClientSubclientsCard data={subClients} />
       </div>
     </main>
   );
