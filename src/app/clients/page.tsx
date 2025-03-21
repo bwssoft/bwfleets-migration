@@ -4,19 +4,21 @@ import { listAllClients } from "@/actions/clients/list.action";
 
 import type { SearchParams } from "nuqs/server";
 import { loadClientsSearchParams } from "@/lib/nuqs/clients.nuqs.loader";
-import { countClients } from "@/actions/clients/count.action";
 
 type PageProps = {
   searchParams: Promise<SearchParams>;
 };
 
 export default async function ClientsPage({ searchParams }: PageProps) {
-  const { page } = await loadClientsSearchParams(searchParams);
-
-  const totalClients = await countClients();
-
-  const clients = await listAllClients({
+  const { page, accountName } = await loadClientsSearchParams(searchParams);
+  const { count, data } = await listAllClients({
     page,
+    where: {
+      userName: {
+        contains: accountName as string,
+        mode: "insensitive",
+      },
+    },
   });
 
   return (
@@ -35,9 +37,9 @@ export default async function ClientsPage({ searchParams }: PageProps) {
 
         <section>
           <WWTClientTable
-            data={clients}
+            data={data}
             pagination={{
-              count: totalClients,
+              count,
               pageSize: 100,
             }}
           />
