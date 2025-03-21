@@ -4,6 +4,7 @@ import { WWTClient } from "@/@shared/interfaces/wwt-client";
 import { DataTable } from "../ui/data-table";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTablePagination } from "../ui/data-table-pagination";
+import { useRouter } from "next/navigation";
 
 const columns: Array<ColumnDef<WWTClient>> = [
   {
@@ -41,9 +42,19 @@ interface WWTClientTableProps {
 }
 
 export function WWTClientTable({ data, pagination }: WWTClientTableProps) {
+  const router = useRouter();
+
+  function handleTableRowClick(data: WWTClient) {
+    router.push(`/clients/${data.accountId}`);
+  }
+
   return (
     <section className="space-y-4">
-      <DataTable data={data} columns={columns} />
+      <DataTable
+        data={data}
+        columns={columns}
+        onRowClick={handleTableRowClick}
+      />
 
       {pagination && (
         <DataTablePagination
