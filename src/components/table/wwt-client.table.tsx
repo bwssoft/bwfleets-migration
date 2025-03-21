@@ -12,11 +12,11 @@ const columns: Array<ColumnDef<WWTClient>> = [
     header: "AccountID",
   },
   {
-    accessorKey: "accountName",
+    accessorKey: "userName",
     header: "Nome do cliente",
   },
   {
-    accessorKey: "userName",
+    accessorKey: "accountName",
     header: "Username",
   },
   {
