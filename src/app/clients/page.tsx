@@ -2,8 +2,9 @@ import { WWTClientTable } from "@/components/table/wwt-client.table";
 import { SearchClientForm } from "../../components/forms/search-client.form";
 import { listAllClients } from "@/actions/clients/list.action";
 
-import { loadClientsSearchParams } from "@/lib/nuqs/clients.nuqs.loader";
 import type { SearchParams } from "nuqs/server";
+import { loadClientsSearchParams } from "@/lib/nuqs/clients.nuqs.loader";
+import { countClients } from "@/actions/clients/count.action";
 
 type PageProps = {
   searchParams: Promise<SearchParams>;
@@ -11,6 +12,9 @@ type PageProps = {
 
 export default async function ClientsPage({ searchParams }: PageProps) {
   const { page } = await loadClientsSearchParams(searchParams);
+
+  const totalClients = await countClients();
+
   const clients = await listAllClients({
     page,
   });
@@ -30,7 +34,13 @@ export default async function ClientsPage({ searchParams }: PageProps) {
         <SearchClientForm />
 
         <section>
-          <WWTClientTable data={clients} />
+          <WWTClientTable
+            data={clients}
+            pagination={{
+              count: totalClients,
+              pageSize: 100,
+            }}
+          />
         </section>
       </div>
     </main>
