@@ -36,6 +36,15 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  --destructive: oklch(0.55 0.22 27.14);
+  --destructive-foreground: oklch(1 0 0);
+  --success: oklch(0.73 0.26 146.16);
+  --success-foreground: oklch(0.37 0.13 146.16);
+  --warning: oklch(0.81 0.23 83.18);
+  --warning-foreground: oklch(0 0 0);
+  --info: oklch(0.68 0.23 232.14);
+  --info-foreground: oklch(0 0 0);
 }
 
 .dark {
@@ -70,6 +79,15 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+
+  --destructive: oklch(0.11 0.04 27.14);
+  --destructive-foreground: oklch(0.43 0.14 27.14);
+  --success: oklch(0.12 0.06 146.16);
+  --success-foreground: oklch(0.47 0.16 146.16);
+  --warning: oklch(0.11 0.06 83.18);
+  --warning-foreground: oklch(0.47 0.16 83.18);
+  --info: oklch(0.12 0.05 232.14);
+  --info-foreground: oklch(0.83 0.08 232.14);
 }
 
 @theme inline {
@@ -92,6 +110,13 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -115,6 +140,31 @@
 @utility container {
   padding-inline: 10px;
   margin-inline: auto;
+}
+
+
+@layer base {
+  :root {
+    --destructive: 2 67% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 114 67% 55%;
+    --success-foreground: 114 67% 15%;
+    --warning: 38 67% 55%;
+    --warning-foreground: 0 0% 0%;
+    --info: 193 67% 55%;
+    --info-foreground: 0 0% 0%;
+  }
+
+  .dark {
+    --destructive: 4 67% 6%;
+    --destructive-foreground: 4 67% 66%;
+    --success: 125 67% 6%;
+    --success-foreground: 125 67% 46%;
+    --warning: 37 67% 6%;
+    --warning-foreground: 37 67% 46%;
+    --info: 232 67% 6%;
+    --info-foreground: 232 67% 86%;
+  }
 }
 
 @layer base {
