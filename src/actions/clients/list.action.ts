@@ -6,9 +6,14 @@ import { countClients } from "./count.action";
 interface ListAllClientsParams {
   page?: number;
   where?: Prisma.clientWhereInput;
+  orderBy?: Prisma.clientOrderByWithAggregationInput;
 }
 
-export async function listAllClients({ page, where }: ListAllClientsParams) {
+export async function listAllClients({
+  page,
+  where,
+  orderBy,
+}: ListAllClientsParams) {
   const findManyWhere = cleanObject(where);
   const skip = !!page ? 100 * Number(page - 1) : 0;
 
@@ -20,6 +25,7 @@ export async function listAllClients({ page, where }: ListAllClientsParams) {
     skip,
     take: 100,
     where: findManyWhere,
+    orderBy,
   });
 
   return {

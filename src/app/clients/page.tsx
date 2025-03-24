@@ -18,6 +18,12 @@ export default async function ClientsPage({ searchParams }: PageProps) {
         contains: accountName as string,
         mode: "insensitive",
       },
+      parentId: {
+        equals: 10160758,
+      },
+    },
+    orderBy: {
+      userName: "asc",
     },
   });
 
