@@ -5,6 +5,7 @@ import { DataTable } from "../ui/data-table";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTablePagination } from "../ui/data-table-pagination";
 import { useRouter } from "next/navigation";
+import { Badge } from "../ui/badge";
 
 const columns: Array<ColumnDef<WWTClient>> = [
   {
@@ -30,6 +31,20 @@ const columns: Array<ColumnDef<WWTClient>> = [
   {
     accessorKey: "isLeaf",
     header: "Qnt. de subclientes",
+  },
+  {
+    accessorKey: "migrationStatus",
+    header: "Status de migração",
+    cell: ({ row: { original: data } }) => {
+      switch (data.migrationStatus) {
+        case "in-progress":
+          return <Badge variant="default">Em progresso</Badge>;
+        case "done":
+          return <Badge variant="success">Migrado</Badge>;
+        default:
+          return <Badge variant="warning">Pendente</Badge>;
+      }
+    },
   },
 ];
 
