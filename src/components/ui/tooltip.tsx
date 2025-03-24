@@ -3,7 +3,7 @@
 import * as React from "react"
 import * as TooltipPrimitive from "@radix-ui/react-tooltip"
 
-import { cn } from "@/@shared/utils/tw-merge.ts"
+import { cn } from "@/@shared/utils/tw-merge"
 
 function TooltipProvider({
   delayDuration = 0,

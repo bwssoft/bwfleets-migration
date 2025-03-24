@@ -17,9 +17,9 @@ import { findByParentId } from "@/actions/clients/find-by-parent.action";
 import { ClientMigrateCard } from "./@components/client-migrate-card";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default async function ClientDetailsPage(pageProps: PageProps) {

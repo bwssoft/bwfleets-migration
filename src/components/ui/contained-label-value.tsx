@@ -20,7 +20,7 @@ function ContainedLabelValue({
 
 interface ContainedLabelValueProps {
   label: string;
-  value?: any;
+  value?: string | number | null;
 }
 
 function ContainedLabelValueItem({ label, value }: ContainedLabelValueProps) {
