@@ -14,6 +14,7 @@ import { ClientInfoCard } from "./@components/client-info-card";
 import { ClientDeviceStatsCard } from "./@components/client-device-stats-card";
 import { ClientSubclientsCard } from "./@components/client-subclients-card";
 import { findByParentId } from "@/actions/clients/find-by-parent.action";
+import { ClientMigrateCard } from "./@components/client-migrate-card";
 
 interface PageProps {
   params: {
@@ -39,7 +40,9 @@ export default async function ClientDetailsPage(pageProps: PageProps) {
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage>Sergio Ramos</BreadcrumbPage>
+                <BreadcrumbPage>
+                  {client.userName} ({client.accountName})
+                </BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
@@ -52,6 +55,7 @@ export default async function ClientDetailsPage(pageProps: PageProps) {
         <ClientInfoCard data={client} />
         <ClientDeviceStatsCard data={[client.accountStatsBean]} />
         <ClientSubclientsCard data={subClients} />
+        <ClientMigrateCard data={client} />
       </div>
     </main>
   );
