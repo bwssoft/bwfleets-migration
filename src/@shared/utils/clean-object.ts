@@ -15,7 +15,7 @@ export const cleanObject = <T>(obj: T): Partial<T> => {
       .mapValues((value) => cleanObject(value))
       .pickBy(
         (value) =>
-          (!_.isEmpty(value) || _.isBoolean(value)) &&
+          (!_.isEmpty(value) || _.isBoolean(value) || _.isNumber(value)) &&
           value !== null &&
           value !== undefined
       )
