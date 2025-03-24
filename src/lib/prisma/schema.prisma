@@ -111,6 +111,7 @@ model client {
   success                 Boolean
   type                    Int
   userName                String
+  migrationStatus         String?
 }
 
 model device {

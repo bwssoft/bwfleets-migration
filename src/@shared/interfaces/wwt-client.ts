@@ -8,6 +8,8 @@ export interface WWTAccountStats {
   success: boolean;
 }
 
+export type MigrationStatusEnum = "pending" | "in-progress" | "done";
+
 export interface SubAccount {
   accountId: number;
   userName: string;
@@ -19,6 +21,7 @@ export interface SubAccount {
 }
 
 export interface WWTAccount {
+  id: string;
   accountId: number;
   accountName: string;
   userName: string;
@@ -34,6 +37,7 @@ export interface WWTAccount {
   isReceiveWaring: number;
   accountStatsBean: WWTAccountStats;
   isLeaf: number;
+  migrationStatus?: string | null;
   // subAccountBeanList?: SubAccount[];
 }
 
