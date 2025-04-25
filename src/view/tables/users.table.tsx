@@ -47,7 +47,8 @@ const columns: Array<ColumnDef<UserTableData>> = [
         </Badge>
       ) : (
         <Badge variant="outline">
-          <XIcon> Não</XIcon>
+          <XIcon />
+          Não
         </Badge>
       ),
   },

@@ -73,7 +73,7 @@ export async function createUser(formData: FormData) {
       password,
       role,
       data: {
-        firstAccess: false,
+        firstAccess: true,
       },
     },
   });
