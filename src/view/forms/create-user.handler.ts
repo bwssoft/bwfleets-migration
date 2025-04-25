@@ -9,7 +9,7 @@ import { z } from "zod";
 const formSchema = z.object({
   name: z.string(),
   email: z.string(),
-  role: z.enum(["user", "admin"]),
+  role: z.enum(["comercial", "support", "admin"]),
 });
 
 type CreateUserFormData = z.infer<typeof formSchema>;
@@ -18,7 +18,7 @@ export function useCreateUserFormHandler() {
   const form = useForm<CreateUserFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      role: "user",
+      role: "comercial",
     },
   });
 
