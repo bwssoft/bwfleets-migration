@@ -5,14 +5,7 @@ import { DataTable } from "@/view/components/ui/data-table";
 import { DataTablePagination } from "@/view/components/ui/data-table-pagination";
 import { User, Session } from "@prisma/client";
 import { Badge } from "../components/ui/badge";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../components/ui/dropdown-menu";
-import { Button } from "../components/ui/button";
-import { CheckIcon, MoreVerticalIcon, XIcon } from "lucide-react";
+import { CheckIcon, XIcon } from "lucide-react";
 
 type UserTableData = User & { sessions: Session[] };
 
