@@ -8,7 +8,7 @@ import { z } from "zod";
 
 const formSchema = z
   .object({
-    password: z.string(),
+    password: z.string().min(6, "A senha deve conter no mínimo 6 caracteres"),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {

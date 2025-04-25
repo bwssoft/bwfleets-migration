@@ -31,6 +31,11 @@ export function FirstAccessForm() {
           <div className="space-y-1">
             <Label>Senha</Label>
             <Input {...form.register("password")} type="password" />
+            {form.formState.errors.password && (
+              <span className="text-xs text-destructive">
+                {form.formState.errors.password.message}
+              </span>
+            )}
           </div>
           <div className="space-y-1">
             <Label>Confirmar senha</Label>
@@ -43,7 +48,7 @@ export function FirstAccessForm() {
           </div>
         </CardContent>
         <CardFooter>
-          <Button>
+          <Button isLoading={form.formState.isSubmitting}>
             <SaveIcon />
             Salvar senha e continuar
           </Button>
