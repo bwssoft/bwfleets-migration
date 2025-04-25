@@ -1,0 +1,218 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+type ClientAccountStatsBean {
+  accountId       Int
+  deviceNo        Int
+  deviceTotalNo   Int
+  offlineDeviceNo Int
+  onlineDeviceNo  Int
+  success         Boolean
+  unUsedDeviceNo  Int
+}
+
+type ClientResultBean {
+  code Int
+}
+
+type DeviceDeviceTypeBean {
+  deviceTypeId Int
+  parameter    Int
+  success      Boolean
+  typeName     String
+  wireless     Boolean
+}
+
+type DeviceImportOwner {
+  accountId               Int
+  accountName             String
+  accountStatsBean        DeviceImportOwnerAccountStatsBean?
+  accountType             Int
+  address                 String
+  contactTel              String
+  contactUser             String
+  createTime              Float
+  email                   String?
+  isReceiveOfflineMessage Int
+  isReceiveWaring         Int
+  parentId                Int
+  payUrl                  String?
+  roles                   Int
+  rootId                  Int
+  success                 Boolean
+  type                    Int
+  userName                String
+}
+
+type DeviceImportOwnerAccountStatsBean {
+  deviceNo        Int
+  deviceTotalNo   Int
+  offlineDeviceNo Int
+  onlineDeviceNo  Int
+  success         Boolean
+  unUsedDeviceNo  Int
+}
+
+type DeviceOwnerBean {
+  accountId               Int
+  accountName             String
+  accountStatsBean        DeviceOwnerBeanAccountStatsBean?
+  accountType             Int
+  address                 String
+  contactTel              String
+  contactUser             String
+  createTime              Float
+  email                   String?
+  isReceiveOfflineMessage Int
+  isReceiveWaring         Int
+  parentId                Int
+  payUrl                  String?
+  roles                   Int
+  rootId                  Int
+  success                 Boolean
+  type                    Int
+  userName                String
+}
+
+type DeviceOwnerBeanAccountStatsBean {
+  deviceNo        Int
+  deviceTotalNo   Int
+  offlineDeviceNo Int
+  onlineDeviceNo  Int
+  success         Boolean
+  unUsedDeviceNo  Int
+}
+
+model client {
+  id                      String                 @id @default(auto()) @map("_id") @db.ObjectId
+  accountId               Int
+  accountName             String
+  accountStatsBean        ClientAccountStatsBean
+  accountType             Int
+  address                 String
+  contactTel              String
+  contactUser             String
+  createTime              Float
+  email                   String?
+  isLeaf                  Int
+  isReceiveOfflineMessage Int
+  isReceiveWaring         Int
+  parentId                Int
+  payUrl                  String?
+  resultBean              ClientResultBean
+  roles                   Int
+  rootId                  Int
+  success                 Boolean
+  type                    Int
+  userName                String
+  migrationStatus         String?
+}
+
+model device {
+  id              String               @id @default(auto()) @map("_id") @db.ObjectId
+  activateTime    Float?
+  carOwner        String?
+  contactTel      String?
+  contactUser     String?
+  deviceMobile    String?
+  deviceTypeBean  DeviceDeviceTypeBean
+  endTime         Float?
+  iconId          Int?
+  imei            String
+  importOwner     DeviceImportOwner?
+  importOwnerId   Int?
+  importTime      Float
+  isNeedPay       Int?
+  isWireless      Int
+  licenseNumber   String?
+  name            String
+  note            String?
+  ownerBean       DeviceOwnerBean
+  ownerId         Int
+  platformEndtime Float?
+  postCode        String?
+  saleTime        Float?
+  success         Boolean
+  useStatus       Int
+  vehicleId       Int?
+  vin             String?
+}
+
+model extractionAudit {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  extracted_at DateTime @db.Date
+  filename     String
+  path         String
+}
+
+model User {
+  id            String    @id @map("_id")
+  name          String
+  email         String
+  emailVerified Boolean
+  image         String?
+  createdAt     DateTime
+  updatedAt     DateTime
+  role          String?
+  banned        Boolean?
+  banReason     String?
+  banExpires    DateTime?
+  firstAccess   Boolean?
+  sessions      Session[]
+  accounts      Account[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id             String   @id @map("_id")
+  expiresAt      DateTime
+  token          String
+  createdAt      DateTime
+  updatedAt      DateTime
+  ipAddress      String?
+  userAgent      String?
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  impersonatedBy String?
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id @map("_id")
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id @map("_id")
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
+}
