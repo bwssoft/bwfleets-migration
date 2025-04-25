@@ -1,13 +1,17 @@
 import "@fontsource-variable/inter";
+import type { Metadata } from "next";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import "../globals.css";
-import { SidebarProvider } from "@/view/components/ui/sidebar";
-import { AppSidebar } from "@/view/components/navigation/sidebar";
 import { Toaster } from "@/view/components/ui/sonner";
 import { auth } from "@/@shared/lib/better-auth/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+
+export const metadata: Metadata = {
+  title: "Migração WWT - Login",
+  description: "Entre para continuar",
+};
 
 export default async function RootLayout({
   children,
@@ -22,20 +26,14 @@ export default async function RootLayout({
     return redirect("/login");
   }
 
-  if (session.user.firstAccess) {
-    return redirect("/first-access");
+  if (session && !session.user.firstAccess) {
+    return redirect("/home");
   }
 
   return (
     <html lang="en">
       <body className="font-inter antialiased">
-        <NuqsAdapter>
-          <SidebarProvider className="overflow-hidden">
-            <AppSidebar />
-            {children}
-          </SidebarProvider>
-        </NuqsAdapter>
-
+        <NuqsAdapter>{children}</NuqsAdapter>
         <Toaster />
       </body>
     </html>

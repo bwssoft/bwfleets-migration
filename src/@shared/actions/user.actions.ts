@@ -30,17 +30,22 @@ export async function signOut() {
 }
 
 export async function setFirstAccessPassword(formData: FormData) {
-  const data = parseFormData(formData, true) as { password: string };
+  const data = parseFormData(formData, true) as {
+    id: string;
+    password: string;
+  };
 
-  await auth.api.resetPassword({
-    body: {
-      newPassword: data.password,
-    },
-  });
+  const ctx = await auth.$context;
+  const hash = await ctx.password.hash(data.password);
 
-  await auth.api.updateUser({
-    body: {
+  await ctx.internalAdapter.updatePassword(data.id, hash); //(you can also use your orm directly)
+
+  await prisma.user.update({
+    data: {
       firstAccess: false,
+    },
+    where: {
+      id: data.id,
     },
   });
 
