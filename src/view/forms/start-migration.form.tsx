@@ -28,7 +28,7 @@ export function StartMigrationForm({ client }: StartMigrationFormProps) {
     }
   }
 
-  if (migrationStatus !== "pending") {
+  if (migrationStatus && migrationStatus !== "pending") {
     return null;
   }
 
