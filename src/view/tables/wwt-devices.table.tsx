@@ -1,15 +1,43 @@
 "use client";
 
-import { WWTClient } from "@/@shared/interfaces/wwt-client";
 import { ColumnDef } from "@tanstack/react-table";
-import { useRouter } from "next/navigation";
 import { DataTable } from "@/view/components/ui/data-table";
 import { DataTablePagination } from "@/view/components/ui/data-table-pagination";
+import { device as Device } from "@prisma/client";
+import { Badge } from "../components/ui/badge";
+import { CheckIcon, XIcon } from "lucide-react";
 
-const columns: Array<ColumnDef<any>> = [];
+const columns: Array<ColumnDef<Device>> = [
+  {
+    accessorKey: "imei",
+    header: "IMEI",
+  },
+  {
+    accessorKey: "name",
+    header: "Nome",
+  },
+  {
+    accessorKey: "ownerBean.userName",
+    header: "Dono",
+  },
+  {
+    accessorKey: "useStatus",
+    header: "Status de uso",
+    cell: ({ row }) =>
+      row.original.useStatus === 1 ? (
+        <Badge variant="outline">
+          <CheckIcon /> Em uso
+        </Badge>
+      ) : (
+        <Badge variant="outline">
+          <XIcon /> Inativo
+        </Badge>
+      ),
+  },
+];
 
 interface WWTDevicesTableProps {
-  data: Array<WWTClient>;
+  data: Array<Device>;
   pagination?: {
     count: number;
     pageSize: number;
@@ -17,26 +45,21 @@ interface WWTDevicesTableProps {
 }
 
 export function WWTDevicesTable({ data, pagination }: WWTDevicesTableProps) {
-  const router = useRouter();
-
-  function handleTableRowClick(data: WWTClient) {
-    router.push(`/wwt/clients/${data.accountId}`);
-  }
-
   return (
     <section className="space-y-4 bg-card">
       <DataTable
         data={data}
         columns={columns}
-        onRowClick={handleTableRowClick}
+        // onRowClick={handleTableRowClick}
       />
 
-      {/* {pagination && (
+      {pagination && (
         <DataTablePagination
+          pageUrlParam="devicesPage"
           count={pagination.count}
           pageSize={pagination.pageSize}
         />
-      )} */}
+      )}
     </section>
   );
 }
