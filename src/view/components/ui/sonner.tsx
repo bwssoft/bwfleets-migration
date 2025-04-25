@@ -23,6 +23,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
           description: "!text-muted-foreground",
         },
       }}
+      position="top-center"
       {...props}
     />
   );
