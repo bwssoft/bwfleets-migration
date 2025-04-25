@@ -19,6 +19,8 @@ type UserTableData = User & { sessions: Session[] };
 const ROLE_BADGE_MAPPER = {
   admin: <Badge>Administrador</Badge>,
   user: <Badge>Comercial</Badge>,
+  comercial: <Badge>Comercial</Badge>,
+  support: <Badge>Suporte</Badge>,
 };
 
 const columns: Array<ColumnDef<UserTableData>> = [
@@ -52,25 +54,25 @@ const columns: Array<ColumnDef<UserTableData>> = [
     header: "Sessões ativas",
     cell: ({ row }) => row.original.sessions.length,
   },
-  {
-    id: "actions",
-    header: "",
-    cell: ({ row }) => (
-      <div className="flex justify-end">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="icon">
-              <MoreVerticalIcon />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>Desativar</DropdownMenuItem>
-            <DropdownMenuItem>Revogar sessões</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-    ),
-  },
+  // {
+  //   id: "actions",
+  //   header: "",
+  //   cell: ({ row }) => (
+  //     <div className="flex justify-end">
+  //       <DropdownMenu>
+  //         <DropdownMenuTrigger asChild>
+  //           <Button variant="outline" size="icon">
+  //             <MoreVerticalIcon />
+  //           </Button>
+  //         </DropdownMenuTrigger>
+  //         <DropdownMenuContent align="end">
+  //           <DropdownMenuItem>Desativar</DropdownMenuItem>
+  //           <DropdownMenuItem>Revogar sessões</DropdownMenuItem>
+  //         </DropdownMenuContent>
+  //       </DropdownMenu>
+  //     </div>
+  //   ),
+  // },
 ];
 
 interface UsersTableProps {
