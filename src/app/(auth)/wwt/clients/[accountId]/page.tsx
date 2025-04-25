@@ -16,9 +16,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/view/components/ui/card";
-import { ArrowLeftRightIcon, XCircleIcon } from "lucide-react";
-import { Button } from "@/view/components/ui/button";
-import { WWTClientTable } from "@/view/tables/wwt-client.table";
 import { findOneClient } from "@/@shared/actions/wwt-client.actions";
 import { ClientInfoCard } from "./@components/client-info-card";
 import { ClientStatisticsCard } from "./@components/client-statistics-card";
@@ -28,6 +25,8 @@ import { Skeleton } from "@/view/components/ui/skeleton";
 import { SearchParams } from "nuqs";
 import { loadClientDetailsPageParams } from "./params";
 import { ClientMigrationCard } from "./@components/client-migration-card";
+import { WWTDevicesTableLoader } from "@/view/tables/wwt-devices.loader";
+import { StartMigrationForm } from "@/view/forms/start-migration.form";
 
 interface PageProps {
   params: {
@@ -66,14 +65,12 @@ export default async function WWTClientDetailsPage({
           </Breadcrumb>
 
           <div className="flex items-center gap-2">
-            <Button size="sm" variant="destructive">
+            {/* <Button size="sm" variant="destructive">
               <XCircleIcon />
               Sinalizar recusa
-            </Button>
-            <Button size="sm">
-              <ArrowLeftRightIcon />
-              Iniciar migração
-            </Button>
+            </Button> */}
+
+            <StartMigrationForm client={client} />
           </div>
         </div>
       </Topbar>
@@ -93,12 +90,16 @@ export default async function WWTClientDetailsPage({
             <CardHeader>
               <CardTitle>Dispositivos</CardTitle>
               <CardDescription>
-                Dispositivos registrados por esse cliente. Inclui os
-                dispositivos de suas subcontas.
+                Lista de dispositivos que esse cliente é proprietário.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <WWTClientTable data={[]} />
+              <WWTDevicesTableLoader
+                params={{
+                  ownerId: client.accountId,
+                  page: nuqsParams.devicesPage,
+                }}
+              />
             </CardContent>
           </Card>
 
