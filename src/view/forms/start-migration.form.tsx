@@ -12,6 +12,8 @@ interface StartMigrationFormProps {
 }
 
 export function StartMigrationForm({ client }: StartMigrationFormProps) {
+  const migrationStatus = client.migrationStatus;
+
   async function handleAction() {
     try {
       const formData = new FormData();
@@ -24,6 +26,10 @@ export function StartMigrationForm({ client }: StartMigrationFormProps) {
         description: error.message,
       });
     }
+  }
+
+  if (migrationStatus !== "pending") {
+    return null;
   }
 
   return (

@@ -17,6 +17,8 @@ import {
   CardFooter,
 } from "@/view/components/ui/card";
 import { StartMigrationForm } from "@/view/forms/start-migration.form";
+import { CircleCheck, CircleDashed, CircleEllipsis } from "lucide-react";
+import React from "react";
 
 interface ClientMigrationCardProps {
   client: WWTClient;
@@ -25,13 +27,9 @@ interface ClientMigrationCardProps {
 export function ClientMigrationCard({ client }: ClientMigrationCardProps) {
   const migrationStatus = client.migrationStatus ?? "pending";
   const alertData = ALERT_DATA[migrationStatus as never] as {
+    icon: string;
     title: string;
     description: string;
-  };
-
-  const alertInfo = {
-    title: alertData.title,
-    description: alertData.description,
   };
 
   return (
@@ -45,10 +43,9 @@ export function ClientMigrationCard({ client }: ClientMigrationCardProps) {
       </CardHeader>
       <CardContent>
         <Alert>
-          <AlertTitle>
-            Status de migração atual: <Badge>{alertInfo.title}</Badge>
-          </AlertTitle>
-          <AlertDescription>{alertInfo.description}</AlertDescription>
+          {alertData.icon}
+          <AlertTitle>Status atual: {alertData.title}</AlertTitle>
+          <AlertDescription>{alertData.description}</AlertDescription>
         </Alert>
       </CardContent>
 
@@ -64,6 +61,7 @@ export function ClientMigrationCard({ client }: ClientMigrationCardProps) {
 type MigrationMapper = Record<
   MigrationStatusEnum,
   {
+    icon: React.ReactNode;
     title: string;
     description: string;
   }
@@ -71,16 +69,19 @@ type MigrationMapper = Record<
 
 const ALERT_DATA: MigrationMapper = {
   pending: {
+    icon: <CircleDashed />,
     title: "Pendente",
     description:
       "Atualmente esse cliente não está marcado para ser migrado para a nova plataforma. Inicie o processo de migração abaixo para continuar.",
   },
   "in-progress": {
-    title: "Em progresso",
+    icon: <CircleEllipsis />,
+    title: "Em andamento",
     description:
       "Esse cliente foi marcado com a intenção de ser migrado para a nova plataforma. O processo de migração está em andamento.",
   },
   done: {
+    icon: <CircleCheck />,
     title: "Concluído",
     description: "Esse cliente foi migrado com sucesso.",
   },

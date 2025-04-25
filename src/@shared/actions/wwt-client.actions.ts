@@ -1,3 +1,5 @@
+"use server";
+
 import { Prisma } from "@prisma/client";
 import { cleanObject } from "../utils/clean-object";
 import { prisma } from "../lib/prisma/prisma-client";
