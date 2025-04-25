@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
 import { Button } from "../components/ui/button";
-import { MoreVerticalIcon } from "lucide-react";
+import { CheckIcon, MoreVerticalIcon, XIcon } from "lucide-react";
 
 type UserTableData = User & { sessions: Session[] };
 
@@ -38,6 +38,20 @@ const columns: Array<ColumnDef<UserTableData>> = [
     ),
   },
   {
+    accessorKey: "firstAccess",
+    header: "Configurou o acesso",
+    cell: ({ row }) =>
+      !row.original.firstAccess ? (
+        <Badge variant="outline">
+          <CheckIcon /> Sim
+        </Badge>
+      ) : (
+        <Badge variant="outline">
+          <XIcon> Não</XIcon>
+        </Badge>
+      ),
+  },
+  {
     accessorKey: "email",
     header: "E-mail",
   },
@@ -49,6 +63,7 @@ const columns: Array<ColumnDef<UserTableData>> = [
         <Badge>Não encontrado</Badge>
       ),
   },
+
   {
     accessorKey: "sessions",
     header: "Sessões ativas",
