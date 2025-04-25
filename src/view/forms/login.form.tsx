@@ -19,7 +19,7 @@ export function LoginForm() {
 
   return (
     <React.Fragment>
-      <form action={handleAction}>
+      <form onSubmit={handleAction}>
         <Card className="w-96">
           <CardHeader>
             <CardTitle>Login</CardTitle>
@@ -36,7 +36,11 @@ export function LoginForm() {
             </div>
           </CardContent>
           <CardFooter>
-            <Button type="submit" className="w-full">
+            <Button
+              isLoading={form.formState.isSubmitting}
+              type="submit"
+              className="w-full"
+            >
               Entrar
             </Button>
           </CardFooter>
