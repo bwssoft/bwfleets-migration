@@ -7,15 +7,14 @@ import {
   BreadcrumbPage,
 } from "@/view/components/ui/breadcrumb";
 import { Card, CardContent } from "@/view/components/ui/card";
-import { UsersTable } from "@/view/tables/users.table";
-import { findManyWithSessions } from "@/@shared/actions/user.actions";
 import { Button } from "@/view/components/ui/button";
 import { PlusIcon } from "lucide-react";
 import Link from "next/link";
+import { UsersTableLoader } from "@/view/tables/users.loader";
+import { Suspense } from "react";
+import { Skeleton } from "@/view/components/ui/skeleton";
 
 export default async function AdminUsersPage() {
-  const users = await findManyWithSessions();
-
   return (
     <main className="grid grid-rows-[min-content_1fr] w-full h-screen overflow-y-hidden">
       <Topbar>
@@ -38,7 +37,9 @@ export default async function AdminUsersPage() {
       <PageLayout>
         <Card>
           <CardContent>
-            <UsersTable data={users} />
+            <Suspense fallback={<Skeleton className="w-full h-96" />}>
+              <UsersTableLoader />
+            </Suspense>
           </CardContent>
         </Card>
       </PageLayout>
