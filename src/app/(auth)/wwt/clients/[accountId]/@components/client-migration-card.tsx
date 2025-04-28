@@ -7,7 +7,6 @@ import {
   AlertDescription,
   AlertTitle,
 } from "@/view/components/ui/alert";
-import { Badge } from "@/view/components/ui/badge";
 import {
   Card,
   CardHeader,

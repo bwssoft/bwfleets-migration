@@ -29,9 +29,9 @@ import { WWTDevicesTableLoader } from "@/view/tables/wwt-devices.loader";
 import { StartMigrationForm } from "@/view/forms/start-migration.form";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     accountId: string;
-  };
+  }>;
   searchParams: Promise<SearchParams>;
 }
 

@@ -11,12 +11,7 @@ import {
   SidebarMenuItem,
 } from "@/view/components/ui/sidebar";
 import { LogoutForm } from "@/view/forms/logout.form";
-import {
-  ArrowLeftRightIcon,
-  SmartphoneIcon,
-  UserIcon,
-  Users2Icon,
-} from "lucide-react";
+import { UserIcon, Users2Icon } from "lucide-react";
 import { headers } from "next/headers";
 import Link from "next/link";
 

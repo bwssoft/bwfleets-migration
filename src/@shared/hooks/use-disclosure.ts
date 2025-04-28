@@ -17,10 +17,13 @@ export function useDisclosure<TData>() {
     if (_data) setData(_data);
   }, []);
 
-  const onClose = React.useCallback(function closeDisclosure() {
-    setIsOpen(false);
-    if (data) setData(undefined);
-  }, []);
+  const onClose = React.useCallback(
+    function closeDisclosure() {
+      setIsOpen(false);
+      if (data) setData(undefined);
+    },
+    [data]
+  );
 
   return {
     isOpen,

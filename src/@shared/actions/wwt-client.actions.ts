@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
-import { Prisma } from "@prisma/client";
 import { cleanObject } from "../utils/clean-object";
 import { prisma } from "../lib/prisma/prisma-client";
 import { MigrationStatusEnum } from "../interfaces/wwt-client";
@@ -9,8 +9,8 @@ import { parseFormData } from "../utils/parse-form-data";
 interface FindManyClientsParams {
   page?: number | null;
   pageSize?: number;
-  where?: Prisma.clientWhereInput;
-  orderBy?: Prisma.clientOrderByWithRelationInput[];
+  where?: any;
+  orderBy?: any[];
 }
 
 export async function findManyClients(params: FindManyClientsParams) {
@@ -29,7 +29,7 @@ export async function findManyClients(params: FindManyClientsParams) {
     skip,
     take: pageSize,
     where: formattedWhere,
-    orderBy: formattedOrderBy as Prisma.clientOrderByWithRelationInput[],
+    orderBy: formattedOrderBy as any[],
   });
 
   return {
@@ -39,7 +39,7 @@ export async function findManyClients(params: FindManyClientsParams) {
 }
 
 interface FindOneClientParams {
-  where: Prisma.clientWhereInput;
+  where: any;
 }
 
 export async function findOneClient(params: FindOneClientParams) {
