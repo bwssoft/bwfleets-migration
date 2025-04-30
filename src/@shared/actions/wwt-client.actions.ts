@@ -5,12 +5,13 @@ import { cleanObject } from "../utils/clean-object";
 import { prisma } from "../lib/prisma/prisma-client";
 import { MigrationStatusEnum } from "../interfaces/wwt-client";
 import { parseFormData } from "../utils/parse-form-data";
+import { Prisma } from "@prisma/client";
 
 interface FindManyClientsParams {
   page?: number | null;
   pageSize?: number;
-  where?: any;
-  orderBy?: any[];
+  where?: Prisma.clientWhereInput;
+  orderBy?: Prisma.clientOrderByWithRelationInput[];
 }
 
 export async function findManyClients(params: FindManyClientsParams) {
