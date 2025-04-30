@@ -40,11 +40,11 @@ const columns: Array<ColumnDef<WWTClient>> = [
     cell: ({ row: { original: data } }) => {
       switch (data.migrationStatus) {
         case "in-progress":
-          return <Badge variant="default">Em progresso</Badge>;
+          return <Badge variant="blue">Em progresso</Badge>;
         case "done":
-          return <Badge>Migrado</Badge>;
+          return <Badge variant="green">Migrado</Badge>;
         default:
-          return <Badge>Pendente</Badge>;
+          return <Badge variant="yellow">Pendente</Badge>;
       }
     },
   },
