@@ -105,7 +105,7 @@ export function GeneralForm({ form }: GeneralFormProps) {
               )}
             />
           </div>
-          <Input label="Nome da empresa" />
+          <Input label="Nome da empresa" {...form.register("name")} />
         </div>
 
         <div>
@@ -116,6 +116,7 @@ export function GeneralForm({ form }: GeneralFormProps) {
             className="w-full"
             leftAddon={<span>https://</span>}
             rightAddon={<span>.bwfleets.com</span>}
+            {...form.register("subdomain")}
           />
         </div>
       </CardContent>
