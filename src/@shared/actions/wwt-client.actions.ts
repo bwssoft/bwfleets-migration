@@ -6,6 +6,8 @@ import { prisma } from "../lib/prisma/prisma-client";
 import { MigrationStatusEnum } from "../interfaces/wwt-client";
 import { parseFormData } from "../utils/parse-form-data";
 import { Prisma } from "@prisma/client";
+import { authClient } from "../lib/better-auth/auth-client";
+import { revalidatePath } from "next/cache";
 
 interface FindManyClientsParams {
   page?: number | null;
@@ -30,7 +32,24 @@ export async function findManyClients(params: FindManyClientsParams) {
     skip,
     take: pageSize,
     where: formattedWhere,
-    orderBy: formattedOrderBy as any[],
+    orderBy: formattedOrderBy as Prisma.clientOrderByWithRelationInput[],
+    select: {
+      id: true,
+      userName: true,
+      accountName: true,
+      accountStatsBean: true,
+      accountId: true,
+      email: true,
+      isLeaf: true,
+      migrationStatus: true,
+      assigned: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+    },
   });
 
   return {
@@ -66,4 +85,28 @@ export async function updateMigrationStatus(formData: FormData) {
       id: uuid,
     },
   });
+}
+
+export namespace AssignMigrationResponsibility {
+  export type Params = {
+    client_id: string;
+    user_id: string;
+  };
+}
+
+export async function assignMigrationResponsibility(
+  params: AssignMigrationResponsibility.Params
+) {
+  const { client_id, user_id } = params;
+
+  await prisma.client.update({
+    where: {
+      id: client_id,
+    },
+    data: {
+      assignedId: user_id,
+      migrationStatus: "in-progress",
+    },
+  });
+  revalidatePath("/wwt/clients");
 }

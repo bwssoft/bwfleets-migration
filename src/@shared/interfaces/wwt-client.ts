@@ -1,3 +1,5 @@
+import { User } from "@prisma/client";
+
 export interface WWTAccountStats {
   deviceTotalNo: number;
   deviceNo: number;
@@ -38,6 +40,8 @@ export interface WWTAccount {
   accountStatsBean: WWTAccountStats;
   isLeaf: number;
   migrationStatus?: string | null;
+  assignedId?: string
+  assigned?: User
   // subAccountBeanList?: SubAccount[];
 }
 
