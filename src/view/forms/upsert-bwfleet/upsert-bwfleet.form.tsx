@@ -6,19 +6,10 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/view/components/ui/dialog";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/view/components/ui/card";
-import { Input } from "@/view/components/ui/input";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { InputWithAddons } from "@/view/components/ui/input-with-addon";
 import { AddressForm } from "./address.form";
 import { UserForm } from "./user.form";
 import { GeneralForm } from "./general.form";
+import { useUpsertBwfleetHandler } from "./upsert-bwfleet.handler";
 
 interface UpsertBWFleetFormProps {
   client: WWTClient;
@@ -30,6 +21,8 @@ export function UpsertBWFleetForm({
   open,
   onOpenChange,
 }: UpsertBWFleetFormProps) {
+  const { form } = useUpsertBwfleetHandler();
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="overflow-y-auto !max-w-[50vw] !max-h-[85vh]">
@@ -39,7 +32,7 @@ export function UpsertBWFleetForm({
         </DialogHeader>
 
         <div className="flex flex-col my-4 gap-4">
-          <GeneralForm />
+          <GeneralForm form={form} />
           <AddressForm />
           <UserForm />
         </div>
