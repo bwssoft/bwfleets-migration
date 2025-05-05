@@ -63,7 +63,7 @@ export function GeneralForm({ form }: GeneralFormProps) {
                     className="w-full"
                     value={field.value}
                     onValueChange={(value) => {
-                      if (value === field.value) return;
+                      if (value === field.value || !value) return;
 
                       field.onChange(value);
                       form.setValue("document", "");
