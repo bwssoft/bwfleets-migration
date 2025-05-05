@@ -72,7 +72,13 @@ export function DataTable<TData, TValue>({
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
-                onClick={() => {
+                onClick={(event) => {
+                  const ignoreID = ['action-button'];
+                  // @ts-ignore
+                  const ignoreAction = ignoreID.includes(event.target.id)
+                  if(ignoreAction) {
+                    return
+                  }
                   setPendingId(row.id);
                   startTransition(() => {
                     onRowClick?.(row.original);
