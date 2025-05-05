@@ -6,8 +6,15 @@ import {
   CardTitle,
 } from "@/view/components/ui/card";
 import { Input } from "@/view/components/ui/input";
+import { UseFormReturn } from "react-hook-form";
+import { BWFleetUpsertClientFormData } from "./upsert-bwfleet.handler";
+import { InputWithMask } from "@/view/components/ui/input-with-mask";
 
-export function UserForm() {
+interface UserFormProps {
+  form: UseFormReturn<BWFleetUpsertClientFormData>;
+}
+
+export function UserForm({ form }: UserFormProps) {
   return (
     <Card>
       <CardHeader>
@@ -19,8 +26,13 @@ export function UserForm() {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 gap-2">
-          <Input label="Nome do usuário" />
-          <Input label="E-mail" type="email" />
+          <Input label="Nome do usuário" {...form.register("user.name")} />
+          <Input label="E-mail" type="email" {...form.register("user.email")} />
+
+          <div>
+            <label className="text-sm font-medium">Contato principal</label>
+            <InputWithMask mask="(__) _____-____" replacement={{ _: /\d/ }} />
+          </div>
         </div>
       </CardContent>
     </Card>

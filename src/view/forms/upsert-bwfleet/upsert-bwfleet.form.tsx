@@ -34,7 +34,7 @@ export function UpsertBWFleetForm({
         <div className="flex flex-col my-4 gap-4">
           <GeneralForm form={form} />
           <AddressForm />
-          <UserForm />
+          <UserForm form={form} />
         </div>
       </DialogContent>
     </Dialog>
