@@ -27,6 +27,7 @@ import { loadClientDetailsPageParams } from "./params";
 import { ClientMigrationCard } from "./@components/client-migration-card";
 import { WWTDevicesTableLoader } from "@/view/tables/wwt-devices.loader";
 import { StartMigrationForm } from "@/view/forms/start-migration.form";
+import { ClientFleetsCard } from "./@components/client-fleets-card";
 
 interface PageProps {
   params: {
@@ -78,6 +79,8 @@ export default async function WWTClientDetailsPage({
       <PageLayout className="grid gap-4 grid-cols-8">
         <div className="col-span-6 space-y-4">
           <ClientInfoCard client={client} />
+
+          <ClientFleetsCard client={client} />
 
           <Suspense fallback={<Skeleton className="w-full h-96" />}>
             <ClientSubclientsCard
