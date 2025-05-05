@@ -28,23 +28,29 @@ export function WWTClientTable({ data, pagination }: WWTClientTableProps) {
   const session = authClient.useSession();
   const [peddingId, setPeddingId] = useState<string>();
   const currentUser = useMemo(() => {
-    const user = session.data?.user
+    const user = session.data?.user;
     return user;
-  }, [session.data])
+  }, [session.data]);
 
-  const handleBeingResponsibleClient = async ({ client_id }: { client_id: string }) => {
-    if(!currentUser) return
+  const handleBeingResponsibleClient = async ({
+    client_id,
+  }: {
+    client_id: string;
+  }) => {
+    if (!currentUser) return;
 
     setPeddingId(client_id);
     startTransition(async () => {
-      await assignMigrationResponsibility({ client_id, user_id: currentUser.id })
+      await assignMigrationResponsibility({
+        client_id,
+        user_id: currentUser.id,
+      });
     });
-    
-  }
+  };
 
-  useEffect(() =>{
-    console.log({ isPending })
-  },[isPending])
+  useEffect(() => {
+    console.log({ isPending });
+  }, [isPending]);
 
   function handleTableRowClick(data: WWTClient) {
     router.push(`/wwt/clients/${data.accountId}`);
@@ -71,16 +77,14 @@ export function WWTClientTable({ data, pagination }: WWTClientTableProps) {
         <div className="flex  gap-2 items-baseline">
           <Avatar>
             <AvatarFallback>
-              {
-                data.assigned?.name ? getInitials(data.assigned.name) : <User />
-              }
+              {data.assigned?.name ? getInitials(data.assigned.name) : <User />}
             </AvatarFallback>
           </Avatar>
           <span className="text-xs font-semibold">
             {formatName(data.assigned?.name)}
           </span>
         </div>
-      )
+      ),
     },
     {
       accessorKey: "accountName",
@@ -112,18 +116,24 @@ export function WWTClientTable({ data, pagination }: WWTClientTableProps) {
       accessorKey: "id",
       header: "Ações",
       cell: ({ row: { original: data } }) => {
-  
-        const isDisabled = !!data.migrationStatus || isPending
-  
-        return (
-          <Button id="action-button" onClick={() => handleBeingResponsibleClient({ client_id: data.id })} disabled={isDisabled} >
-            { isPending && peddingId === data.id ?  <LoaderIcon className="animate-spin h-4 w-4" /> : "Migrar" }
-          </Button>
-        )
-      }
-    }
-  ];
+        const isDisabled = !!data.migrationStatus || isPending;
 
+        return (
+          <Button
+            id="action-button"
+            onClick={() => handleBeingResponsibleClient({ client_id: data.id })}
+            disabled={isDisabled}
+          >
+            {isPending && peddingId === data.id ? (
+              <LoaderIcon className="animate-spin h-4 w-4" />
+            ) : (
+              "Migrar"
+            )}
+          </Button>
+        );
+      },
+    },
+  ];
 
   return (
     <section className="space-y-4 bg-card">

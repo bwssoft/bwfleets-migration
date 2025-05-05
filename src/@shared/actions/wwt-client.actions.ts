@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
-import { Prisma } from "@prisma/client";
 import { cleanObject } from "../utils/clean-object";
 import { prisma } from "../lib/prisma/prisma-client";
 import { MigrationStatusEnum } from "../interfaces/wwt-client";
 import { parseFormData } from "../utils/parse-form-data";
+import { Prisma } from "@prisma/client";
 import { authClient } from "../lib/better-auth/auth-client";
 import { revalidatePath } from "next/cache";
 
@@ -17,7 +18,7 @@ interface FindManyClientsParams {
 
 export async function findManyClients(params: FindManyClientsParams) {
   const { page, pageSize = 100, where, orderBy } = params;
-  
+
   const formattedWhere = cleanObject(where);
   const formattedOrderBy = cleanObject(orderBy);
 
@@ -45,10 +46,10 @@ export async function findManyClients(params: FindManyClientsParams) {
         select: {
           id: true,
           name: true,
-          email: true
-        }
-      }
-    }
+          email: true,
+        },
+      },
+    },
   });
 
   return {
@@ -58,7 +59,7 @@ export async function findManyClients(params: FindManyClientsParams) {
 }
 
 interface FindOneClientParams {
-  where: Prisma.clientWhereInput;
+  where: any;
 }
 
 export async function findOneClient(params: FindOneClientParams) {
@@ -88,22 +89,24 @@ export async function updateMigrationStatus(formData: FormData) {
 
 export namespace AssignMigrationResponsibility {
   export type Params = {
-    client_id: string
-    user_id: string
-  }
+    client_id: string;
+    user_id: string;
+  };
 }
 
-export async function assignMigrationResponsibility(params: AssignMigrationResponsibility.Params) {
+export async function assignMigrationResponsibility(
+  params: AssignMigrationResponsibility.Params
+) {
   const { client_id, user_id } = params;
 
   await prisma.client.update({
     where: {
-      id: client_id
+      id: client_id,
     },
     data: {
       assignedId: user_id,
-      migrationStatus: 'in-progress'
-    }
-  })
-  revalidatePath('/wwt/clients')
+      migrationStatus: "in-progress",
+    },
+  });
+  revalidatePath("/wwt/clients");
 }
