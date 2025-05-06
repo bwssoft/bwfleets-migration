@@ -16,7 +16,14 @@ import {
   CardFooter,
 } from "@/view/components/ui/card";
 import { StartMigrationForm } from "@/view/forms/start-migration.form";
-import { CircleCheck, CircleDashed, CircleEllipsis } from "lucide-react";
+import {
+  CircleCheck,
+  CircleDashed,
+  CircleEllipsis,
+  CirclePauseIcon,
+  CircleXIcon,
+  PhoneOffIcon,
+} from "lucide-react";
 import React from "react";
 
 interface ClientMigrationCardProps {
@@ -67,17 +74,33 @@ type MigrationMapper = Record<
 >;
 
 const ALERT_DATA: MigrationMapper = {
-  pending: {
+  "to-do": {
     icon: <CircleDashed />,
     title: "Pendente",
     description:
       "Atualmente esse cliente não está marcado para ser migrado para a nova plataforma. Inicie o processo de migração abaixo para continuar.",
   },
-  "in-progress": {
+  waiting: {
+    icon: <CirclePauseIcon />,
+    title: "Aguardando resposta do cliente",
+    description:
+      "Esse cliente foi marcado com a intenção de ser migrado para a nova plataforma. O processo de migração está em andamento.",
+  },
+  pending: {
     icon: <CircleEllipsis />,
     title: "Em andamento",
     description:
       "Esse cliente foi marcado com a intenção de ser migrado para a nova plataforma. O processo de migração está em andamento.",
+  },
+  "failed-by-client": {
+    icon: <CircleXIcon />,
+    title: "Recusado pelo cliente",
+    description: "Esse cliente recusou a migração de plataforma.",
+  },
+  "failed-by-contact": {
+    icon: <PhoneOffIcon />,
+    title: "Recusado por não conseguir contato",
+    description: "Não foi possível entrar em contato com esse cliente.",
   },
   done: {
     icon: <CircleCheck />,
