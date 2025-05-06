@@ -2,10 +2,6 @@ import * as React from "react";
 
 import { cn } from "@/@shared/utils/tw-merge";
 
-export interface InputProps extends React.ComponentProps<"input"> {
-  label?: string;
-}
-
 function Input({
   className,
   type,
@@ -13,7 +9,7 @@ function Input({
   readOnly,
   name,
   ...props
-}: InputProps) {
+}: React.ComponentProps<"input"> & { label?: string }) {
   return (
     <div className={cn(label ? "space-y-1" : undefined, "w-full")}>
       {label && (
@@ -32,6 +28,7 @@ function Input({
           readOnly && "bg-accent/50 cursor-default",
           className
         )}
+        name={name}
         {...props}
       />
     </div>
