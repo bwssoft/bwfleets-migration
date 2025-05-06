@@ -6,3 +6,9 @@ export function parseFormData<TResult>(formData: FormData, asBody?: boolean) {
 
   return Object.fromEntries(formData.entries()) as TResult;
 }
+
+export function generateFormData<TData>(data: TData) {
+  const formData = new FormData();
+  formData.append("body", JSON.stringify(data));
+  return formData;
+}
