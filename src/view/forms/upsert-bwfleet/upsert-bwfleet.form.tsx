@@ -10,6 +10,7 @@ import { AddressForm } from "./address.form";
 import { UserForm } from "./user.form";
 import { GeneralForm } from "./general.form";
 import { useUpsertBwfleetHandler } from "./upsert-bwfleet.handler";
+import { Button } from "@/view/components/ui/button";
 
 interface UpsertBWFleetFormProps {
   client: WWTClient;
@@ -21,7 +22,7 @@ export function UpsertBWFleetForm({
   open,
   onOpenChange,
 }: UpsertBWFleetFormProps) {
-  const { form } = useUpsertBwfleetHandler();
+  const { form, handleSubmit } = useUpsertBwfleetHandler();
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -33,9 +34,16 @@ export function UpsertBWFleetForm({
 
         <div className="flex flex-col my-4 gap-4">
           <GeneralForm form={form} />
-          <AddressForm />
+          <AddressForm form={form} />
           <UserForm form={form} />
         </div>
+        <Button
+          className="w-fit"
+          disabled={form.formState.isSubmitting}
+          onClick={() => handleSubmit()}
+        >
+          Salvar
+        </Button>
       </DialogContent>
     </Dialog>
   );

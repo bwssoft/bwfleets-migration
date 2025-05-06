@@ -7,8 +7,13 @@ import {
 } from "@/view/components/ui/card";
 import { Input } from "@/view/components/ui/input";
 import { InputWithMask } from "@/view/components/ui/input-with-mask";
+import { UseFormReturn } from "react-hook-form";
+import { BWFleetUpsertClientFormData } from "./upsert-bwfleet.handler";
 
-export function AddressForm() {
+interface Props {
+  form: UseFormReturn<BWFleetUpsertClientFormData>;
+}
+export function AddressForm({ form }: Props) {
   return (
     <Card>
       <CardHeader>
@@ -21,14 +26,18 @@ export function AddressForm() {
         <div className="grid grid-cols-2 gap-2">
           <div>
             <label className="text-sm font-medium">Código-postal</label>
-            <InputWithMask mask="_____-___" replacement={{ _: /\d/ }} />
+            <InputWithMask
+              mask="_____-___"
+              replacement={{ _: /\d/ }}
+              {...form.register("cep")}
+            />
           </div>
-          <Input label="Rua" />
-          <Input label="Número" />
-          <Input label="Bairro" />
-          <Input label="Cidade" />
-          <Input label="Estado" />
-          <Input label="País" />
+          <Input label="Rua" {...form.register("street")} />
+          <Input label="Número" {...form.register("number")} />
+          <Input label="Bairro" {...form.register("district")} />
+          <Input label="Cidade" {...form.register("city")} />
+          <Input label="Estado" {...form.register("state")} />
+          <Input label="País" {...form.register("country")} />
         </div>
       </CardContent>
     </Card>

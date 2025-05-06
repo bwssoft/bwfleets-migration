@@ -31,7 +31,11 @@ export function UserForm({ form }: UserFormProps) {
 
           <div>
             <label className="text-sm font-medium">Contato principal</label>
-            <InputWithMask mask="(__) _____-____" replacement={{ _: /\d/ }} />
+            <InputWithMask
+              mask="(__) _____-____"
+              replacement={{ _: /\d/ }}
+              {...form.register("user.contact")}
+            />
           </div>
         </div>
       </CardContent>

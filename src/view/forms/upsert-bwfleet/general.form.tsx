@@ -47,67 +47,62 @@ export function GeneralForm({ form }: GeneralFormProps) {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
-        <div className="grid grid-cols-2 gap-2">
-          <div className="grid grid-cols-2 gap-2">
-            <Controller
-              control={form.control}
-              name="document_type"
-              render={({ field }) => (
-                <div className="flex flex-col gap-1 justify-center">
-                  <label className="text-sm font-medium">
-                    Tipo do documento
-                  </label>
-                  <ToggleGroup
-                    type="single"
-                    variant="outline"
-                    className="w-full"
-                    value={field.value}
-                    onValueChange={(value) => {
-                      if (value === field.value || !value) return;
+        <div className="flex gap-2">
+          <Controller
+            control={form.control}
+            name="document_type"
+            render={({ field }) => (
+              <div className="flex flex-col gap-1 justify-center">
+                <label className="text-sm font-medium">Tipo do documento</label>
+                <ToggleGroup
+                  type="single"
+                  variant="outline"
+                  className="w-full"
+                  value={field.value}
+                  onValueChange={(value) => {
+                    if (value === field.value || !value) return;
 
-                      field.onChange(value);
-                      form.setValue("document", "");
-                    }}
-                  >
-                    <ToggleGroupItem value="cpf" className="w-full">
-                      CPF
-                    </ToggleGroupItem>
-                    <ToggleGroupItem value="cnpj" className="w-full">
-                      CNPJ
-                    </ToggleGroupItem>
-                  </ToggleGroup>
-                </div>
-              )}
-            />
+                    field.onChange(value);
+                    form.setValue("document", "");
+                  }}
+                >
+                  <ToggleGroupItem value="cpf" className="w-full">
+                    CPF
+                  </ToggleGroupItem>
+                  <ToggleGroupItem value="cnpj" className="w-full">
+                    CNPJ
+                  </ToggleGroupItem>
+                </ToggleGroup>
+              </div>
+            )}
+          />
 
-            <Controller
-              control={form.control}
-              name="document"
-              render={({ field }) => (
-                <div className="flex flex-col gap-1 justify-center">
-                  <label className="text-sm font-medium">
-                    Documento do cliente
-                  </label>
-                  <InputWithMask
-                    mask={documentTypeMask}
-                    placeholder={
-                      !documentTypeMask
-                        ? "Selecione o tipo do documento"
-                        : undefined
-                    }
-                    replacement={{ _: /\d/ }}
-                    value={field.value}
-                    onChange={(event) => {
-                      field.onChange(event.target.value);
-                    }}
-                  />
-                </div>
-              )}
-            />
-          </div>
-          <Input label="Nome da empresa" {...form.register("name")} />
+          <Controller
+            control={form.control}
+            name="document"
+            render={({ field }) => (
+              <div className="flex flex-1 flex-col gap-1 justify-center">
+                <label className="text-sm font-medium">
+                  Documento do cliente
+                </label>
+                <InputWithMask
+                  mask={documentTypeMask}
+                  placeholder={
+                    !documentTypeMask
+                      ? "Selecione o tipo do documento"
+                      : undefined
+                  }
+                  replacement={{ _: /\d/ }}
+                  value={field.value}
+                  onChange={(event) => {
+                    field.onChange(event.target.value);
+                  }}
+                />
+              </div>
+            )}
+          />
         </div>
-
+        <Input label="Nome da empresa" {...form.register("name")} />
         <div>
           <label className="text-sm font-medium">
             Subdomínio da plataforma do cliente
