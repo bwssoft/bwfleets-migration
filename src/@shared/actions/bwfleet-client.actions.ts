@@ -9,12 +9,14 @@ import { cleanObject } from "../utils/clean-object";
 
 interface FindOneClientParams {
   where: Prisma.BFleetClientWhereInput;
+  include?: Prisma.BFleetClientInclude;
 }
 
 export async function findOneBFleetClient(params: FindOneClientParams) {
-  const { where } = params;
-  return await prisma.bFleetClient.findFirstOrThrow({
+  const { where, include } = params;
+  return await prisma.bFleetClient.findFirst({
     where,
+    include,
   });
 }
 
