@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
-import { client, Prisma } from "@prisma/client";
+import { client, MigrationStatus, Prisma } from "@prisma/client";
 import { cleanObject } from "../utils/clean-object";
 import { prisma } from "../lib/prisma/prisma-client";
 import { MigrationStatusEnum } from "../interfaces/wwt-client";
@@ -72,7 +72,7 @@ export async function findOneClient(params: FindOneClientParams) {
 
 interface UpdateMigrationStatus {
   uuid: string;
-  status: MigrationStatusEnum;
+  status: MigrationStatus;
 }
 
 export async function updateMigrationStatus(formData: FormData) {
@@ -210,7 +210,7 @@ export async function assignMigrationResponsibility(
     },
     data: {
       assignedId: user_id,
-      migrationStatus: "in-progress",
+      migrationStatus: "PENDING",
     },
   });
   revalidatePath("/wwt/clients");

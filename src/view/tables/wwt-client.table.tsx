@@ -76,7 +76,7 @@ export function WWTClientTable({ data, pagination }: WWTClientTableProps) {
     },
     {
       accessorKey: "email",
-      header: "Responável",
+      header: "Responsável",
       cell: ({ row: { original: data } }) => (
         <div className="flex  gap-2 items-baseline">
           {data.assigned?.name ? (
