@@ -82,14 +82,10 @@ export function useUpsertBwfleetHandler({
   wwtClient,
   bfleetClient,
 }: UseUpsertBwfleetHandlerParams) {
-  console.log("🚀 ~ bfleetClient:", bfleetClient);
   const form = useForm<BWFleetUpsertClientFormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      ...bfleetClient,
-      uuid: bfleetClient?.uuid,
-      tenant: bfleetClient?.tenant,
-      enterprise_uuid: bfleetClient?.enterprise_uuid,
+      ...(cleanObject(bfleetClient) as BWFleetUpsertClientFormData),
     },
   });
 
