@@ -95,7 +95,7 @@ export type IParametersValue = {
 }
 
 export async function generateUserSummary(data: client) {
-  const TEMPLATE_MESSAGE = "Olá, {client_name}. Tudo bem? Você está com a gente desde {time} e durante todo esse tempo você atingiu os valores de {qnt_device} dispositivos, sendo {qnt_device_online_pctg} ativo e {qnt_device_ofline_pctg} desativados nos últimos meses e {qnt_client} clientes.";
+  const TEMPLATE_MESSAGE = "Olá, {client_name}. Tudo bem? Você está com a gente desde {time} e durante todo esse tempo você atingiu os valores de {qnt_device} dispositivos, sendo {qnt_device_online_pctg} ativo e {qnt_device_ofline_pctg} inativos nos últimos meses e {qnt_client} clientes.";
 
   const formatTime = (value?: number): string | undefined => {
     if(!value) return 
@@ -104,7 +104,7 @@ export async function generateUserSummary(data: client) {
   }
 
   const calcPercentage = (value: number, total: number) => {
-    return Math.floor((value * 100) / total)
+    return Math.round((value * 100) / total)
   }
 
   const calculateDeviceStatistics = () => {
