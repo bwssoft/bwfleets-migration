@@ -11,9 +11,9 @@
     "prefix": ""
   },
   "aliases": {
-    "components": "@/components",
+    "components": "@/view/components",
     "utils": "@/@shared/utils/tw-merge",
-    "ui": "@/components/ui",
+    "ui": "@/view/components/ui",
     "lib": "@/@shared/utils",
     "hooks": "@/@shared/hooks"
   },
