@@ -89,15 +89,20 @@ type DeviceOwnerBeanAccountStatsBean {
   unUsedDeviceNo  Int
 }
 
+type CommentUser {
+  id   String
+  name String
+}
+
 model Comment {
-  id        String   @id @map("_id")
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   message   String
   user_uuid String
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+  clientId  String   @db.ObjectId
   user      User     @relation(fields: [user_uuid], references: [id])
-  client    client?  @relation(fields: [clientId], references: [id])
-  clientId  String?  @db.ObjectId
+  client    client   @relation(fields: [clientId], references: [id])
 }
 
 enum MigrationStatus {

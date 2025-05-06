@@ -112,8 +112,8 @@ export default async function WWTClientDetailsPage({
         </div>
         <div className="col-span-2">
         <div className="flex flex-col gap-4 sticky top-0">
-          <ClientStatusMigrationCard />
-          <ClientCommentsCard hidden={client.migrationStatus === "TO_DO"} data={[]} />
+          <ClientStatusMigrationCard id={client.id} status={client.migrationStatus} />
+          <ClientCommentsCard client_id={client.id} hidden={client.migrationStatus === "TO_DO"} data={client.comments} />
           <ClientStatisticsCard client={client} />
         </div>
         </div>

@@ -105,9 +105,9 @@ export function WWTClientTable({ data, pagination }: WWTClientTableProps) {
       header: "Status de migração",
       cell: ({ row: { original: data } }) => {
         switch (data.migrationStatus) {
-          case "in-progress":
+          case "PENDING":
             return <Badge variant="default">Em progresso</Badge>;
-          case "done":
+          case "DONE":
             return <Badge>Migrado</Badge>;
           default:
             return <Badge>Pendente</Badge>;
@@ -119,7 +119,7 @@ export function WWTClientTable({ data, pagination }: WWTClientTableProps) {
       header: "Ações",
       cell: ({ row: { original: data } }) => {
         const isDisabled =
-          data.migrationStatus !== "pending" &&
+          data.migrationStatus !== "TO_DO" &&
           data.migrationStatus !== null &&
           data.migrationStatus !== undefined;
 

@@ -1,16 +1,20 @@
+'use client'
+
+import { updateMigrationStatus } from '@/@shared/actions/wwt-client.actions';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/view/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/view/components/ui/select';
 import { MigrationStatus } from '@prisma/client';
 import React from 'react';
+import { toast } from 'sonner';
 
+export interface IClientStatusMigrationCard {
+  status: MigrationStatus | null
+  id: string
+}
 
-export const ClientStatusMigrationCard: React.FC = () => {
+export const ClientStatusMigrationCard: React.FC<IClientStatusMigrationCard> = ({ status, id }) => {
   
   const options: Array<{ value: MigrationStatus, label: string }> = [
-    {
-      value: 'TO_DO',
-      label: "Pendente"
-    },
     {
       value: 'PENDING',
       label: "Em Andamento"      
@@ -28,6 +32,17 @@ export const ClientStatusMigrationCard: React.FC = () => {
       label: 'Não conseguiu contato'
     }
   ]
+
+  const onHandleChange = async (value: string) => {
+    const formData = new FormData();
+    formData.append("uuid", id);
+    formData.append("status", value);
+
+    await updateMigrationStatus(formData);
+
+    toast.success("Status atualizado com sucesso")
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -35,8 +50,8 @@ export const ClientStatusMigrationCard: React.FC = () => {
         <CardDescription>Visualize e informe o status da migração por aqui</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className='relative flex w-full'>
-        <Select >
+        <div className='relative flex flex-col gap-1 w-full'>
+        <Select defaultValue={status ?? undefined} onValueChange={onHandleChange}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Status" />
           </SelectTrigger>

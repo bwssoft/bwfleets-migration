@@ -24,7 +24,7 @@ export function StartMigrationForm({ client }: StartMigrationFormProps) {
     try {
       const formData = new FormData();
       formData.append("uuid", client.id);
-      formData.append("status", "in-progress");
+      formData.append("status", "PENDING");
       await assignMigrationResponsibility({
         client_id: client.id,
         user_id: data.user.id!,
@@ -39,7 +39,7 @@ export function StartMigrationForm({ client }: StartMigrationFormProps) {
     }
   }
 
-  if (migrationStatus && migrationStatus !== "pending") {
+  if (migrationStatus && migrationStatus !== "TO_DO") {
     return null;
   }
 
