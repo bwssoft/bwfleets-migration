@@ -8,8 +8,9 @@ function Input({
   label,
   readOnly,
   name,
+  error,
   ...props
-}: React.ComponentProps<"input"> & { label?: string }) {
+}: React.ComponentProps<"input"> & { label?: string; error?: string }) {
   return (
     <div className={cn(label ? "space-y-1" : undefined, "w-full")}>
       {label && (
@@ -31,6 +32,8 @@ function Input({
         name={name}
         {...props}
       />
+
+      {error && <small className="text-destructive">{error}</small>}
     </div>
   );
 }
