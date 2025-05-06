@@ -31,7 +31,8 @@ interface ClientMigrationCardProps {
 }
 
 export function ClientMigrationCard({ client }: ClientMigrationCardProps) {
-  const migrationStatus = client.migrationStatus ?? "pending";
+  const migrationStatus = client.migrationStatus?.toLowerCase() ?? "to-do";
+
   const alertData = ALERT_DATA[migrationStatus as never] as {
     icon: string;
     title: string;
@@ -49,13 +50,13 @@ export function ClientMigrationCard({ client }: ClientMigrationCardProps) {
       </CardHeader>
       <CardContent>
         <Alert>
-          {alertData.icon}
-          <AlertTitle>Status atual: {alertData.title}</AlertTitle>
-          <AlertDescription>{alertData.description}</AlertDescription>
+          {alertData?.icon}
+          <AlertTitle>Status atual: {alertData?.title}</AlertTitle>
+          <AlertDescription>{alertData?.description}</AlertDescription>
         </Alert>
       </CardContent>
 
-      {migrationStatus === "pending" && (
+      {migrationStatus === "to-do" && (
         <CardFooter>
           <StartMigrationForm client={client} />
         </CardFooter>
