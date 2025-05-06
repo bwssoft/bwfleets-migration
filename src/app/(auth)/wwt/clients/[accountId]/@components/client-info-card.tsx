@@ -1,3 +1,4 @@
+import { generateUserSummary } from "@/@shared/actions/wwt-client.actions";
 import { WWTClient } from "@/@shared/interfaces/wwt-client";
 import {
   Card,
@@ -7,14 +8,19 @@ import {
   CardContent,
 } from "@/view/components/ui/card";
 import { LabelValue } from "@/view/components/ui/label-value";
+import { SparklesIcon } from "lucide-react";
 
 interface ClientInfoCardProps {
   client: WWTClient;
 }
 
-export function ClientInfoCard({ client }: ClientInfoCardProps) {
+export async function ClientInfoCard({ client }: ClientInfoCardProps) {
+  const sumary = await generateUserSummary(client);
+
   return (
-    <Card>
+    <div className="flex gap-4 w-full">
+
+    <Card className="w-full">
       <CardHeader>
         <CardTitle>Informações do cliente</CardTitle>
         <CardDescription>
@@ -30,5 +36,23 @@ export function ClientInfoCard({ client }: ClientInfoCardProps) {
         <LabelValue label="Endereco" value={client.address} />
       </CardContent>
     </Card>
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle className="flex gap-1">
+          <SparklesIcon className="w-4 h-4" />
+          <span>Sugestão de texto</span>
+
+          </CardTitle>
+        <CardDescription>
+          Sugestão de resumo com base nos dados do cliente
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="max-w-[80%] -mt-2">
+        <span className="text-sm font-medium">{sumary}</span>
+      </CardContent>
+    </Card>
+
+    </div>
+
   );
 }
