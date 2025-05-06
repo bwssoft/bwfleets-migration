@@ -30,9 +30,11 @@ export function useLoginFormHandler() {
 
     try {
       await signIn(formData);
-    } catch (error) {
-      console.error("error", error);
-      toast.error("E-mail ou senha inválidos");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      if (error.message !== "NEXT_REDIRECT") {
+        toast.error("E-mail ou senha inválidos");
+      }
     }
   }
 
