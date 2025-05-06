@@ -1,5 +1,6 @@
-"use client";
+"use server";
 
+import { findOneBFleetClient } from "@/@shared/actions/bwfleet-client.actions";
 import { WWTClient } from "@/@shared/interfaces/wwt-client";
 import {
   Card,
@@ -11,10 +12,19 @@ import {
 import { UpsertBWFleetForm } from "@/view/forms/upsert-bwfleet/upsert-bwfleet.form";
 
 interface ClientFleetsCardProps {
-  client: WWTClient;
+  wwtClient: WWTClient;
 }
 
-export function ClientFleetsCard({ client }: ClientFleetsCardProps) {
+export async function ClientFleetsCard({ wwtClient }: ClientFleetsCardProps) {
+  const bfleetClient = await findOneBFleetClient({
+    where: {
+      wwtAccountId: wwtClient.accountId,
+    },
+    include: {
+      user: true,
+    },
+  });
+
   return (
     <Card>
       <CardHeader>
@@ -25,7 +35,10 @@ export function ClientFleetsCard({ client }: ClientFleetsCardProps) {
         </CardDescription>
 
         <CardAction>
-          <UpsertBWFleetForm wwtClient={client} />
+          <UpsertBWFleetForm
+            wwtClient={wwtClient}
+            bfleetClient={bfleetClient}
+          />
         </CardAction>
       </CardHeader>
     </Card>

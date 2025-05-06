@@ -1,3 +1,5 @@
+"use client";
+
 import {
   upsertBfleetClient,
   upsertBfleetUser,
@@ -8,6 +10,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { generateFormData } from "@/@shared/utils/parse-form-data";
 import { WWTClient } from "@/@shared/interfaces/wwt-client";
+import { cleanObject } from "@/@shared/utils/clean-object";
+import { BFleetClient } from "@prisma/client";
 
 const contactSchema = z.object({
   name: z.string().min(1, "Informe o nome de contato"),
@@ -60,6 +64,10 @@ const schema = z.object({
       email: z.string().optional(),
     })
     .optional(),
+
+  tenant: z.array(z.string()).optional(),
+  enterprise_uuid: z.string().optional(),
+  user_uuid: z.string().optional(),
   // identifier: clientIdentifierSchema // VER OQ FAZER
 });
 
@@ -67,17 +75,26 @@ export type BWFleetUpsertClientFormData = z.infer<typeof schema>;
 
 interface UseUpsertBwfleetHandlerParams {
   wwtClient: WWTClient;
+  bfleetClient: BFleetClient | null;
 }
 
 export function useUpsertBwfleetHandler({
   wwtClient,
+  bfleetClient,
 }: UseUpsertBwfleetHandlerParams) {
+  console.log("🚀 ~ bfleetClient:", bfleetClient);
   const form = useForm<BWFleetUpsertClientFormData>({
     resolver: zodResolver(schema),
+    defaultValues: {
+      ...bfleetClient,
+      uuid: bfleetClient?.uuid,
+      tenant: bfleetClient?.tenant,
+      enterprise_uuid: bfleetClient?.enterprise_uuid,
+    },
   });
 
   const handleSubmit = form.handleSubmit(
-    async (data) => {
+    async (data: BWFleetUpsertClientFormData) => {
       const address = {
         cep: data.cep,
         city: data.city,
@@ -98,8 +115,9 @@ export function useUpsertBwfleetHandler({
         days: 60,
       };
 
-      const tenant = [nanoid(21)];
-      const enterprise_uuid = crypto.randomUUID();
+      const tenant = data.tenant ?? [nanoid(21)];
+      const enterprise_uuid = data.enterprise_uuid ?? crypto.randomUUID();
+      const user_uuid = data.user_uuid ?? crypto.randomUUID();
 
       const clientPayload = generateFormData({
         uuid: data.uuid,
@@ -111,7 +129,7 @@ export function useUpsertBwfleetHandler({
         depth: 1,
         document,
         profile_uuid: [],
-        user_uuid: crypto.randomUUID(),
+        user_uuid,
         tenant,
         enterprise_uuid,
         created_at: new Date(),
@@ -123,14 +141,23 @@ export function useUpsertBwfleetHandler({
 
       const client = await upsertBfleetClient(clientPayload);
 
-      const userPayload = generateFormData({
+      const userPayload = cleanObject({
         name: data.user?.name,
         email: data.user?.email,
         contact: data.user?.contact,
-        client,
+        user: {
+          uuid: user_uuid,
+        },
       });
 
-      await upsertBfleetUser(userPayload);
+      if (Object.keys(userPayload).length !== 0) {
+        await upsertBfleetUser(
+          generateFormData({
+            ...userPayload,
+            client,
+          })
+        );
+      }
     },
     (error) => {
       console.log("🚀 ~ handleSubmit ~ error:", error);

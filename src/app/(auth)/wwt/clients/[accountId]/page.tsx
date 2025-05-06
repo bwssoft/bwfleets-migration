@@ -80,7 +80,7 @@ export default async function WWTClientDetailsPage({
         <div className="col-span-6 space-y-4">
           <ClientInfoCard client={client} />
 
-          <ClientFleetsCard client={client} />
+          <ClientFleetsCard wwtClient={client} />
 
           <Suspense fallback={<Skeleton className="w-full h-96" />}>
             <ClientSubclientsCard
