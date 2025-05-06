@@ -12,6 +12,7 @@ import { generateFormData } from "@/@shared/utils/parse-form-data";
 import { WWTClient } from "@/@shared/interfaces/wwt-client";
 import { cleanObject } from "@/@shared/utils/clean-object";
 import { BFleetClient } from "@prisma/client";
+import { toast } from "sonner";
 
 const contactSchema = z.object({
   name: z.string().min(1, "Informe o nome de contato"),
@@ -41,9 +42,9 @@ const schema = z.object({
     // )
     .optional(),
 
-  freePeriod: z.number().nonnegative().optional(),
+  // freePeriod: z.number().nonnegative().optional(),
 
-  validate: z.number().nonnegative().optional(),
+  // validate: z.number().nonnegative().optional(),
 
   district: z.string().optional(),
   number: z.string().optional(),
@@ -86,6 +87,8 @@ export function useUpsertBwfleetHandler({
     resolver: zodResolver(schema),
     defaultValues: {
       ...(cleanObject(bfleetClient) as BWFleetUpsertClientFormData),
+      document: bfleetClient?.document?.value,
+      document_type: bfleetClient?.document?.type as "cpf" | "cnpj",
     },
   });
 
@@ -154,9 +157,11 @@ export function useUpsertBwfleetHandler({
           })
         );
       }
+
+      toast.success("Dados do cliente atualizados com sucesso!");
     },
     (error) => {
-      console.log("🚀 ~ handleSubmit ~ error:", error);
+      console.log("🚀 ~ handleSubmit ~ error:", error, form.getValues());
     }
   );
 
