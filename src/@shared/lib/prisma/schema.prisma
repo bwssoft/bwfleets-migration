@@ -112,6 +112,8 @@ model client {
   type                    Int
   userName                String
   migrationStatus         String?
+  assignedId              String?
+  assigned                User?                  @relation(fields: [assignedId], references: [id])
 }
 
 model device {
@@ -166,6 +168,7 @@ model User {
   firstAccess   Boolean?
   sessions      Session[]
   accounts      Account[]
+  client        client[]
 
   @@unique([email])
   @@map("user")
@@ -215,4 +218,68 @@ model Verification {
   updatedAt  DateTime?
 
   @@map("verification")
+}
+
+
+
+model BFleetClient {
+  subdomain              String
+  name                   String
+  document               Document
+  contacts               Contact[]
+  address                Address
+  user_uuid              String
+  profile_uuid           String[]
+  logo                   String?
+  login_background       String?
+  theme                  ClientTheme?
+  parent_enterprise_uuid String?
+  child_count            Int
+  depth                  Int
+  free_period            Validate
+  validate               Validate
+  tenant                 String[]
+  enterprise_uuid        String
+  uuid                   String @id @map("_id")
+  restriction_uuid       String
+  created_at             DateTime
+  updated_at             DateTime?
+  @@map("bfleet_client")
+}
+
+type Document {
+  type  String // could be enum, but MongoDB composite types need String
+  value String
+}
+
+type Contact {
+  name    String
+  email   String
+  contact String
+}
+
+type Address {
+  country String?
+  state String?
+  number String?
+  street String?
+  district String?
+  city String?
+  cep String
+}
+
+type ClientTheme {
+  primary   ClientThemeColorVariable?
+  secondary ClientThemeColorVariable?
+  nav       ClientThemeColorVariable?
+}
+
+type ClientThemeColorVariable {
+  default    String?
+  foreground String?
+}
+
+type Validate {
+  date DateTime
+  days Int
 }

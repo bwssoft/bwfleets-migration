@@ -38,6 +38,7 @@ export async function ClientSubclientsCard({
       </CardHeader>
       <CardContent>
         <WWTSubclientTable
+          // @ts-expect-error Ítalo: Eu não entendo do prisma mas isso me parece algo relacionado ao schema, mas não consegui resolver
           data={subclients.data}
           pagination={{
             count: subclients.count,

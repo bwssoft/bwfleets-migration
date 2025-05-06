@@ -4,6 +4,7 @@ import { cn } from "@/@shared/utils/tw-merge";
 
 interface LabelValueProps extends ComponentProps<"div"> {
   label: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value?: any;
 }
 
