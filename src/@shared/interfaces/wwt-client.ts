@@ -10,7 +10,13 @@ export interface WWTAccountStats {
   success: boolean;
 }
 
-export type MigrationStatusEnum = "pending" | "in-progress" | "done";
+export type MigrationStatusEnum =
+  | "to-do" // status de inicio
+  | "pending" // status de andamento
+  | "waiting" // status de andamento
+  | "done" // status de finalização
+  | "failed-by-client" // status de finalização
+  | "failed-by-contact"; // status de finalização
 
 export interface SubAccount {
   accountId: number;
