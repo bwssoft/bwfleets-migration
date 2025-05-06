@@ -228,7 +228,6 @@ model BFleetClient {
   document               Document?
   contacts               Contact[]
   address                Address?
-  user_uuid              String?
   profile_uuid           String[]
   logo                   String?
   login_background       String?
@@ -244,6 +243,12 @@ model BFleetClient {
   created_at             DateTime
   updated_at             DateTime?
   wwtAccountId           Int          @unique
+
+  // author   User   @relation(fields: [authorId], references: [id])
+  // authorId String @db.ObjectId 
+
+  user      BFleetUser? @relation(fields: [user_uuid], references: [uuid])
+  user_uuid String?
 
   @@index([id, uuid])
   @@map("bfleet_client")
@@ -287,12 +292,13 @@ type Validate {
 }
 
 model BFleetUser {
-  id      String             @id @default(auto()) @map("_id") @db.ObjectId
-  uuid    String             @unique
-  name    String?
-  email   String?
-  client  ClientUserRelation
-  contact String?
+  id           String             @id @default(auto()) @map("_id") @db.ObjectId
+  uuid         String             @unique
+  name         String?
+  email        String?
+  client       ClientUserRelation
+  contact      String?
+  BFleetClient BFleetClient[]
 
   @@index([id, uuid])
   @@map("bfleet_user")
