@@ -220,30 +220,32 @@ model Verification {
   @@map("verification")
 }
 
-
-
 model BFleetClient {
-  subdomain              String
-  name                   String
-  document               Document
+  id                     String       @id @default(auto()) @map("_id") @db.ObjectId
+  uuid                   String       @unique
+  subdomain              String?
+  name                   String?
+  document               Document?
   contacts               Contact[]
-  address                Address
-  user_uuid              String
+  address                Address?
+  user_uuid              String?
   profile_uuid           String[]
   logo                   String?
   login_background       String?
   theme                  ClientTheme?
   parent_enterprise_uuid String?
-  child_count            Int
-  depth                  Int
-  free_period            Validate
-  validate               Validate
+  child_count            Int?
+  depth                  Int?
+  free_period            Validate?
+  validate               Validate?
   tenant                 String[]
-  enterprise_uuid        String
-  uuid                   String @id @map("_id")
-  restriction_uuid       String
+  enterprise_uuid        String?
+  restriction_uuid       String?
   created_at             DateTime
   updated_at             DateTime?
+  wwtAccountId           Int          @unique
+
+  @@index([id, uuid])
   @@map("bfleet_client")
 }
 
@@ -259,13 +261,13 @@ type Contact {
 }
 
 type Address {
-  country String?
-  state String?
-  number String?
-  street String?
+  country  String?
+  state    String?
+  number   String?
+  street   String?
   district String?
-  city String?
-  cep String
+  city     String?
+  cep      String
 }
 
 type ClientTheme {
@@ -282,4 +284,21 @@ type ClientThemeColorVariable {
 type Validate {
   date DateTime
   days Int
+}
+
+model BFleetUser {
+  id      String             @id @default(auto()) @map("_id") @db.ObjectId
+  uuid    String             @unique
+  name    String?
+  email   String?
+  client  ClientUserRelation
+  contact String?
+
+  @@index([id, uuid])
+  @@map("bfleet_user")
+}
+
+type ClientUserRelation {
+  uuid String
+  name String
 }

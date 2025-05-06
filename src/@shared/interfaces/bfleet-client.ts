@@ -37,6 +37,7 @@ interface IAddress {
 }
 
 export interface BFleetClient {
+  id?: string;
   subdomain: string;
   name: string;
   document: IDocument;
