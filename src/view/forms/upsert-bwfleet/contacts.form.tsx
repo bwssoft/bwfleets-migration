@@ -45,10 +45,12 @@ export function ContactsForm({ form, contactsFieldArray }: Props) {
               <Input
                 label="Apelido"
                 {...form.register(`contacts.${index}.name`)}
+                error={form.formState.errors.contacts?.[index]?.name?.message}
               />
               <Input
                 label="E-mail"
                 {...form.register(`contacts.${index}.email`)}
+                error={form.formState.errors.contacts?.[index]?.email?.message}
               />
 
               <Controller
@@ -65,6 +67,15 @@ export function ContactsForm({ form, contactsFieldArray }: Props) {
                         field.onChange(event.target.value);
                       }}
                     />
+
+                    {form.formState.errors.contacts?.[index]?.contact && (
+                      <small className="text-destructive">
+                        {
+                          form.formState.errors.contacts?.[index]?.contact
+                            ?.message
+                        }
+                      </small>
+                    )}
                   </div>
                 )}
               />
