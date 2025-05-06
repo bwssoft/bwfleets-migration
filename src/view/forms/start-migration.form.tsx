@@ -29,7 +29,7 @@ export function StartMigrationForm({ client }: StartMigrationFormProps) {
         client_id: client.id,
         user_id: data.user.id!,
       });
-      // Pelo o que eu entendi, a função 'assignMigrationResponsibility' já atualiza o status para "in-progress"
+      // Ítalo: Pelo o que eu entendi, a função 'assignMigrationResponsibility' já atualiza o status para "in-progress"
       // e não é mais necessário usar a função 'updateMigrationStatus'
       await updateMigrationStatus(formData);
     } catch (error: any) {

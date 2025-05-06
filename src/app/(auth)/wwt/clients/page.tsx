@@ -9,12 +9,11 @@ import {
 import { Card, CardContent } from "@/view/components/ui/card";
 import { SearchClientForm } from "@/view/forms/search-client.form";
 
-import type { SearchParams } from "nuqs/server";
-import { loadClientsPageParams } from "./params";
-import { WWTClientTableLoader } from "@/view/tables/wwt-client.loader";
-import { Suspense } from "react";
 import { Skeleton } from "@/view/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/view/components/ui/tabs";
+import { WWTClientTableLoader } from "@/view/tables/wwt-client.loader";
+import type { SearchParams } from "nuqs/server";
+import { Suspense } from "react";
+import { loadClientsPageParams } from "./params";
 
 interface PageProps {
   searchParams: Promise<SearchParams>;
@@ -34,7 +33,6 @@ export default async function WWTClientsPage({ searchParams }: PageProps) {
       </Topbar>
 
       <PageLayout>
-
         <Card className="w-full">
           <CardContent className="space-y-4">
             <SearchClientForm />
