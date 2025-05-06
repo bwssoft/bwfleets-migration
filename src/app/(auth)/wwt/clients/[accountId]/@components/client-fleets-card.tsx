@@ -38,7 +38,7 @@ export function ClientFleetsCard({ client }: ClientFleetsCardProps) {
       </CardHeader>
 
       <UpsertBWFleetForm
-        client={client}
+        wwtClient={client}
         open={editFormDisclosure.isOpen}
         onOpenChange={editFormDisclosure.onClose}
       />

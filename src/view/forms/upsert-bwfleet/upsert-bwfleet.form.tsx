@@ -13,16 +13,19 @@ import { useUpsertBwfleetHandler } from "./upsert-bwfleet.handler";
 import { Button } from "@/view/components/ui/button";
 
 interface UpsertBWFleetFormProps {
-  client: WWTClient;
+  wwtClient: WWTClient;
   open: boolean;
   onOpenChange: () => void;
 }
 
 export function UpsertBWFleetForm({
+  wwtClient,
   open,
   onOpenChange,
 }: UpsertBWFleetFormProps) {
-  const { form, handleSubmit } = useUpsertBwfleetHandler();
+  const { form, handleSubmit } = useUpsertBwfleetHandler({
+    wwtClient,
+  });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
