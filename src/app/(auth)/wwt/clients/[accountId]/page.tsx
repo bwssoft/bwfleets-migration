@@ -28,6 +28,8 @@ import { ClientMigrationCard } from "./@components/client-migration-card";
 import { WWTDevicesTableLoader } from "@/view/tables/wwt-devices.loader";
 import { StartMigrationForm } from "@/view/forms/start-migration.form";
 import { ClientFleetsCard } from "./@components/client-fleets-card";
+import { ClientCommentsCard } from "./@components/client-comments-card";
+import { ClientStatusMigrationCard } from "./@components/client-status-migration-card";
 
 interface PageProps {
   params: Promise<{
@@ -109,7 +111,11 @@ export default async function WWTClientDetailsPage({
           <ClientMigrationCard client={client} />
         </div>
         <div className="col-span-2">
+        <div className="flex flex-col gap-4 sticky top-0">
+          <ClientStatusMigrationCard id={client.id} hidden={client.migrationStatus === "TO_DO"} status={client.migrationStatus} />
+          <ClientCommentsCard client_id={client.id} hidden={client.migrationStatus === "TO_DO"} data={client.comments} />
           <ClientStatisticsCard client={client} />
+        </div>
         </div>
       </PageLayout>
     </main>

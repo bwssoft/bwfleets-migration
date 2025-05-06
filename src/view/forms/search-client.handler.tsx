@@ -9,7 +9,7 @@ import { useQueryStates } from "nuqs";
 import { cleanObject } from "@/@shared/utils/clean-object";
 import { useRouter } from "next/navigation";
 import { clientSearchParams } from "../params/clients-search.params";
-import React from "react";
+import React, { ReactNode } from "react";
 import { useDisclosure } from "@/@shared/hooks/use-disclosure";
 
 import {
@@ -18,6 +18,7 @@ import {
   CircleEllipsis,
   CircleX,
 } from "lucide-react";
+import { MigrationStatus } from "@prisma/client";
 
 const formSchema = z.object({
   name: z.string().optional(),
@@ -27,25 +28,25 @@ const formSchema = z.object({
   status: z.array(z.string()).optional(),
 });
 
-export const CLIENT_MIGRATION_STATUS_OPTIONS = [
+export const CLIENT_MIGRATION_STATUS_OPTIONS: Array<{ label: string, value: MigrationStatus, icon: ReactNode }> = [
   {
     label: "Pendente",
-    value: "pending",
+    value: "TO_DO",
     icon: <CircleDashed />,
   },
   {
     label: "Em andamento",
-    value: "in-progress",
+    value: "PENDING",
     icon: <CircleEllipsis />,
   },
   {
     label: "Recusado",
-    value: "refused",
+    value: "FAILED_BY_CLIENT",
     icon: <CircleX />,
   },
   {
     label: "Finalizado",
-    value: "done",
+    value: "DONE",
     icon: <CircleCheck />,
   },
 ];

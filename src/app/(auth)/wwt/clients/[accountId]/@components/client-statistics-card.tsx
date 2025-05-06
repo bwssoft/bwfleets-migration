@@ -24,7 +24,7 @@ interface ClientStatisticsCardProps {
 
 export function ClientStatisticsCard({ client }: ClientStatisticsCardProps) {
   return (
-    <Card className="sticky top-0">
+    <Card className="">
       <CardContent className="flex flex-col gap-2">
         <Alert>
           <Users2Icon />
