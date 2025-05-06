@@ -1,18 +1,18 @@
 "use client";
 
+import { assignMigrationResponsibility } from "@/@shared/actions/wwt-client.actions";
 import { WWTClient } from "@/@shared/interfaces/wwt-client";
-import { ColumnDef } from "@tanstack/react-table";
-import { useRouter } from "next/navigation";
+import { authClient } from "@/@shared/lib/better-auth/auth-client";
+import { formatName, getInitials } from "@/@shared/utils/get-initials";
 import { Badge } from "@/view/components/ui/badge";
 import { DataTable } from "@/view/components/ui/data-table";
 import { DataTablePagination } from "@/view/components/ui/data-table-pagination";
+import { ColumnDef } from "@tanstack/react-table";
 import { ExternalLinkIcon, LoaderIcon, User } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useMemo, useState, useTransition } from "react";
 import { Avatar, AvatarFallback } from "../components/ui/avatar";
 import { Button } from "../components/ui/button";
-import { authClient } from "@/@shared/lib/better-auth/auth-client";
-import { useEffect, useMemo, useState, useTransition } from "react";
-import { assignMigrationResponsibility } from "@/@shared/actions/wwt-client.actions";
-import { formatName, getInitials } from "@/@shared/utils/get-initials";
 
 interface WWTClientTableProps {
   data: Array<WWTClient>;
@@ -48,10 +48,6 @@ export function WWTClientTable({ data, pagination }: WWTClientTableProps) {
     });
   };
 
-  useEffect(() => {
-    console.log({ isPending });
-  }, [isPending]);
-
   function handleTableRowClick(data: WWTClient) {
     router.push(`/wwt/clients/${data.accountId}`);
   }
@@ -71,32 +67,38 @@ export function WWTClientTable({ data, pagination }: WWTClientTableProps) {
       header: "Nome",
     },
     {
-      accessorKey: "email",
-      header: "Responável",
-      cell: ({ row: { original: data } }) => (
-        <div className="flex  gap-2 items-baseline">
-          <Avatar>
-            <AvatarFallback>
-              {data.assigned?.name ? getInitials(data.assigned.name) : <User />}
-            </AvatarFallback>
-          </Avatar>
-          <span className="text-xs font-semibold">
-            {formatName(data.assigned?.name)}
-          </span>
-        </div>
-      ),
-    },
-    {
-      accessorKey: "accountName",
-      header: "Login",
-    },
-    {
       accessorKey: "accountStatsBean.deviceTotalNo",
       header: "Dispositivos",
     },
     {
       accessorKey: "isLeaf",
       header: "Subclientes",
+    },
+    {
+      accessorKey: "email",
+      header: "Responável",
+      cell: ({ row: { original: data } }) => (
+        <div className="flex  gap-2 items-baseline">
+          {data.assigned?.name ? (
+            <>
+              <Avatar>
+                <AvatarFallback>
+                  {data.assigned?.name ? (
+                    getInitials(data.assigned.name)
+                  ) : (
+                    <User />
+                  )}
+                </AvatarFallback>
+              </Avatar>
+              <span className="text-xs font-semibold">
+                {formatName(data.assigned?.name)}
+              </span>
+            </>
+          ) : (
+            "--"
+          )}
+        </div>
+      ),
     },
     {
       accessorKey: "migrationStatus",
@@ -116,18 +118,22 @@ export function WWTClientTable({ data, pagination }: WWTClientTableProps) {
       accessorKey: "id",
       header: "Ações",
       cell: ({ row: { original: data } }) => {
-        const isDisabled = !!data.migrationStatus || isPending;
+        const isDisabled =
+          data.migrationStatus !== "pending" &&
+          data.migrationStatus !== null &&
+          data.migrationStatus !== undefined;
 
         return (
           <Button
             id="action-button"
             onClick={() => handleBeingResponsibleClient({ client_id: data.id })}
             disabled={isDisabled}
+            variant="outline"
           >
             {isPending && peddingId === data.id ? (
               <LoaderIcon className="animate-spin h-4 w-4" />
             ) : (
-              "Migrar"
+              "Iniciar Processo"
             )}
           </Button>
         );

@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
-import { cleanObject } from "../utils/clean-object";
-import { prisma } from "../lib/prisma/prisma-client";
-import { MigrationStatusEnum } from "../interfaces/wwt-client";
-import { parseFormData } from "../utils/parse-form-data";
 import { Prisma } from "@prisma/client";
-import { authClient } from "../lib/better-auth/auth-client";
 import { revalidatePath } from "next/cache";
+import { MigrationStatusEnum } from "../interfaces/wwt-client";
+import { prisma } from "../lib/prisma/prisma-client";
+import { cleanObject } from "../utils/clean-object";
+import { parseFormData } from "../utils/parse-form-data";
 
 interface FindManyClientsParams {
   page?: number | null;
@@ -87,6 +86,7 @@ export async function updateMigrationStatus(formData: FormData) {
   });
 }
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace AssignMigrationResponsibility {
   export type Params = {
     client_id: string;
