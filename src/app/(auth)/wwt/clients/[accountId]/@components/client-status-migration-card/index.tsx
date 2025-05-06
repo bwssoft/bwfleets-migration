@@ -10,9 +10,10 @@ import { toast } from 'sonner';
 export interface IClientStatusMigrationCard {
   status: MigrationStatus | null
   id: string
+  hidden?: boolean
 }
 
-export const ClientStatusMigrationCard: React.FC<IClientStatusMigrationCard> = ({ status, id }) => {
+export const ClientStatusMigrationCard: React.FC<IClientStatusMigrationCard> = ({ status, id, hidden = false }) => {
   
   const options: Array<{ value: MigrationStatus, label: string }> = [
     {
@@ -41,6 +42,10 @@ export const ClientStatusMigrationCard: React.FC<IClientStatusMigrationCard> = (
     await updateMigrationStatus(formData);
 
     toast.success("Status atualizado com sucesso")
+  }
+
+  if(hidden) {
+    return null
   }
 
   return (
