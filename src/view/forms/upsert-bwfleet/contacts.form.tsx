@@ -58,6 +58,7 @@ export function ContactsForm({ form, contactsFieldArray }: Props) {
                   <div className="w-full">
                     <label className="text-sm font-medium">Telefone</label>
                     <InputWithMask
+                      value={field.value}
                       mask="(__) _____-____"
                       replacement={{ _: /\d/ }}
                       onChange={(event) => {
