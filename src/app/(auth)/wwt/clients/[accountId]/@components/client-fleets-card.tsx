@@ -1,8 +1,6 @@
 "use client";
 
-import { useDisclosure } from "@/@shared/hooks/use-disclosure";
 import { WWTClient } from "@/@shared/interfaces/wwt-client";
-import { Button } from "@/view/components/ui/button";
 import {
   Card,
   CardHeader,
@@ -11,15 +9,12 @@ import {
   CardAction,
 } from "@/view/components/ui/card";
 import { UpsertBWFleetForm } from "@/view/forms/upsert-bwfleet/upsert-bwfleet.form";
-import { PencilIcon } from "lucide-react";
 
 interface ClientFleetsCardProps {
   client: WWTClient;
 }
 
 export function ClientFleetsCard({ client }: ClientFleetsCardProps) {
-  const editFormDisclosure = useDisclosure();
-
   return (
     <Card>
       <CardHeader>
@@ -30,18 +25,9 @@ export function ClientFleetsCard({ client }: ClientFleetsCardProps) {
         </CardDescription>
 
         <CardAction>
-          <Button onClick={editFormDisclosure.onOpen} variant="outline">
-            <PencilIcon />
-            Editar
-          </Button>
+          <UpsertBWFleetForm wwtClient={client} />
         </CardAction>
       </CardHeader>
-
-      <UpsertBWFleetForm
-        wwtClient={client}
-        open={editFormDisclosure.isOpen}
-        onOpenChange={editFormDisclosure.onClose}
-      />
     </Card>
   );
 }
