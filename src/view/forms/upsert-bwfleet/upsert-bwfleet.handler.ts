@@ -6,7 +6,7 @@ import {
 } from "@/@shared/actions/bwfleet-client.actions";
 import { nanoid } from "nanoid";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { generateFormData } from "@/@shared/utils/parse-form-data";
 import { WWTClient } from "@/@shared/interfaces/wwt-client";
@@ -73,6 +73,9 @@ const schema = z.object({
 });
 
 export type BWFleetUpsertClientFormData = z.infer<typeof schema>;
+export type BWFleetUpsertClientContactFieldArray = z.infer<
+  typeof contactSchema
+>;
 
 interface UseUpsertBwfleetHandlerParams {
   wwtClient: WWTClient;
@@ -89,6 +92,7 @@ export function useUpsertBwfleetHandler({
       ...(cleanObject(bfleetClient) as BWFleetUpsertClientFormData),
       document: bfleetClient?.document?.value,
       document_type: bfleetClient?.document?.type as "cpf" | "cnpj",
+      contacts: bfleetClient?.contacts ?? [],
     },
   });
 
@@ -124,7 +128,7 @@ export function useUpsertBwfleetHandler({
         address,
         subdomain: data.subdomain,
         child_count: 0,
-        contacts: [],
+        contacts: data.contacts,
         depth: 1,
         document,
         profile_uuid: [],
@@ -165,8 +169,14 @@ export function useUpsertBwfleetHandler({
     }
   );
 
+  const contactsFieldArray = useFieldArray({
+    control: form.control,
+    name: "contacts",
+  });
+
   return {
     form,
+    contactsFieldArray,
     handleSubmit,
   };
 }

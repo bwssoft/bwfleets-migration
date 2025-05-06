@@ -16,6 +16,7 @@ import { Button } from "@/view/components/ui/button";
 import { PencilIcon } from "lucide-react";
 import { useDisclosure } from "@/@shared/hooks/use-disclosure";
 import { BFleetClient } from "@prisma/client";
+import { ContactsForm } from "./contacts.form";
 
 interface UpsertBWFleetFormProps {
   bfleetClient: BFleetClient | null;
@@ -27,7 +28,7 @@ export function UpsertBWFleetForm({
   bfleetClient,
 }: UpsertBWFleetFormProps) {
   const editFormDisclosure = useDisclosure();
-  const { form, handleSubmit } = useUpsertBwfleetHandler({
+  const { form, handleSubmit, contactsFieldArray } = useUpsertBwfleetHandler({
     wwtClient,
     bfleetClient,
   });
@@ -49,6 +50,7 @@ export function UpsertBWFleetForm({
 
         <div className="flex flex-col my-4 gap-4">
           <GeneralForm form={form} />
+          <ContactsForm form={form} contactsFieldArray={contactsFieldArray} />
           <AddressForm form={form} />
           <UserForm form={form} />
         </div>
