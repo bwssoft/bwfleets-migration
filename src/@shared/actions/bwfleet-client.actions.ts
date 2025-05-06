@@ -27,7 +27,7 @@ type UpsertBfleetClientParams = BFleetClient & {
 export async function upsertBfleetClient(formData: FormData) {
   const data = parseFormData(formData, true) as UpsertBfleetClientParams;
 
-  const client = cleanObject(data);
+  const client = cleanObject(data, ["contacts"]);
 
   const uuid = data.uuid ?? crypto.randomUUID();
   return await prisma.bFleetClient.upsert({
