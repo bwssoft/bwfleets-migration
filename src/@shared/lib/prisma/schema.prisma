@@ -112,6 +112,8 @@ model client {
   type                    Int
   userName                String
   migrationStatus         String?
+  assignedId              String?
+  assigned                User?                  @relation(fields: [assignedId], references: [id])
 }
 
 model device {
@@ -166,6 +168,7 @@ model User {
   firstAccess   Boolean?
   sessions      Session[]
   accounts      Account[]
+  client        client[]
 
   @@unique([email])
   @@map("user")

@@ -7,6 +7,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
+import { cn } from "@/@shared/utils/tw-merge";
 import {
   Table,
   TableBody,
@@ -15,9 +16,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/view/components/ui/table";
-import { cn } from "@/@shared/utils/tw-merge";
-import React from "react";
 import { LoaderIcon, SearchSlashIcon } from "lucide-react";
+import React from "react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -72,7 +72,13 @@ export function DataTable<TData, TValue>({
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
-                onClick={() => {
+                onClick={(event) => {
+                  const ignoreID = ["action-button"];
+                  // @ts-expect-error: event.target.id might not exist on all event targets
+                  const ignoreAction = ignoreID.includes(event.target.id);
+                  if (ignoreAction) {
+                    return;
+                  }
                   setPendingId(row.id);
                   startTransition(() => {
                     onRowClick?.(row.original);

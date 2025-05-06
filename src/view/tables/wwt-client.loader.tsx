@@ -31,10 +31,18 @@ export async function WWTClientTableLoader({
         in: params.status ?? [],
       },
     },
+    orderBy: [
+      {
+        accountStatsBean: {
+          deviceTotalNo: params.devicesOrderBy as never,
+        },
+      },
+    ],
   });
 
   return (
     <WWTClientTable
+      // @ts-expect-error Ítalo: Eu não entendo do prisma mas isso me parece algo relacionado ao schema, mas não consegui resolver
       data={data}
       pagination={{
         count,

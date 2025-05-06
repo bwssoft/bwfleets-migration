@@ -30,9 +30,9 @@ import { StartMigrationForm } from "@/view/forms/start-migration.form";
 import { ClientFleetsCard } from "./@components/client-fleets-card";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     accountId: string;
-  };
+  }>;
   searchParams: Promise<SearchParams>;
 }
 
