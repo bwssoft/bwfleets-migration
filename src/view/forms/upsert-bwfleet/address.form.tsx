@@ -7,12 +7,19 @@ import {
 } from "@/view/components/ui/card";
 import { Input } from "@/view/components/ui/input";
 import { InputWithMask } from "@/view/components/ui/input-with-mask";
-import { UseFormReturn } from "react-hook-form";
+import { Controller, UseFormReturn } from "react-hook-form";
 import { BWFleetUpsertClientFormData } from "./upsert-bwfleet.handler";
+import { Label } from "@/view/components/ui/label";
+import { countries } from "@/@shared/constants/countries";
+import { ComboBox } from "@/view/components/ui/single-select-combobox";
+import { CommandItem } from "@/view/components/ui/command";
+import { CheckIcon } from "lucide-react";
+import { cn } from "@/@shared/utils/tw-merge";
 
 interface Props {
   form: UseFormReturn<BWFleetUpsertClientFormData>;
 }
+
 export function AddressForm({ form }: Props) {
   return (
     <Card>
@@ -37,7 +44,47 @@ export function AddressForm({ form }: Props) {
           <Input label="Bairro" {...form.register("district")} />
           <Input label="Cidade" {...form.register("city")} />
           <Input label="Estado" {...form.register("state")} />
-          <Input label="País" {...form.register("country")} />
+
+          <Controller
+            control={form.control}
+            name="country"
+            render={({ field }) => (
+              <div>
+                <Label>País</Label>
+                <ComboBox
+                  placeholder="Selecione um país..."
+                  selectedItem={
+                    field.value
+                      ? `${field.value.name} (${field.value?.code})`
+                      : undefined
+                  }
+                  closeOnSelect
+                >
+                  {countries.map((country) => {
+                    const isSelected = country.code === field.value?.code;
+
+                    return (
+                      <CommandItem
+                        onSelect={() => field.onChange(country)}
+                        key={country.code}
+                        value={country.code}
+                      >
+                        <CheckIcon
+                          className={cn(
+                            "mr-2 h-4 w-4 transition-opacity",
+                            isSelected ? "opacity-100" : "opacity-0"
+                          )}
+                          aria-hidden="true"
+                        />
+
+                        {country.name}
+                      </CommandItem>
+                    );
+                  })}
+                </ComboBox>
+              </div>
+            )}
+          />
         </div>
       </CardContent>
     </Card>
