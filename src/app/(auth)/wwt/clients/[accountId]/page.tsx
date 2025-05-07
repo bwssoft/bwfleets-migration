@@ -30,6 +30,7 @@ import { StartMigrationForm } from "@/view/forms/start-migration.form";
 import { ClientFleetsCard } from "./@components/client-fleets-card";
 import { ClientCommentsCard } from "./@components/client-comments-card";
 import { ClientStatusMigrationCard } from "./@components/client-status-migration-card";
+import { ClientAssignedCard } from "./@components/client-assigned-card";
 
 interface PageProps {
   params: Promise<{
@@ -119,6 +120,8 @@ export default async function WWTClientDetailsPage({
         </div>
         <div className="col-span-2">
           <div className="flex flex-col gap-4 sticky top-0">
+            <ClientAssignedCard wwtClient={client} />
+
             <ClientStatusMigrationCard
               migration_uuid={client.migration?.uuid}
               hidden={!isMigrating}
