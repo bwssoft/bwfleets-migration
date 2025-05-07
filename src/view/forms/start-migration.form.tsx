@@ -1,37 +1,38 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import {
-  assignMigrationResponsibility,
-  updateMigrationStatus,
-} from "@/@shared/actions/wwt-client.actions";
-import { WWTClient } from "@/@shared/interfaces/wwt-client";
+import { startMigration } from "@/@shared/actions/migration.action";
+import { IWanwayClient, IBFleetClient } from "@/@shared/interfaces";
 import { authClient } from "@/@shared/lib/better-auth/auth-client";
 import { Button } from "@/view/components/ui/button";
 import { ArrowLeftRightIcon } from "lucide-react";
 import { toast } from "sonner";
 
 interface StartMigrationFormProps {
-  client: WWTClient;
+  wwtClient: IWanwayClient;
+  bfleetClient?: IBFleetClient;
 }
 
-export function StartMigrationForm({ client }: StartMigrationFormProps) {
-  const migrationStatus = client.migrationStatus;
+export function StartMigrationForm({
+  wwtClient,
+  bfleetClient,
+}: StartMigrationFormProps) {
+  const migrationStatus = wwtClient.migration?.migration_status ?? "TO_DO";
   const { data } = authClient.useSession();
 
   async function handleAction() {
     if (!data) return;
     try {
       const formData = new FormData();
-      formData.append("uuid", client.id);
+      formData.append("uuid", wwtClient.id);
       formData.append("status", "PENDING");
-      await assignMigrationResponsibility({
-        client_id: client.id,
-        user_id: data.user.id!,
+
+      await startMigration({
+        status: "PENDING",
+        user: data.user,
+        wwtClient,
+        bfleetClient,
       });
-      // Ítalo: Pelo o que eu entendi, a função 'assignMigrationResponsibility' já atualiza o status para "in-progress"
-      // e não é mais necessário usar a função 'updateMigrationStatus'
-      await updateMigrationStatus(formData);
     } catch (error: any) {
       toast.error("Não foi possível atualizar o status de migração", {
         description: error.message,
