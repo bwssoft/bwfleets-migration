@@ -9,7 +9,7 @@ import {
 } from "@/view/components/ui/card";
 import { Input } from "@/view/components/ui/input";
 import { InputWithMask } from "@/view/components/ui/input-with-mask";
-import { Controller, UseFormReturn } from "react-hook-form";
+import { Controller, UseFormReturn, useWatch } from "react-hook-form";
 import { BWFleetUpsertClientFormData } from "./upsert-bwfleet.handler";
 import { Label } from "@/view/components/ui/label";
 import { countries } from "@/@shared/constants/countries";
@@ -26,6 +26,11 @@ interface Props {
 
 export function AddressForm({ form }: Props) {
   const queryClient = useQueryClient();
+
+  const formCountryCode = useWatch({
+    control: form.control,
+    name: "country.code",
+  });
 
   async function handlePostalCodeChange(postalCode: string) {
     const countryCode = form.getValues("country.code");
@@ -101,19 +106,24 @@ export function AddressForm({ form }: Props) {
             render={({ field }) => (
               <div>
                 <label className="text-sm font-medium">Código-postal</label>
-                <InputWithMask
-                  mask="_____-___"
-                  value={field.value}
-                  replacement={{ _: /\d/ }}
-                  onChange={(event) => {
-                    const _cep = event.target.value;
-                    field.onChange(_cep);
 
-                    if (_cep.length === 9) {
-                      handlePostalCodeChange(_cep);
-                    }
-                  }}
-                />
+                {!formCountryCode || formCountryCode === "BR" ? (
+                  <InputWithMask
+                    mask="_____-___"
+                    value={field.value}
+                    replacement={{ _: /\d/ }}
+                    onChange={(event) => {
+                      const _cep = event.target.value;
+                      field.onChange(_cep);
+
+                      if (_cep.length === 9) {
+                        handlePostalCodeChange(_cep);
+                      }
+                    }}
+                  />
+                ) : (
+                  <Input {...form.register("cep")} />
+                )}
               </div>
             )}
           />
