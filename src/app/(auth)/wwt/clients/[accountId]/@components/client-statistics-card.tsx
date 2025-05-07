@@ -24,7 +24,7 @@ interface ClientStatisticsCardProps {
 
 export function ClientStatisticsCard({ wwtClient }: ClientStatisticsCardProps) {
   return (
-    <Card className="">
+    <Card className="!p-0 !pt-2 !pb-4 !border-0 !shadow-none">
       <CardContent className="flex flex-col gap-2">
         <Alert>
           <Users2Icon />

@@ -31,6 +31,13 @@ import { ClientFleetsCard } from "./@components/client-fleets-card";
 import { ClientCommentsCard } from "./@components/client-comments-card";
 import { ClientStatusMigrationCard } from "./@components/client-status-migration-card";
 import { ClientAssignedCard } from "./@components/client-assigned-card";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/view/components/ui/accordion";
+import { Badge } from "@/view/components/ui/badge";
 
 interface PageProps {
   params: Promise<{
@@ -127,13 +134,45 @@ export default async function WWTClientDetailsPage({
               hidden={!isMigrating}
               status={client.migration?.migration_status}
             />
-            <ClientCommentsCard
-              wwt_account_id={client.accountId}
-              hidden={!isMigrating}
-              migration_uuid={client.migration?.uuid}
-              data={client.migration?.comments ?? []}
-            />
-            <ClientStatisticsCard wwtClient={client} />
+
+            <Card className="!p-0">
+              <CardContent className="!p-0">
+                <Accordion
+                  type="multiple"
+                  defaultValue={!isMigrating ? ["stats"] : undefined}
+                >
+                  <AccordionItem value="stats">
+                    <AccordionTrigger className="px-6">
+                      Estatísticas gerais
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <ClientStatisticsCard wwtClient={client} />
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  {isMigrating && (
+                    <AccordionItem value="comments">
+                      <AccordionTrigger className="px-6">
+                        <div className="flex items-center gap-2">
+                          Comentários da migração{" "}
+                          <Badge variant="blue">
+                            {client.migration?.comments?.length ?? 0}
+                          </Badge>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="pb-0">
+                        <ClientCommentsCard
+                          wwt_account_id={client.accountId}
+                          hidden={!isMigrating}
+                          migration_uuid={client.migration?.uuid}
+                          data={client.migration?.comments ?? []}
+                        />
+                      </AccordionContent>
+                    </AccordionItem>
+                  )}
+                </Accordion>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </PageLayout>

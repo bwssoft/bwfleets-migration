@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/view/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/view/components/ui/card";
 import React, { useEffect, useMemo, useRef } from "react";
 import { CommentCard } from "./@components/comment-card";
 import { Button } from "@/view/components/ui/button";
@@ -90,13 +83,7 @@ export const ClientCommentsCard: React.FC<IClientCommentsCard> = ({
   }
 
   return (
-    <Card className="h-[447px] min-h-[447px]">
-      <CardHeader>
-        <CardTitle>Comentarios da migração</CardTitle>
-        <CardDescription>
-          Adicione comentarios das etapas de migração do cliente
-        </CardDescription>
-      </CardHeader>
+    <Card className="h-96 border-0 shadow-none">
       <CardContent
         ref={containerRef}
         className="relative flex flex-col w-full h-full max-h-[243px] overflow-y-auto gap-4"
