@@ -105,10 +105,18 @@ export function WWTClientTable({ data, pagination }: WWTClientTableProps) {
       header: "Status de migração",
       cell: ({ row: { original: data } }) => {
         switch (data.migrationStatus) {
+          case "TO_DO": 
+              return <Badge>Pendente</Badge>;
+          case "WAITING": 
+              return <Badge>Aguardando</Badge>;
+          case "FAILED_BY_CLIENT": 
+              return <Badge variant="yellow">Recusado</Badge>;
+          case "FAILED_BY_CONTACT": 
+              return <Badge variant="yellow">Recusado</Badge>;
           case "PENDING":
-            return <Badge variant="default">Em progresso</Badge>;
+            return <Badge variant="default">Em Andamento</Badge>;
           case "DONE":
-            return <Badge>Migrado</Badge>;
+            return <Badge variant="green">Migrado</Badge>;
           default:
             return <Badge>Pendente</Badge>;
         }
