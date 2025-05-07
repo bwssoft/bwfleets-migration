@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "@/view/components/ui/card";
 import { Input } from "@/view/components/ui/input";
-import { UseFormReturn } from "react-hook-form";
+import { Controller, UseFormReturn } from "react-hook-form";
 import { BWFleetUpsertClientFormData } from "./upsert-bwfleet.handler";
 import { InputWithMask } from "@/view/components/ui/input-with-mask";
 
@@ -34,14 +34,21 @@ export function UserForm({ form }: UserFormProps) {
             error={form.formState.errors.user?.email?.message}
           />
 
-          <div>
-            <label className="text-sm font-medium">Contato principal</label>
-            <InputWithMask
-              mask="(__) _____-____"
-              replacement={{ _: /\d/ }}
-              {...form.register("user.contact")}
-            />
-          </div>
+          <Controller
+            control={form.control}
+            name="user.contact"
+            render={({ field }) => (
+              <div>
+                <label className="text-sm font-medium">Contato principal</label>
+                <InputWithMask
+                  mask="(__) _____-____"
+                  replacement={{ _: /\d/ }}
+                  value={field.value}
+                  onChange={(event) => field.onChange(event.target.value)}
+                />
+              </div>
+            )}
+          />
         </div>
       </CardContent>
     </Card>
