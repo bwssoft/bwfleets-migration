@@ -187,7 +187,7 @@ export async function generateUserSummary(data: WWTClient) {
       value: data.accountStatsBean.deviceNo?.toString(),
       onError: (template: string) => {
         const excludeDevice =
-          "{qnt_device} dispositivos, sendo % <porcentagem ativa/inativa> nos últimos meses e";
+          "{qnt_device} dispositivos, sendo {qnt_device_online_pctg} ativo e {qnt_device_ofline_pctg} inativos nos últimos meses e";
         const valueToReplace = "";
         return template.replace(excludeDevice, valueToReplace);
       },
@@ -211,9 +211,15 @@ export async function generateUserSummary(data: WWTClient) {
     qnt_client: {
       value: data.isLeaf.toString(),
       onError: (template: string) => {
-        const exclude = " e {qnt_client} clientes";
+        const excludeParts = [
+          " e {qnt_client} clientes",
+          "{qnt_client} clientes",
+        ];
         const valueToReplace = "";
-        return template.replace(exclude, valueToReplace);
+        excludeParts.map(
+          (exclude) => (template = template.replace(exclude, valueToReplace))
+        );
+        return template;
       },
     },
   };
@@ -234,6 +240,7 @@ export async function generateUserSummary(data: WWTClient) {
   parameterskey.forEach((key) => {
     const parameter = templateParameters[key];
     const isValid = isValidValue(parameter.value);
+    console.log({ key, value: parameter.value, isValid });
     if (!isValid) {
       const reply = parameter.onError?.(response);
       if (reply) {
@@ -243,8 +250,24 @@ export async function generateUserSummary(data: WWTClient) {
     response = response.replace(`{${key}}`, parameter.value!);
   });
 
+  const refineMessage = () => {
+    const { qnt_client, qnt_device } = templateParameters;
+    const clientIsValid = isValidValue(qnt_client.value);
+    const deviceIsValid = isValidValue(qnt_device.value);
+
+    if (!clientIsValid && !deviceIsValid) {
+      response = response.replace(
+        "e durante todo esse tempo você atingiu os valores de",
+        ""
+      );
+    }
+  };
+
+  refineMessage();
+
   return response;
 }
+
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace AssignMigrationResponsibility {
   export type Params = {
