@@ -1,13 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
-import {
-  Prisma,
-  client,
-  Comment,
-  MigrationStatus,
-  Prisma,
-} from "@prisma/client";
+import { Prisma, Comment, MigrationStatus } from "@prisma/client";
 import { cleanObject } from "../utils/clean-object";
 import { prisma } from "../lib/prisma/prisma-client";
 import { WWTClient } from "../interfaces/wwt-client";
@@ -71,7 +65,6 @@ interface FindOneClientParams {
 
 export async function findOneClient(params: FindOneClientParams) {
   const { where } = params;
-  console.log({ where });
   return await prisma.client.findFirstOrThrow({
     where,
     select: {
