@@ -14,6 +14,16 @@ interface StartMigration {
 }
 
 export async function startMigration(data: StartMigration) {
+  const currentMigration = await prisma.migration.findFirst({
+    where: {
+      wwt_account_id: data.wwtClient.accountId,
+    },
+  });
+
+  if (currentMigration) {
+    throw new Error("Uma migração para esse cliente já foi iniciada");
+  }
+
   await prisma.migration.create({
     data: {
       uuid: crypto.randomUUID(),
