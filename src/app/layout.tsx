@@ -4,6 +4,7 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import "./globals.css";
 import { Toaster } from "@/view/components/ui/sonner";
+import { ReactQueryClientProvider } from "@/@shared/lib/tanstack-query";
 
 export const metadata: Metadata = {
   title: "BWS Migração",
@@ -17,10 +18,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="font-inter antialiased">
-        <NuqsAdapter>{children}</NuqsAdapter>
-        <Toaster />
-      </body>
+      <ReactQueryClientProvider>
+        <body className="font-inter antialiased">
+          <NuqsAdapter>{children}</NuqsAdapter>
+          <Toaster />
+        </body>
+      </ReactQueryClientProvider>
     </html>
   );
 }
