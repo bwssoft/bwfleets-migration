@@ -24,22 +24,19 @@ const contactSchema = z.object({
 
 const schema = z.object({
   uuid: z.string().optional(),
-  name: z.string().min(1, "Nome da empresa não pode ser vazio").optional(),
+  name: z.string().optional(),
   document_type: z.enum(["cpf", "cnpj"]).optional(),
   document: z.string().optional(),
   subdomain: z.string().optional(),
 
   contacts: z.array(contactSchema).default([]).optional(),
   country: z
-    .string()
-    // .array(
-    //   z.object({
-    //     name: z.string().optional(),
-    //     code: z.string().optional(),
-    //     altCode: z.string().optional(),
-    //     numberCode: z.string().optional(),
-    //   })
-    // )
+    .object({
+      name: z.string().optional(),
+      code: z.string().optional(),
+      altCode: z.string().optional(),
+      numberCode: z.string().optional(),
+    })
     .optional(),
 
   // freePeriod: z.number().nonnegative().optional(),
@@ -56,12 +53,8 @@ const schema = z.object({
     .optional(),
   user: z
     .object({
-      name: z.string().min(1, "Nome do usuário não pode ser vazio").optional(),
-      contact: z
-        .string({
-          required_error: "Numero de telefone do usuario não pode ser vazio",
-        })
-        .optional(),
+      name: z.string().optional(),
+      contact: z.string().optional(),
       email: z.string().optional(),
     })
     .optional(),
@@ -90,9 +83,11 @@ export function useUpsertBwfleetHandler({
     resolver: zodResolver(schema),
     defaultValues: {
       ...(cleanObject(bfleetClient) as BWFleetUpsertClientFormData),
+      name: bfleetClient?.name ?? wwtClient.userName,
       document: bfleetClient?.document?.value,
       document_type: bfleetClient?.document?.type as "cpf" | "cnpj",
       contacts: bfleetClient?.contacts ?? [],
+      user_uuid: bfleetClient?.user_uuid ?? "",
     },
   });
 
@@ -103,7 +98,7 @@ export function useUpsertBwfleetHandler({
         city: data.city,
         state: data.state,
         district: data.district,
-        country: data.country,
+        country: data.country?.name,
         street: data.street,
         number: data.street,
       };
