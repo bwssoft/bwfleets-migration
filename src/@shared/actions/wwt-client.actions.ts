@@ -174,7 +174,7 @@ export async function generateUserSummary(data: client) {
     qnt_device: {
       value: data.accountStatsBean.deviceNo?.toString(),
       onError: (template: string) => {
-        const excludeDevice = "{qnt_device} dispositivos, sendo % <porcentagem ativa/inativa> nos últimos meses e"
+        const excludeDevice = "{qnt_device} dispositivos, sendo {qnt_device_online_pctg} ativo e {qnt_device_ofline_pctg} inativos nos últimos meses e"
         const valueToReplace = "";
         return template.replace(excludeDevice, valueToReplace);
       }
@@ -219,6 +219,7 @@ export async function generateUserSummary(data: client) {
   parameterskey.forEach((key) => {
     const parameter = templateParameters[key]
     const isValid = isValidValue(parameter.value);
+    console.log({ key, value: parameter.value, isValid })
     if(!isValid) {
       const reply = parameter.onError?.(response)
       if(reply) {

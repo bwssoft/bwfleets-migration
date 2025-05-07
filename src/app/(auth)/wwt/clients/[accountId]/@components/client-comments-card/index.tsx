@@ -93,7 +93,7 @@ export const ClientCommentsCard: React.FC<IClientCommentsCard> = ({ hidden = fal
       </CardContent>
       <CardFooter>
           <form className='flex w-full items-center gap-2' onSubmit={onHandleSubmit} >
-            <Textarea {...register('message')} placeholder='Hã do oruam' className='resize-none' />
+            <Textarea {...register('message')} placeholder='Escreva um comentario...' className='resize-none' />
             <Button type='submit'>
               <SendIcon className='w-5 h-5' />
             </Button>
