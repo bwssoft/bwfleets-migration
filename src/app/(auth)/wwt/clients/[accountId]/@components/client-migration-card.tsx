@@ -1,4 +1,4 @@
-import { WWTClient } from "@/@shared/interfaces/wwt-client";
+import { IWanwayClient } from "@/@shared/interfaces/wwt-client";
 import {
   Alert,
   AlertDescription,
@@ -25,11 +25,11 @@ import {
 import React from "react";
 
 interface ClientMigrationCardProps {
-  client: WWTClient;
+  wwtClient: IWanwayClient;
 }
 
-export function ClientMigrationCard({ client }: ClientMigrationCardProps) {
-  const migrationStatus = client.migrationStatus ?? "TO_DO";
+export function ClientMigrationCard({ wwtClient }: ClientMigrationCardProps) {
+  const migrationStatus = wwtClient.migration?.migration_status ?? "TO_DO";
   const alertData = ALERT_DATA[migrationStatus as never] as {
     icon: string;
     title: string;
@@ -53,9 +53,9 @@ export function ClientMigrationCard({ client }: ClientMigrationCardProps) {
         </Alert>
       </CardContent>
 
-      {migrationStatus === "PENDING" && (
+      {migrationStatus === "TO_DO" && (
         <CardFooter>
-          <StartMigrationForm client={client} />
+          <StartMigrationForm wwtClient={wwtClient} />
         </CardFooter>
       )}
     </Card>

@@ -1,6 +1,6 @@
 'use client'
 
-import { updateMigrationStatus } from '@/@shared/actions/wwt-client.actions';
+import { updateMigrationStatus } from '@/@shared/actions/migration.action';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/view/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/view/components/ui/select';
 import { MigrationStatus } from '@prisma/client';
@@ -8,12 +8,12 @@ import React from 'react';
 import { toast } from 'sonner';
 
 export interface IClientStatusMigrationCard {
-  status: MigrationStatus | null
-  id: string
+  status?: MigrationStatus | null
+  migration_uuid?: string
   hidden?: boolean
 }
 
-export const ClientStatusMigrationCard: React.FC<IClientStatusMigrationCard> = ({ status, id, hidden = false }) => {
+export const ClientStatusMigrationCard: React.FC<IClientStatusMigrationCard> = ({ status, migration_uuid, hidden = false }) => {
   
   const options: Array<{ value: MigrationStatus, label: string }> = [
     {
@@ -39,13 +39,14 @@ export const ClientStatusMigrationCard: React.FC<IClientStatusMigrationCard> = (
   ]
 
   const onHandleChange = async (value: string) => {
-    const formData = new FormData();
-    formData.append("uuid", id);
-    formData.append("status", value);
-
-    await updateMigrationStatus(formData);
-
-    toast.success("Status atualizado com sucesso")
+    if (migration_uuid) {
+      await updateMigrationStatus({
+        uuid: migration_uuid,
+        status: value as MigrationStatus
+      });
+  
+      toast.success("Status atualizado com sucesso")
+    }
   }
 
   if(hidden) {

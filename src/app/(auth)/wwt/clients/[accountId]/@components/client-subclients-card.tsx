@@ -1,5 +1,5 @@
 import { findManyClients } from "@/@shared/actions/wwt-client.actions";
-import { WWTClient } from "@/@shared/interfaces/wwt-client";
+import { IWanwayClient } from "@/@shared/interfaces/wwt-client";
 import {
   Card,
   CardHeader,
@@ -10,18 +10,18 @@ import {
 import { WWTSubclientTable } from "@/view/tables/wwt-subclient.table";
 
 interface ClientSubclientsCard {
-  client: WWTClient;
+  wwtClient: IWanwayClient;
   page?: number | null;
 }
 
 export async function ClientSubclientsCard({
-  client,
+  wwtClient,
   page,
 }: ClientSubclientsCard) {
-  const subclients = await findManyClients({
+  const { data, count } = await findManyClients({
     where: {
       parentId: {
-        equals: client.accountId,
+        equals: wwtClient.accountId,
       },
     },
     page,
@@ -38,10 +38,9 @@ export async function ClientSubclientsCard({
       </CardHeader>
       <CardContent>
         <WWTSubclientTable
-          // @ts-expect-error Ítalo: Eu não entendo do prisma mas isso me parece algo relacionado ao schema, mas não consegui resolver
-          data={subclients.data}
+          data={data}
           pagination={{
-            count: subclients.count,
+            count,
             pageSize: 10,
             pageUrlParam: "subclientsPage",
           }}
