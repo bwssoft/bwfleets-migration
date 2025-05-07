@@ -272,7 +272,7 @@ type Address {
   street   String?
   district String?
   city     String?
-  cep      String
+  cep      String?
 }
 
 type ClientTheme {
