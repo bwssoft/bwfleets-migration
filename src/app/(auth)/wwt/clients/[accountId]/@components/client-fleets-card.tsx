@@ -1,8 +1,7 @@
-"use client";
+"use server";
 
-import { useDisclosure } from "@/@shared/hooks/use-disclosure";
+import { findOneBFleetClient } from "@/@shared/actions/bwfleet-client.actions";
 import { WWTClient } from "@/@shared/interfaces/wwt-client";
-import { Button } from "@/view/components/ui/button";
 import {
   Card,
   CardHeader,
@@ -11,14 +10,21 @@ import {
   CardAction,
 } from "@/view/components/ui/card";
 import { UpsertBWFleetForm } from "@/view/forms/upsert-bwfleet/upsert-bwfleet.form";
-import { PencilIcon } from "lucide-react";
+import { BFleetClient, BFleetUser } from "@prisma/client";
 
 interface ClientFleetsCardProps {
-  client: WWTClient;
+  wwtClient: WWTClient;
 }
 
-export function ClientFleetsCard({ client }: ClientFleetsCardProps) {
-  const editFormDisclosure = useDisclosure();
+export async function ClientFleetsCard({ wwtClient }: ClientFleetsCardProps) {
+  const bfleetClient = (await findOneBFleetClient({
+    where: {
+      wwtAccountId: wwtClient.accountId,
+    },
+    include: {
+      user: true,
+    },
+  })) as (BFleetClient & { user: BFleetUser }) | null;
 
   return (
     <Card>
@@ -30,18 +36,12 @@ export function ClientFleetsCard({ client }: ClientFleetsCardProps) {
         </CardDescription>
 
         <CardAction>
-          <Button onClick={editFormDisclosure.onOpen} variant="outline">
-            <PencilIcon />
-            Editar
-          </Button>
+          <UpsertBWFleetForm
+            wwtClient={wwtClient}
+            bfleetClient={bfleetClient}
+          />
         </CardAction>
       </CardHeader>
-
-      <UpsertBWFleetForm
-        client={client}
-        open={editFormDisclosure.isOpen}
-        onOpenChange={editFormDisclosure.onClose}
-      />
     </Card>
   );
 }

@@ -1,28 +1,85 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
 import { prisma } from "../lib/prisma/prisma-client";
 import { BFleetClient } from "../interfaces/bfleet-client";
+import { BFleetUser } from "../interfaces/bfleet-user";
+import { parseFormData } from "../utils/parse-form-data";
+import { Prisma } from "@prisma/client";
+import { cleanObject } from "../utils/clean-object";
 
 interface FindOneClientParams {
-  where: any;
+  where: Prisma.BFleetClientWhereInput;
+  include?: Prisma.BFleetClientInclude;
 }
 
-export async function findOneClient(params: FindOneClientParams) {
-  const { where } = params;
-  return await prisma.bFleetClient.findFirstOrThrow({
+export async function findOneBFleetClient(params: FindOneClientParams) {
+  const { where, include } = params;
+  return await prisma.bFleetClient.findFirst({
     where,
+    include,
   });
 }
 
-export async function upsertBfleetClient(client: BFleetClient) {
-  const uuid = client.uuid ?? crypto.randomUUID();
+type UpsertBfleetClientParams = BFleetClient & {
+  wwtAccountId: number;
+};
+
+export async function upsertBfleetClient(formData: FormData) {
+  const data = parseFormData(formData, true) as UpsertBfleetClientParams;
+
+  const client = cleanObject(data, ["contacts"]);
+
+  const uuid = data.uuid ?? crypto.randomUUID();
   return await prisma.bFleetClient.upsert({
     create: {
-      ...client,
+      ...(client as Prisma.BFleetClientCreateInput),
       uuid,
+      wwtAccountId: data.wwtAccountId,
     },
     update: client,
-    where: { uuid },
+    where: {
+      uuid,
+    },
+  });
+}
+
+interface UpsertBfleetUserParams {
+  name: string;
+  email: string;
+  contact: string;
+  client: BFleetClient;
+  user?: BFleetUser;
+}
+
+export async function upsertBfleetUser(formData: FormData) {
+  const data = parseFormData(formData, true) as UpsertBfleetUserParams;
+
+  const uuid = data.user?.uuid ?? crypto.randomUUID();
+
+  const upsertData = {
+    name: data.name,
+    email: data.email,
+    contact: data.contact,
+  };
+
+  const clientData = {
+    uuid: data.client.uuid!,
+    name: data.client.name,
+  };
+
+  const user = cleanObject(upsertData);
+
+  return await prisma.bFleetUser.upsert({
+    create: {
+      ...(user as Prisma.BFleetUserCreateInput),
+      uuid,
+      client: clientData,
+    },
+    update: {
+      ...upsertData,
+    },
+    where: {
+      uuid,
+    },
   });
 }

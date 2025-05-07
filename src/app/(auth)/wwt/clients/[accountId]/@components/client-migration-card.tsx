@@ -1,6 +1,4 @@
-import {
-  WWTClient,
-} from "@/@shared/interfaces/wwt-client";
+import { WWTClient } from "@/@shared/interfaces/wwt-client";
 import {
   Alert,
   AlertDescription,
@@ -16,7 +14,14 @@ import {
 } from "@/view/components/ui/card";
 import { StartMigrationForm } from "@/view/forms/start-migration.form";
 import { MigrationStatus } from "@prisma/client";
-import { CircleCheck, CircleDashed, CircleEllipsis, Hourglass, PhoneOff, UserX } from "lucide-react";
+import {
+  CircleCheck,
+  CircleDashed,
+  CircleEllipsis,
+  Hourglass,
+  PhoneOff,
+  UserX,
+} from "lucide-react";
 import React from "react";
 
 interface ClientMigrationCardProps {
@@ -42,9 +47,9 @@ export function ClientMigrationCard({ client }: ClientMigrationCardProps) {
       </CardHeader>
       <CardContent>
         <Alert>
-          {alertData.icon}
-          <AlertTitle>Status atual: {alertData.title}</AlertTitle>
-          <AlertDescription>{alertData.description}</AlertDescription>
+          {alertData?.icon}
+          <AlertTitle>Status atual: {alertData?.title}</AlertTitle>
+          <AlertDescription>{alertData?.description}</AlertDescription>
         </Alert>
       </CardContent>
 
@@ -82,17 +87,18 @@ const ALERT_DATA: MigrationMapper = {
   FAILED_BY_CONTACT: {
     icon: <PhoneOff />,
     title: "Sem contato",
-    description: "Esse cliente foi marcado que não obteve comunicação, ou não foi identificado"
+    description:
+      "Esse cliente foi marcado que não obteve comunicação, ou não foi identificado",
   },
   WAITING: {
     icon: <Hourglass />,
     title: "Aguardando resposta",
-    description: "Aguardando resposta do cliente"
+    description: "Aguardando resposta do cliente",
   },
   FAILED_BY_CLIENT: {
     icon: <UserX />,
     title: "Optou por não migrar",
-    description: "O Cliente optou por não continuar a migração de dados"
+    description: "O Cliente optou por não continuar a migração de dados",
   },
   DONE: {
     icon: <CircleCheck />,

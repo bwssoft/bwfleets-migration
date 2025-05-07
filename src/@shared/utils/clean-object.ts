@@ -1,9 +1,12 @@
 import _ from "lodash";
 
-export const cleanObject = <T>(obj: T): Partial<T> => {
+export const cleanObject = <T>(
+  obj: T,
+  ignoredKeys: string[] = []
+): Partial<T> => {
   if (_.isArray(obj)) {
     return obj
-      .map((item) => cleanObject(item))
+      .map((item) => cleanObject(item, ignoredKeys))
       .filter(
         (item) =>
           (!_.isEmpty(item) || _.isNumber(item)) &&
@@ -12,9 +15,11 @@ export const cleanObject = <T>(obj: T): Partial<T> => {
       ) as T;
   } else if (_.isObject(obj)) {
     return _(obj)
-      .mapValues((value, key) => (key === "not" ? value : cleanObject(value)))
+      .mapValues((value, key) =>
+        ignoredKeys.includes(key) ? value : cleanObject(value, ignoredKeys)
+      )
       .pickBy((value, key) => {
-        if (key === "not") return true;
+        if (ignoredKeys.includes(key)) return true;
 
         return (
           (!_.isEmpty(value) || _.isBoolean(value) || _.isNumber(value)) &&

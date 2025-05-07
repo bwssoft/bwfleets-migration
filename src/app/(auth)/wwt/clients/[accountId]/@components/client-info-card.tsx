@@ -6,17 +6,18 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
+  CardAction,
 } from "@/view/components/ui/card";
 import { LabelValue } from "@/view/components/ui/label-value";
 import { SparklesIcon } from "lucide-react";
+import { ClientInfoCopyButton } from "./client-info-copy-button";
 
 interface ClientInfoCardProps {
   client: WWTClient;
 }
 
 export async function ClientInfoCard({ client }: ClientInfoCardProps) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const sumary = await generateUserSummary(client as any);
+  const summary = await generateUserSummary(client);
 
   return (
     <div className="flex gap-4 w-full">
@@ -45,9 +46,13 @@ export async function ClientInfoCard({ client }: ClientInfoCardProps) {
           <CardDescription>
             Sugestão de resumo com base nos dados do cliente
           </CardDescription>
+
+          <CardAction>
+            <ClientInfoCopyButton text={summary} />
+          </CardAction>
         </CardHeader>
         <CardContent className="max-w-[80%] -mt-2">
-          <span className="text-sm font-medium">{sumary}</span>
+          <span className="text-sm font-medium">{summary}</span>
         </CardContent>
       </Card>
     </div>
