@@ -27,7 +27,12 @@ export function UserForm({ form }: UserFormProps) {
       <CardContent>
         <div className="grid grid-cols-2 gap-2">
           <Input label="Nome do usuário" {...form.register("user.name")} />
-          <Input label="E-mail" type="email" {...form.register("user.email")} />
+          <Input
+            label="E-mail"
+            type="email"
+            {...form.register("user.email")}
+            error={form.formState.errors.user?.email?.message}
+          />
 
           <div>
             <label className="text-sm font-medium">Contato principal</label>

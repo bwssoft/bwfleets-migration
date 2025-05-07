@@ -17,8 +17,8 @@ import { countries } from "@/@shared/constants/countries";
 
 const contactSchema = z.object({
   name: z.string().min(1, "Informe o nome de contato"),
-  email: z.string().min(1, "Informe o email de contato").email({
-    message: "Informe um email valido para contato",
+  email: z.string().min(1, "Informe um e-mail válido de contato").email({
+    message: "Informe um e-mail válido para contato",
   }),
   contact: z.string().min(1, "Informe o numero de contato"),
 });
@@ -56,7 +56,10 @@ const schema = z.object({
     .object({
       name: z.string().optional(),
       contact: z.string().optional(),
-      email: z.string().optional(),
+      email: z
+        .string()
+        .email({ message: "Insira um e-mail válido" })
+        .optional(),
     })
     .optional(),
 
@@ -130,7 +133,7 @@ export function useUpsertBwfleetHandler({
         uuid: data.uuid,
         name: data.name,
         address,
-        subdomain: data.subdomain,
+        subdomain: data.subdomain?.toLowerCase(),
         child_count: 0,
         contacts: data.contacts,
         depth: 1,
