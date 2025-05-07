@@ -1,7 +1,4 @@
-import {
-  MigrationStatusEnum,
-  WWTClient,
-} from "@/@shared/interfaces/wwt-client";
+import { WWTClient } from "@/@shared/interfaces/wwt-client";
 import {
   Alert,
   AlertDescription,
@@ -16,13 +13,14 @@ import {
   CardFooter,
 } from "@/view/components/ui/card";
 import { StartMigrationForm } from "@/view/forms/start-migration.form";
+import { MigrationStatus } from "@prisma/client";
 import {
   CircleCheck,
   CircleDashed,
   CircleEllipsis,
-  CirclePauseIcon,
-  CircleXIcon,
-  PhoneOffIcon,
+  Hourglass,
+  PhoneOff,
+  UserX,
 } from "lucide-react";
 import React from "react";
 
@@ -31,8 +29,7 @@ interface ClientMigrationCardProps {
 }
 
 export function ClientMigrationCard({ client }: ClientMigrationCardProps) {
-  const migrationStatus = client.migrationStatus?.toLowerCase() ?? "to-do";
-
+  const migrationStatus = client.migrationStatus ?? "TO_DO";
   const alertData = ALERT_DATA[migrationStatus as never] as {
     icon: string;
     title: string;
@@ -56,7 +53,7 @@ export function ClientMigrationCard({ client }: ClientMigrationCardProps) {
         </Alert>
       </CardContent>
 
-      {migrationStatus === "to-do" && (
+      {migrationStatus === "PENDING" && (
         <CardFooter>
           <StartMigrationForm client={client} />
         </CardFooter>
@@ -66,7 +63,7 @@ export function ClientMigrationCard({ client }: ClientMigrationCardProps) {
 }
 
 type MigrationMapper = Record<
-  MigrationStatusEnum,
+  MigrationStatus,
   {
     icon: React.ReactNode;
     title: string;
@@ -75,35 +72,35 @@ type MigrationMapper = Record<
 >;
 
 const ALERT_DATA: MigrationMapper = {
-  "to-do": {
+  TO_DO: {
     icon: <CircleDashed />,
     title: "Pendente",
     description:
       "Atualmente esse cliente não está marcado para ser migrado para a nova plataforma. Inicie o processo de migração abaixo para continuar.",
   },
-  waiting: {
-    icon: <CirclePauseIcon />,
-    title: "Aguardando resposta do cliente",
-    description:
-      "Esse cliente foi marcado com a intenção de ser migrado para a nova plataforma. O processo de migração está em andamento.",
-  },
-  pending: {
+  PENDING: {
     icon: <CircleEllipsis />,
     title: "Em andamento",
     description:
       "Esse cliente foi marcado com a intenção de ser migrado para a nova plataforma. O processo de migração está em andamento.",
   },
-  "failed-by-client": {
-    icon: <CircleXIcon />,
-    title: "Recusado pelo cliente",
-    description: "Esse cliente recusou a migração de plataforma.",
+  FAILED_BY_CONTACT: {
+    icon: <PhoneOff />,
+    title: "Sem contato",
+    description:
+      "Esse cliente foi marcado que não obteve comunicação, ou não foi identificado",
   },
-  "failed-by-contact": {
-    icon: <PhoneOffIcon />,
-    title: "Recusado por não conseguir contato",
-    description: "Não foi possível entrar em contato com esse cliente.",
+  WAITING: {
+    icon: <Hourglass />,
+    title: "Aguardando resposta",
+    description: "Aguardando resposta do cliente",
   },
-  done: {
+  FAILED_BY_CLIENT: {
+    icon: <UserX />,
+    title: "Optou por não migrar",
+    description: "O Cliente optou por não continuar a migração de dados",
+  },
+  DONE: {
     icon: <CircleCheck />,
     title: "Concluído",
     description: "Esse cliente foi migrado com sucesso.",

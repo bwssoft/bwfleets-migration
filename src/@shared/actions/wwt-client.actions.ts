@@ -1,10 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
-import { Prisma } from "@prisma/client";
+import {
+  Prisma,
+  client,
+  Comment,
+  MigrationStatus,
+  Prisma,
+} from "@prisma/client";
 import { cleanObject } from "../utils/clean-object";
 import { prisma } from "../lib/prisma/prisma-client";
-import { MigrationStatusEnum, WWTClient } from "../interfaces/wwt-client";
+import { WWTClient } from "../interfaces/wwt-client";
 import { parseFormData } from "../utils/parse-form-data";
 import { format } from "date-fns";
 import _ from "lodash";
@@ -65,19 +71,59 @@ interface FindOneClientParams {
 
 export async function findOneClient(params: FindOneClientParams) {
   const { where } = params;
+  console.log({ where });
   return await prisma.client.findFirstOrThrow({
     where,
+    select: {
+      comments: {
+        select: {
+          client: true,
+          user: true,
+          clientId: true,
+          createdAt: true,
+          message: true,
+          id: true,
+          user_uuid: true,
+          updatedAt: true,
+        },
+      },
+      accountId: true,
+      accountName: true,
+      accountStatsBean: true,
+      accountType: true,
+      address: true,
+      assigned: true,
+      assignedId: true,
+      contactTel: true,
+      contactUser: true,
+      createTime: true,
+      email: true,
+      id: true,
+      isLeaf: true,
+      isReceiveOfflineMessage: true,
+      isReceiveWaring: true,
+      migrationStatus: true,
+      parentId: true,
+      payUrl: true,
+      resultBean: true,
+      roles: true,
+      rootId: true,
+      success: true,
+      type: true,
+      userName: true,
+    },
   });
 }
 
 interface UpdateMigrationStatus {
   uuid: string;
-  status: MigrationStatusEnum;
+  status: MigrationStatus;
 }
 
 export async function updateMigrationStatus(formData: FormData) {
   const { uuid, status } = parseFormData(formData) as UpdateMigrationStatus;
 
+  console.log({ uuid, status });
   return await prisma.client.update({
     data: {
       migrationStatus: status,
@@ -225,8 +271,20 @@ export async function assignMigrationResponsibility(
     },
     data: {
       assignedId: user_id,
-      migrationStatus: "in-progress",
+      migrationStatus: "PENDING",
     },
   });
   revalidatePath("/wwt/clients");
+}
+
+export async function writeMigrationComment({
+  data,
+}: {
+  data: Partial<Comment>;
+}) {
+  await prisma.comment.create({
+    data: data as Comment,
+  });
+
+  revalidatePath(`/wwt/clients/${data.clientId}`);
 }

@@ -76,7 +76,7 @@ export function WWTClientTable({ data, pagination }: WWTClientTableProps) {
     },
     {
       accessorKey: "email",
-      header: "Responável",
+      header: "Responsável",
       cell: ({ row: { original: data } }) => (
         <div className="flex  gap-2 items-baseline">
           {data.assigned?.name ? (
@@ -105,10 +105,18 @@ export function WWTClientTable({ data, pagination }: WWTClientTableProps) {
       header: "Status de migração",
       cell: ({ row: { original: data } }) => {
         switch (data.migrationStatus) {
-          case "in-progress":
-            return <Badge variant="default">Em progresso</Badge>;
-          case "done":
-            return <Badge>Migrado</Badge>;
+          case "TO_DO": 
+              return <Badge>Pendente</Badge>;
+          case "WAITING": 
+              return <Badge>Aguardando</Badge>;
+          case "FAILED_BY_CLIENT": 
+              return <Badge variant="yellow">Recusado</Badge>;
+          case "FAILED_BY_CONTACT": 
+              return <Badge variant="yellow">Recusado</Badge>;
+          case "PENDING":
+            return <Badge variant="default">Em Andamento</Badge>;
+          case "DONE":
+            return <Badge variant="green">Migrado</Badge>;
           default:
             return <Badge>Pendente</Badge>;
         }
@@ -119,7 +127,7 @@ export function WWTClientTable({ data, pagination }: WWTClientTableProps) {
       header: "Ações",
       cell: ({ row: { original: data } }) => {
         const isDisabled =
-          data.migrationStatus !== "pending" &&
+          data.migrationStatus !== "TO_DO" &&
           data.migrationStatus !== null &&
           data.migrationStatus !== undefined;
 

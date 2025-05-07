@@ -3,6 +3,7 @@
 import { findManyClients } from "@/@shared/actions/wwt-client.actions";
 import { WWTClientTable } from "./wwt-client.table";
 import { IClientsPageParams } from "@/app/(auth)/wwt/clients/params";
+import { MigrationStatus } from "@prisma/client";
 
 export interface WWTClientTableLoaderProps {
   params: IClientsPageParams;
@@ -28,7 +29,7 @@ export async function WWTClientTableLoader({
           }
         : undefined,
       migrationStatus: {
-        in: params.status ?? [],
+        in: params.status as MigrationStatus[] ?? [],
       },
     },
     orderBy: [

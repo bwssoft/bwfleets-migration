@@ -89,6 +89,31 @@ type DeviceOwnerBeanAccountStatsBean {
   unUsedDeviceNo  Int
 }
 
+type CommentUser {
+  id   String
+  name String
+}
+
+model Comment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  message   String
+  user_uuid String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  clientId  String   @db.ObjectId
+  user      User     @relation(fields: [user_uuid], references: [id])
+  client    client   @relation(fields: [clientId], references: [id])
+}
+
+enum MigrationStatus {
+  TO_DO             @map("to-do")
+  PENDING
+  WAITING
+  DONE
+  FAILED_BY_CLIENT  @map("failed-by-client")
+  FAILED_BY_CONTACT @map("failed-by-contact")
+}
+
 model client {
   id                      String                 @id @default(auto()) @map("_id") @db.ObjectId
   accountId               Int
@@ -111,9 +136,10 @@ model client {
   success                 Boolean
   type                    Int
   userName                String
-  migrationStatus         String?
+  migrationStatus         MigrationStatus?       @default(TO_DO)
   assignedId              String?
   assigned                User?                  @relation(fields: [assignedId], references: [id])
+  comments                Comment[]
 }
 
 model device {
@@ -169,6 +195,7 @@ model User {
   sessions      Session[]
   accounts      Account[]
   client        client[]
+  Comment       Comment[]
 
   @@unique([email])
   @@map("user")
@@ -243,9 +270,6 @@ model BFleetClient {
   created_at             DateTime
   updated_at             DateTime?
   wwtAccountId           Int          @unique
-
-  // author   User   @relation(fields: [authorId], references: [id])
-  // authorId String @db.ObjectId 
 
   user      BFleetUser? @relation(fields: [user_uuid], references: [uuid])
   user_uuid String?
