@@ -15,11 +15,11 @@ import { useUpsertBwfleetHandler } from "./upsert-bwfleet.handler";
 import { Button } from "@/view/components/ui/button";
 import { PencilIcon } from "lucide-react";
 import { useDisclosure } from "@/@shared/hooks/use-disclosure";
-import { BFleetClient } from "@prisma/client";
+import { BFleetClient, BFleetUser } from "@prisma/client";
 import { ContactsForm } from "./contacts.form";
 
 interface UpsertBWFleetFormProps {
-  bfleetClient: BFleetClient | null;
+  bfleetClient: (BFleetClient & { user: BFleetUser }) | null;
   wwtClient: WWTClient;
 }
 

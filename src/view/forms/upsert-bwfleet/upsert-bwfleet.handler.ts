@@ -11,7 +11,7 @@ import { z } from "zod";
 import { generateFormData } from "@/@shared/utils/parse-form-data";
 import { WWTClient } from "@/@shared/interfaces/wwt-client";
 import { cleanObject } from "@/@shared/utils/clean-object";
-import { BFleetClient } from "@prisma/client";
+import { BFleetClient, BFleetUser } from "@prisma/client";
 import { toast } from "sonner";
 import { countries } from "@/@shared/constants/countries";
 
@@ -76,7 +76,7 @@ export type BWFleetUpsertClientContactFieldArray = z.infer<
 
 interface UseUpsertBwfleetHandlerParams {
   wwtClient: WWTClient;
-  bfleetClient: BFleetClient | null;
+  bfleetClient: (BFleetClient & { user: BFleetUser }) | null;
 }
 
 export function useUpsertBwfleetHandler({
@@ -99,7 +99,13 @@ export function useUpsertBwfleetHandler({
       street: bfleetClient?.address?.street ?? "",
       district: bfleetClient?.address?.district ?? "",
       number: bfleetClient?.address?.number ?? "",
+      city: bfleetClient?.address?.city ?? "",
       state: bfleetClient?.address?.state ?? "",
+      user: {
+        name: bfleetClient?.user.name ?? "",
+        email: bfleetClient?.user.email ?? "",
+        contact: bfleetClient?.user.contact ?? "",
+      },
     },
   });
 
