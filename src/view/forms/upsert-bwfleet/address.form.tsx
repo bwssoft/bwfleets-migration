@@ -31,14 +31,21 @@ export function AddressForm({ form }: Props) {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 gap-2">
-          <div>
-            <label className="text-sm font-medium">Código-postal</label>
-            <InputWithMask
-              mask="_____-___"
-              replacement={{ _: /\d/ }}
-              {...form.register("cep")}
-            />
-          </div>
+          <Controller
+            control={form.control}
+            name="cep"
+            render={({ field }) => (
+              <div>
+                <label className="text-sm font-medium">Código-postal</label>
+                <InputWithMask
+                  mask="_____-___"
+                  value={field.value}
+                  replacement={{ _: /\d/ }}
+                  onChange={(event) => field.onChange(event.target.value)}
+                />
+              </div>
+            )}
+          />
           <Input label="Rua" {...form.register("street")} />
           <Input label="Número" {...form.register("number")} />
           <Input label="Bairro" {...form.register("district")} />
