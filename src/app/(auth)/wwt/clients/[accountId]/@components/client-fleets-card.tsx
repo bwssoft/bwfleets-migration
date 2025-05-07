@@ -10,20 +10,21 @@ import {
   CardAction,
 } from "@/view/components/ui/card";
 import { UpsertBWFleetForm } from "@/view/forms/upsert-bwfleet/upsert-bwfleet.form";
+import { BFleetClient, BFleetUser } from "@prisma/client";
 
 interface ClientFleetsCardProps {
   wwtClient: WWTClient;
 }
 
 export async function ClientFleetsCard({ wwtClient }: ClientFleetsCardProps) {
-  const bfleetClient = await findOneBFleetClient({
+  const bfleetClient = (await findOneBFleetClient({
     where: {
       wwtAccountId: wwtClient.accountId,
     },
     include: {
       user: true,
     },
-  });
+  })) as (BFleetClient & { user: BFleetUser }) | null;
 
   return (
     <Card>
