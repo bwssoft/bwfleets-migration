@@ -107,13 +107,13 @@ export function WWTClientTable({ data, pagination }: WWTClientTableProps) {
           case "TO_DO":
             return <Badge>Pendente</Badge>;
           case "WAITING":
-            return <Badge>Aguardando</Badge>;
+            return <Badge variant="yellow">Aguardando</Badge>;
           case "FAILED_BY_CLIENT":
-            return <Badge variant="yellow">Recusado</Badge>;
+            return <Badge variant="red">Recusado</Badge>;
           case "FAILED_BY_CONTACT":
-            return <Badge variant="yellow">Sem contato</Badge>;
+            return <Badge variant="red">Sem contato</Badge>;
           case "PENDING":
-            return <Badge variant="default">Em Andamento</Badge>;
+            return <Badge variant="blue">Em Andamento</Badge>;
           case "DONE":
             return <Badge variant="green">Aceitou migrar</Badge>;
           default:
