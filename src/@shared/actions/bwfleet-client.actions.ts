@@ -32,7 +32,7 @@ export async function upsertBfleetClient(formData: FormData) {
   const uuid = data.uuid ?? crypto.randomUUID();
   return await prisma.bFleetClient.upsert({
     create: {
-      ...(client as any),
+      ...(client as Prisma.BFleetClientCreateInput),
       uuid,
       wwtAccountId: data.wwtAccountId,
     },
@@ -71,7 +71,7 @@ export async function upsertBfleetUser(formData: FormData) {
 
   return await prisma.bFleetUser.upsert({
     create: {
-      ...(user as any),
+      ...(user as Prisma.BFleetUserCreateInput),
       uuid,
       client: clientData,
     },
