@@ -141,7 +141,6 @@ export function useUpsertBwfleetHandler({
           : crypto.randomUUID();
       const user_uuid =
         data.user_uuid?.length !== 0 ? data.user_uuid : crypto.randomUUID();
-      console.log("🚀 ~ user_uuid:", user_uuid);
 
       const clientPayload = generateFormData({
         uuid: data.uuid,
