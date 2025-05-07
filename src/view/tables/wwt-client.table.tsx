@@ -80,8 +80,8 @@ export function WWTClientTable({ data, pagination }: WWTClientTableProps) {
         <div className="flex  gap-2 items-baseline">
           {data.migration?.assigned?.name ? (
             <>
-              <Avatar>
-                <AvatarFallback>
+              <Avatar className="size-7">
+                <AvatarFallback className="text-xs">
                   {data.migration?.assigned?.name ? (
                     getInitials(data.migration?.assigned.name)
                   ) : (
@@ -136,6 +136,7 @@ export function WWTClientTable({ data, pagination }: WWTClientTableProps) {
             onClick={() => handleBeingResponsibleClient(data)}
             disabled={isDisabled}
             variant="outline"
+            size="sm"
           >
             {isPending && peddingId === data.id ? (
               <LoaderIcon className="animate-spin h-4 w-4" />
