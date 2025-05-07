@@ -5,10 +5,7 @@ import {
   UseFieldArrayReturn,
   UseFormReturn,
 } from "react-hook-form";
-import {
-  BWFleetUpsertClientContactFieldArray,
-  BWFleetUpsertClientFormData,
-} from "./upsert-bwfleet.handler";
+import { BWFleetUpsertClientFormData } from "./upsert-bwfleet.handler";
 import {
   Card,
   CardContent,
@@ -23,7 +20,7 @@ import { InputWithMask } from "@/view/components/ui/input-with-mask";
 
 interface Props {
   form: UseFormReturn<BWFleetUpsertClientFormData>;
-  contactsFieldArray: UseFieldArrayReturn<BWFleetUpsertClientContactFieldArray>;
+  contactsFieldArray: UseFieldArrayReturn<BWFleetUpsertClientFormData>;
 }
 
 export function ContactsForm({ form, contactsFieldArray }: Props) {
