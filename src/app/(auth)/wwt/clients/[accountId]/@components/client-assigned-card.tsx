@@ -11,7 +11,7 @@ interface ClientAssignedCardProps {
 
 export function ClientAssignedCard({ wwtClient }: ClientAssignedCardProps) {
   const assigned = React.useMemo(() => {
-    return wwtClient.migration?.assigned?.name;
+    return wwtClient.migration?.assigned;
   }, [wwtClient]);
 
   if (!assigned) return null;
@@ -19,12 +19,14 @@ export function ClientAssignedCard({ wwtClient }: ClientAssignedCardProps) {
   return (
     <div className="flex gap-2 bg-card border border-border rounded-md p-4">
       <Avatar>
-        <AvatarFallback>{getInitials(assigned)}</AvatarFallback>
+        <AvatarFallback>{getInitials(assigned.name)}</AvatarFallback>
       </Avatar>
 
       <div className="flex flex-col">
         <span className="text-xs mb-0  text-muted-foreground">Responsável</span>
-        <span className="text-sm font-medium">{assigned}</span>
+        <span className="text-sm font-medium">
+          {assigned.name} ({assigned.email})
+        </span>
       </div>
     </div>
   );
