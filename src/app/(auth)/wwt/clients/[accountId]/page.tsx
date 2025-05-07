@@ -51,6 +51,9 @@ export default async function WWTClientDetailsPage({
     },
   });
 
+  const isMigrating =
+    client.migration && client.migration?.migration_status !== "TO_DO";
+
   return (
     <main className="grid grid-rows-[min-content_1fr] w-full h-screen overflow-y-hidden">
       <Topbar>
@@ -73,22 +76,24 @@ export default async function WWTClientDetailsPage({
               Sinalizar recusa
             </Button> */}
 
-            <StartMigrationForm client={client} />
+            <StartMigrationForm wwtClient={client} />
           </div>
         </div>
       </Topbar>
 
       <PageLayout className="grid gap-4 grid-cols-8">
         <div className="col-span-6 space-y-4">
-          <ClientInfoCard client={client} />
+          <ClientInfoCard wwtClient={client} />
 
-          <Suspense fallback={<Skeleton className="w-full h-96" />}>
-            <ClientFleetsCard wwtClient={client} />
-          </Suspense>
+          {isMigrating && (
+            <Suspense fallback={<Skeleton className="w-full h-96" />}>
+              <ClientFleetsCard wwtClient={client} />
+            </Suspense>
+          )}
 
           <Suspense fallback={<Skeleton className="w-full h-96" />}>
             <ClientSubclientsCard
-              client={client}
+              wwtClient={client}
               page={nuqsParams.subclientsPage}
             />
           </Suspense>
@@ -110,14 +115,23 @@ export default async function WWTClientDetailsPage({
             </CardContent>
           </Card>
 
-          <ClientMigrationCard client={client} />
+          <ClientMigrationCard wwtClient={client} />
         </div>
         <div className="col-span-2">
-        <div className="flex flex-col gap-4 sticky top-0">
-          <ClientStatusMigrationCard id={client.id} hidden={client.migrationStatus === "TO_DO"} status={client.migrationStatus} />
-          <ClientCommentsCard client_id={client.id} hidden={client.migrationStatus === "TO_DO"} data={client.comments} />
-          <ClientStatisticsCard client={client} />
-        </div>
+          <div className="flex flex-col gap-4 sticky top-0">
+            <ClientStatusMigrationCard
+              migration_uuid={client.migration?.uuid}
+              hidden={!isMigrating}
+              status={client.migration?.migration_status}
+            />
+            <ClientCommentsCard
+              wwt_account_id={client.accountId}
+              hidden={!isMigrating}
+              migration_uuid={client.migration?.uuid}
+              data={client.migration?.comments ?? []}
+            />
+            <ClientStatisticsCard wwtClient={client} />
+          </div>
         </div>
       </PageLayout>
     </main>

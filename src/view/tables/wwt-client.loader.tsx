@@ -28,8 +28,10 @@ export async function WWTClientTableLoader({
             equals: 10160758,
           }
         : undefined,
-      migrationStatus: {
-        in: params.status as MigrationStatus[] ?? [],
+      migration: {
+        migration_status: {
+          in: (params.status as MigrationStatus[]) ?? [],
+        },
       },
     },
     orderBy: [
@@ -43,7 +45,6 @@ export async function WWTClientTableLoader({
 
   return (
     <WWTClientTable
-      // @ts-expect-error Ítalo: Eu não entendo do prisma mas isso me parece algo relacionado ao schema, mas não consegui resolver
       data={data}
       pagination={{
         count,
