@@ -102,8 +102,8 @@ model Comment {
   createdAt      DateTime   @default(now()) @map("created_at")
   updatedAt      DateTime   @updatedAt @map("updated_at")
   user           User       @relation(fields: [user_uuid], references: [id])
-  migration      Migration? @relation(fields: [migration_uuid], references: [id])
-  migration_uuid String?    @db.ObjectId
+  migration      Migration? @relation(fields: [migration_uuid], references: [uuid])
+  migration_uuid String?
 
   @@map("comment")
 }
@@ -275,7 +275,7 @@ model BFleetClient {
 
   user      BFleetUser? @relation(fields: [user_uuid], references: [uuid])
   user_uuid String?
-  Migration Migration?
+  migration Migration?
 
   @@index([id, uuid])
   @@map("bfleet_client")
@@ -348,8 +348,8 @@ model Migration {
   wwt_client     WanwayClient @relation(fields: [wwt_account_id], references: [accountId])
   wwt_account_id Int          @unique
 
-  bfleet_client BFleetClient? @relation(fields: [bfleet_uuid], references: [uuid])
-  bfleet_uuid   String?       @unique
+  bfleet_client      BFleetClient? @relation(fields: [bfleet_client_uuid], references: [uuid])
+  bfleet_client_uuid String?       @unique
 
   comments         Comment[]
   migration_status MigrationStatus? @default(PENDING)
