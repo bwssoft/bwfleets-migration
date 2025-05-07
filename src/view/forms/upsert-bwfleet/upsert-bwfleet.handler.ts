@@ -86,7 +86,10 @@ export function useUpsertBwfleetHandler({
   const form = useForm<BWFleetUpsertClientFormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      ...(cleanObject(bfleetClient) as BWFleetUpsertClientFormData),
+      uuid: bfleetClient?.uuid,
+      enterprise_uuid: bfleetClient?.enterprise_uuid ?? "",
+      subdomain: bfleetClient?.subdomain ?? "",
+      tenant: bfleetClient?.tenant ?? [],
       name: bfleetClient?.name ?? wwtClient.userName,
       document: bfleetClient?.document?.value,
       document_type: bfleetClient?.document?.type as "cpf" | "cnpj",
@@ -102,9 +105,9 @@ export function useUpsertBwfleetHandler({
       city: bfleetClient?.address?.city ?? "",
       state: bfleetClient?.address?.state ?? "",
       user: {
-        name: bfleetClient?.user.name ?? "",
-        email: bfleetClient?.user.email ?? "",
-        contact: bfleetClient?.user.contact ?? "",
+        name: bfleetClient?.user?.name ?? "",
+        email: bfleetClient?.user?.email ?? "",
+        contact: bfleetClient?.user?.contact ?? "",
       },
     },
   });
@@ -131,9 +134,14 @@ export function useUpsertBwfleetHandler({
         days: 60,
       };
 
-      const tenant = data.tenant ?? [nanoid(21)];
-      const enterprise_uuid = data.enterprise_uuid ?? crypto.randomUUID();
-      const user_uuid = data.user_uuid ?? crypto.randomUUID();
+      const tenant = data.tenant?.length !== 0 ? data.tenant : [nanoid(21)];
+      const enterprise_uuid =
+        data.enterprise_uuid?.length !== 0
+          ? data.enterprise_uuid
+          : crypto.randomUUID();
+      const user_uuid =
+        data.user_uuid?.length !== 0 ? data.user_uuid : crypto.randomUUID();
+      console.log("🚀 ~ user_uuid:", user_uuid);
 
       const clientPayload = generateFormData({
         uuid: data.uuid,
