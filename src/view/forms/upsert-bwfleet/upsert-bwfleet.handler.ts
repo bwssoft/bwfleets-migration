@@ -13,6 +13,7 @@ import { WWTClient } from "@/@shared/interfaces/wwt-client";
 import { cleanObject } from "@/@shared/utils/clean-object";
 import { BFleetClient } from "@prisma/client";
 import { toast } from "sonner";
+import { countries } from "@/@shared/constants/countries";
 
 const contactSchema = z.object({
   name: z.string().min(1, "Informe o nome de contato"),
@@ -88,6 +89,14 @@ export function useUpsertBwfleetHandler({
       document_type: bfleetClient?.document?.type as "cpf" | "cnpj",
       contacts: bfleetClient?.contacts ?? [],
       user_uuid: bfleetClient?.user_uuid ?? "",
+      country: countries.find(
+        (element) => element.name === bfleetClient?.address?.country
+      ),
+      cep: bfleetClient?.address?.cep ?? "",
+      street: bfleetClient?.address?.street ?? "",
+      district: bfleetClient?.address?.district ?? "",
+      number: bfleetClient?.address?.number ?? "",
+      state: bfleetClient?.address?.state ?? "",
     },
   });
 
@@ -100,7 +109,7 @@ export function useUpsertBwfleetHandler({
         district: data.district,
         country: data.country?.name,
         street: data.street,
-        number: data.street,
+        number: data.number,
       };
 
       const document = {
