@@ -198,9 +198,10 @@ export async function generateUserSummary(data: client) {
     qnt_client: {
       value: data.isLeaf.toString(),
       onError: (template: string) => {
-        const exclude = " e {qnt_client} clientes"
+        const excludeParts = [" e {qnt_client} clientes", "{qnt_client} clientes"]
         const valueToReplace = "";
-        return template.replace(exclude, valueToReplace);
+        excludeParts.map((exclude) => template = template.replace(exclude, valueToReplace))
+        return template
       }
     }
   }
@@ -228,9 +229,22 @@ export async function generateUserSummary(data: client) {
     }
     response = response.replace(`{${key}}`, parameter.value!)
   })
+
+  const refineMessage = () => {
+    const { qnt_client, qnt_device } = templateParameters;
+    const clientIsValid = isValidValue(qnt_client.value);
+    const deviceIsValid = isValidValue(qnt_device.value);
+
+    if(!clientIsValid && !deviceIsValid) {
+      response = response.replace("e durante todo esse tempo você atingiu os valores de", "")
+    }
+  } 
+
+  refineMessage()
   
   return response
 }
+
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace AssignMigrationResponsibility {
   export type Params = {
