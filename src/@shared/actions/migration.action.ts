@@ -1,13 +1,15 @@
-import { MigrationStatus, Migration, BFleetClient, User } from "@prisma/client";
-import { WWTClient } from "../interfaces/wwt-client";
+"use server";
+
+import { Migration, MigrationStatus } from "@prisma/client";
 import { prisma } from "../lib/prisma/prisma-client";
 import { revalidatePath } from "next/cache";
+import { User } from "better-auth";
+import { IBFleetClient, IWanwayClient } from "../interfaces";
 
 interface StartMigration {
-  wwtClient: WWTClient;
+  wwtClient: IWanwayClient;
   status: MigrationStatus;
-  migration?: Migration;
-  bfleetClient?: BFleetClient;
+  bfleetClient?: IBFleetClient;
   user: User;
 }
 
@@ -18,7 +20,7 @@ export async function startMigration(data: StartMigration) {
       assigned_uuid: data.user.id,
       migration_status: data.status,
       wwt_account_id: data.wwtClient.accountId,
-      bfleet_uuid: data.bfleetClient?.uuid ?? null,
+      bfleet_client_uuid: data.bfleetClient?.uuid ?? null,
     },
   });
 
@@ -45,16 +47,16 @@ export async function updateMigrationStatus({
   });
 }
 
-interface WriteMigrationComment {
+export interface WriteMigrationComment {
   message: string;
-  wwt_account_uuid: string;
+  wwt_account_id: number;
   user_uuid: string;
   migration_uuid: string;
 }
 
 export async function writeMigrationComment({
   message,
-  wwt_account_uuid,
+  wwt_account_id,
   migration_uuid,
   user_uuid,
 }: WriteMigrationComment) {
@@ -67,5 +69,20 @@ export async function writeMigrationComment({
     },
   });
 
-  revalidatePath(`/wwt/clients/${wwt_account_uuid}`);
+  revalidatePath(`/wwt/clients/${wwt_account_id}`);
+}
+
+interface UpdateOneMigration extends Partial<Migration> {
+  uuid: string;
+}
+
+export async function updateOneMigration(data: UpdateOneMigration) {
+  await prisma.migration.update({
+    data: {
+      ...data,
+    },
+    where: {
+      uuid: data.uuid,
+    },
+  });
 }

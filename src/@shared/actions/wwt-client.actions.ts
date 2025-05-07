@@ -4,7 +4,7 @@
 import { Prisma } from "@prisma/client";
 import { cleanObject } from "../utils/clean-object";
 import { prisma } from "../lib/prisma/prisma-client";
-import { WWTClient } from "../interfaces/wwt-client";
+import { IWanwayClient } from "../interfaces/wwt-client";
 import { format } from "date-fns";
 import _ from "lodash";
 
@@ -36,6 +36,11 @@ export async function findManyClients(params: FindManyClientsParams) {
       migration: {
         include: {
           assigned: true,
+          comments: {
+            include: {
+              user: true,
+            },
+          },
         },
       },
     },
@@ -51,7 +56,23 @@ interface FindOneClientParams {
   where: any;
 }
 
-export async function findOneClient(params: FindOneClientParams) {
+export async function findOneClient(params: FindOneClientParams): Promise<
+  Prisma.WanwayClientGetPayload<{
+    include: {
+      migration: {
+        include: {
+          assigned: true;
+          comments: {
+            include: {
+              user: true;
+            };
+          };
+          bfleet_client: true;
+        };
+      };
+    };
+  }>
+> {
   const { where } = params;
   return await prisma.wanwayClient.findFirstOrThrow({
     where,
@@ -59,7 +80,12 @@ export async function findOneClient(params: FindOneClientParams) {
       migration: {
         include: {
           assigned: true,
-          comments: true,
+          comments: {
+            include: {
+              user: true,
+            },
+          },
+          bfleet_client: true,
         },
       },
     },
@@ -78,7 +104,7 @@ export type IParametersValue = {
   onError?: (template: string) => string | void;
 };
 
-export async function generateUserSummary(data: WWTClient) {
+export async function generateUserSummary(data: IWanwayClient) {
   const TEMPLATE_MESSAGE =
     "Olá, {client_name}. Tudo bem? Você está com a gente desde {time} e durante todo esse tempo você atingiu os valores de {qnt_device} dispositivos, sendo {qnt_device_online_pctg} ativo e {qnt_device_ofline_pctg} inativos nos últimos meses e {qnt_client} clientes.";
 

@@ -1,10 +1,9 @@
 "use server";
 
 import { prisma } from "../lib/prisma/prisma-client";
-import { BFleetClient } from "../interfaces/bfleet-client";
 import { BFleetUser } from "../interfaces/bfleet-user";
 import { parseFormData } from "../utils/parse-form-data";
-import { Prisma } from "@prisma/client";
+import { Prisma, BFleetClient } from "@prisma/client";
 import { cleanObject } from "../utils/clean-object";
 
 interface FindOneClientParams {
@@ -64,7 +63,7 @@ export async function upsertBfleetUser(formData: FormData) {
 
   const clientData = {
     uuid: data.client.uuid!,
-    name: data.client.name,
+    name: data.client.name!,
   };
 
   const user = cleanObject(upsertData);

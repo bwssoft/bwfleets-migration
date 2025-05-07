@@ -1,63 +1,76 @@
-type Contact = {
-  name: string;
-  email: string;
-  contact: string;
-};
+import { Prisma } from "@prisma/client";
 
-interface ClientThemeColorVariable {
-  default?: string;
-  foreground?: string;
-}
+// type Contact = {
+//   name: string;
+//   email: string;
+//   contact: string;
+// };
 
-interface ClientTheme {
-  primary?: ClientThemeColorVariable;
-  secondary?: ClientThemeColorVariable;
-  nav?: ClientThemeColorVariable;
-}
+// interface ClientThemeColorVariable {
+//   default?: string;
+//   foreground?: string;
+// }
 
-interface IValidate {
-  date: Date;
-  days: number;
-}
+// interface ClientTheme {
+//   primary?: ClientThemeColorVariable;
+//   secondary?: ClientThemeColorVariable;
+//   nav?: ClientThemeColorVariable;
+// }
 
-type DocType = "cpf" | "cnpj";
-interface IDocument {
-  type: DocType;
-  value: string;
-}
+// interface IValidate {
+//   date: Date;
+//   days: number;
+// }
 
-interface IAddress {
-  country?: string | undefined;
-  state?: string | undefined;
-  nnumber?: string | undefined;
-  street?: string | undefined;
-  district?: string | undefined;
-  city?: string | undefined;
-  cep: string;
-}
+// type DocType = "cpf" | "cnpj";
+// interface IDocument {
+//   type: DocType;
+//   value: string;
+// }
 
-export interface BFleetClient {
-  id?: string;
-  subdomain: string;
-  name: string;
-  document: IDocument;
-  contacts: Contact[];
-  address: IAddress;
-  user_uuid: string;
-  profile_uuid: string[];
-  logo?: string;
-  login_background?: string;
-  theme?: ClientTheme;
-  parent_enterprise_uuid?: string;
-  child_count: number;
+// interface IAddress {
+//   country?: string | undefined;
+//   state?: string | undefined;
+//   nnumber?: string | undefined;
+//   street?: string | undefined;
+//   district?: string | undefined;
+//   city?: string | undefined;
+//   cep: string;
+// }
 
-  uuid?: string;
-  depth: number;
-  free_period: IValidate;
-  validate: IValidate;
-  tenant: string[];
-  enterprise_uuid: string;
-  restriction_uuid: string;
-  created_at: Date;
-  updated_at?: Date;
-}
+// export interface BFleetClient {
+//   id?: string;
+//   subdomain: string;
+//   name: string;
+//   document: IDocument;
+//   contacts: Contact[];
+//   address: IAddress;
+//   user_uuid: string;
+//   profile_uuid: string[];
+//   logo?: string;
+//   login_background?: string;
+//   theme?: ClientTheme;
+//   parent_enterprise_uuid?: string;
+//   child_count: number;
+
+//   uuid?: string;
+//   depth: number;
+//   free_period: IValidate;
+//   validate: IValidate;
+//   tenant: string[];
+//   enterprise_uuid: string;
+//   restriction_uuid: string;
+//   created_at: Date;
+//   updated_at?: Date;
+// }
+
+export type IBFleetClient = Prisma.BFleetClientGetPayload<{
+  include: {
+    migration: {
+      include: {
+        assigned: true;
+      };
+    };
+    user: true;
+  };
+}>;

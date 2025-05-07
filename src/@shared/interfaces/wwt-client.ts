@@ -1,4 +1,4 @@
-import { MigrationStatus, User } from "@prisma/client";
+import { MigrationStatus, Prisma, User } from "@prisma/client";
 
 export interface WWTAccountStats {
   deviceTotalNo: number;
@@ -51,6 +51,13 @@ export interface WWTAccount {
   // subAccountBeanList?: SubAccount[];
 }
 
-export type WWTClient = Omit<WWTAccount, "subAccountBeanList"> & {
-  // subAccountBeanList: WWTClient[];
-};
+export type IWanwayClient = Prisma.WanwayClientGetPayload<{
+  include: {
+    migration: {
+      include: {
+        assigned: true;
+        comments: true;
+      };
+    };
+  };
+}>;

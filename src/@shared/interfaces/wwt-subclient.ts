@@ -1,3 +1,3 @@
-import { WWTClient } from "./wwt-client";
+import { IWanwayClient } from "./wwt-client";
 
-export type WWTSubclient = WWTClient;
+export type IWanwaySubclient = IWanwayClient;
