@@ -31,6 +31,10 @@ export const ClientStatusMigrationCard: React.FC<IClientStatusMigrationCard> = (
     {
       value: 'FAILED_BY_CONTACT',
       label: 'Não conseguiu contato'
+    },
+    {
+      value: 'DONE',
+      label: "Migração concluida"
     }
   ]
 
