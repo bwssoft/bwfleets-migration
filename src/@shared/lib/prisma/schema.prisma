@@ -94,15 +94,18 @@ type CommentUser {
   name String
 }
 
-model comment {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  message   String
-  user_uuid String
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  clientId  String   @db.ObjectId
-  user      User     @relation(fields: [user_uuid], references: [id])
-  client    client   @relation(fields: [clientId], references: [id])
+model Comment {
+  id             String     @id @default(auto()) @map("_id") @db.ObjectId
+  uuid           String
+  message        String
+  user_uuid      String
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime   @updatedAt @map("updated_at")
+  user           User       @relation(fields: [user_uuid], references: [id])
+  migration      Migration? @relation(fields: [migration_uuid], references: [id])
+  migration_uuid String?    @db.ObjectId
+
+  @@map("comment")
 }
 
 enum MigrationStatus {
@@ -114,9 +117,9 @@ enum MigrationStatus {
   FAILED_BY_CONTACT @map("FAIELD-BY-CONTACT")
 }
 
-model client {
+model WanwayClient {
   id                      String                 @id @default(auto()) @map("_id") @db.ObjectId
-  accountId               Int
+  accountId               Int                    @unique
   accountName             String
   accountStatsBean        ClientAccountStatsBean
   accountType             Int
@@ -136,10 +139,9 @@ model client {
   success                 Boolean
   type                    Int
   userName                String
-  migrationStatus         MigrationStatus?       @default(TO_DO)
-  assignedId              String?
-  assigned                User?                  @relation(fields: [assignedId], references: [id])
-  comments                comment[]
+  migration               Migration?
+
+  @@map("client")
 }
 
 model device {
@@ -180,7 +182,7 @@ model extractionAudit {
 }
 
 model User {
-  id            String    @id @map("_id")
+  id            String      @id @map("_id")
   name          String
   email         String
   emailVerified Boolean
@@ -194,8 +196,8 @@ model User {
   firstAccess   Boolean?
   sessions      Session[]
   accounts      Account[]
-  client        client[]
-  Comment       comment[]
+  comments      Comment[]
+  migrations    Migration[]
 
   @@unique([email])
   @@map("user")
@@ -273,6 +275,7 @@ model BFleetClient {
 
   user      BFleetUser? @relation(fields: [user_uuid], references: [uuid])
   user_uuid String?
+  Migration Migration?
 
   @@index([id, uuid])
   @@map("bfleet_client")
@@ -331,4 +334,25 @@ model BFleetUser {
 type ClientUserRelation {
   uuid String
   name String
+}
+
+model Migration {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  uuid       String   @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+
+  assigned      User?   @relation(fields: [assigned_uuid], references: [id])
+  assigned_uuid String?
+
+  wwt_client     WanwayClient @relation(fields: [wwt_account_id], references: [accountId])
+  wwt_account_id Int          @unique
+
+  bfleet_client BFleetClient? @relation(fields: [bfleet_uuid], references: [uuid])
+  bfleet_uuid   String?       @unique
+
+  comments         Comment[]
+  migration_status MigrationStatus? @default(PENDING)
+
+  @@map("migration_audit")
 }

@@ -1,20 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
-import { Prisma, Comment, MigrationStatus } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { cleanObject } from "../utils/clean-object";
 import { prisma } from "../lib/prisma/prisma-client";
 import { WWTClient } from "../interfaces/wwt-client";
-import { parseFormData } from "../utils/parse-form-data";
 import { format } from "date-fns";
 import _ from "lodash";
-import { revalidatePath } from "next/cache";
 
 interface FindManyClientsParams {
   page?: number | null;
   pageSize?: number;
-  where?: Prisma.clientWhereInput;
-  orderBy?: Prisma.clientOrderByWithRelationInput[];
+  where?: Prisma.WanwayClientWhereInput;
+  orderBy?: Prisma.WanwayClientOrderByWithRelationInput[];
 }
 
 export async function findManyClients(params: FindManyClientsParams) {
@@ -25,29 +23,19 @@ export async function findManyClients(params: FindManyClientsParams) {
 
   const skip = !!page ? pageSize * Number(page - 1) : 0;
 
-  const count = await prisma.client.count({
+  const count = await prisma.wanwayClient.count({
     where: formattedWhere,
   });
 
-  const data = await prisma.client.findMany({
+  const data = await prisma.wanwayClient.findMany({
     skip,
     take: pageSize,
     where: formattedWhere,
-    orderBy: formattedOrderBy as Prisma.clientOrderByWithRelationInput[],
-    select: {
-      id: true,
-      userName: true,
-      accountName: true,
-      accountStatsBean: true,
-      accountId: true,
-      email: true,
-      isLeaf: true,
-      migrationStatus: true,
-      assigned: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
+    orderBy: formattedOrderBy as Prisma.WanwayClientOrderByWithRelationInput[],
+    include: {
+      migration: {
+        include: {
+          assigned: true,
         },
       },
     },
@@ -65,64 +53,15 @@ interface FindOneClientParams {
 
 export async function findOneClient(params: FindOneClientParams) {
   const { where } = params;
-  return await prisma.client.findFirstOrThrow({
+  return await prisma.wanwayClient.findFirstOrThrow({
     where,
-    select: {
-      comments: {
-        select: {
-          client: true,
-          user: true,
-          clientId: true,
-          createdAt: true,
-          message: true,
-          id: true,
-          user_uuid: true,
-          updatedAt: true,
+    include: {
+      migration: {
+        include: {
+          assigned: true,
+          comments: true,
         },
       },
-      accountId: true,
-      accountName: true,
-      accountStatsBean: true,
-      accountType: true,
-      address: true,
-      assigned: true,
-      assignedId: true,
-      contactTel: true,
-      contactUser: true,
-      createTime: true,
-      email: true,
-      id: true,
-      isLeaf: true,
-      isReceiveOfflineMessage: true,
-      isReceiveWaring: true,
-      migrationStatus: true,
-      parentId: true,
-      payUrl: true,
-      resultBean: true,
-      roles: true,
-      rootId: true,
-      success: true,
-      type: true,
-      userName: true,
-    },
-  });
-}
-
-interface UpdateMigrationStatus {
-  uuid: string;
-  status: MigrationStatus;
-}
-
-export async function updateMigrationStatus(formData: FormData) {
-  const { uuid, status } = parseFormData(formData) as UpdateMigrationStatus;
-
-  console.log({ uuid, status });
-  return await prisma.client.update({
-    data: {
-      migrationStatus: status,
-    },
-    where: {
-      id: uuid,
     },
   });
 }
@@ -266,41 +205,4 @@ export async function generateUserSummary(data: WWTClient) {
   refineMessage();
 
   return response;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-namespace
-export namespace AssignMigrationResponsibility {
-  export type Params = {
-    client_id: string;
-    user_id: string;
-  };
-}
-
-export async function assignMigrationResponsibility(
-  params: AssignMigrationResponsibility.Params
-) {
-  const { client_id, user_id } = params;
-
-  await prisma.client.update({
-    where: {
-      id: client_id,
-    },
-    data: {
-      assignedId: user_id,
-      migrationStatus: "PENDING",
-    },
-  });
-  revalidatePath("/wwt/clients");
-}
-
-export async function writeMigrationComment({
-  data,
-}: {
-  data: Partial<Comment>;
-}) {
-  await prisma.comment.create({
-    data: data as Comment,
-  });
-
-  revalidatePath(`/wwt/clients/${data.clientId}`);
 }
