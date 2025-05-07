@@ -94,7 +94,7 @@ type CommentUser {
   name String
 }
 
-model Comment {
+model comment {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   message   String
   user_uuid String
@@ -106,12 +106,12 @@ model Comment {
 }
 
 enum MigrationStatus {
-  TO_DO             @map("to-do")
+  TO_DO             @map("TO-DO")
   PENDING
   WAITING
   DONE
-  FAILED_BY_CLIENT  @map("failed-by-client")
-  FAILED_BY_CONTACT @map("failed-by-contact")
+  FAILED_BY_CLIENT  @map("FAIELD-BY-CLIENT")
+  FAILED_BY_CONTACT @map("FAIELD-BY-CONTACT")
 }
 
 model client {
@@ -139,7 +139,7 @@ model client {
   migrationStatus         MigrationStatus?       @default(TO_DO)
   assignedId              String?
   assigned                User?                  @relation(fields: [assignedId], references: [id])
-  comments                Comment[]
+  comments                comment[]
 }
 
 model device {
@@ -195,7 +195,7 @@ model User {
   sessions      Session[]
   accounts      Account[]
   client        client[]
-  Comment       Comment[]
+  Comment       comment[]
 
   @@unique([email])
   @@map("user")
