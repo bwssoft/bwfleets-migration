@@ -28,7 +28,7 @@ export async function ClientInfoCard({ wwtClient }: ClientInfoCardProps) {
             Dados encontrados no registro desse cliente na WWT
           </CardDescription>
         </CardHeader>
-        <CardContent className="grid grid-cols-2 2xl:grid-cols-3 gap-4 my-4">
+        <CardContent className="grid grid-cols-2 gap-4 my-4">
           <LabelValue label="Nome" value={wwtClient.userName} />
           <LabelValue label="Login" value={wwtClient.accountName} />
           <LabelValue label="Email" value={wwtClient.email} />
