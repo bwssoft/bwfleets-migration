@@ -140,6 +140,8 @@ export function WWTClientTable({ data, pagination }: WWTClientTableProps) {
           >
             {isPending && peddingId === data.id ? (
               <LoaderIcon className="animate-spin h-4 w-4" />
+            ) : isDisabled ? (
+              "Processo iniciado"
             ) : (
               "Iniciar Processo"
             )}
