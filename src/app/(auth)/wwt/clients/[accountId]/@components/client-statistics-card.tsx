@@ -1,4 +1,4 @@
-import { WWTClient } from "@/@shared/interfaces/wwt-client";
+import { IWanwayClient } from "@/@shared/interfaces/wwt-client";
 import { Card, CardContent } from "@/view/components/ui/card";
 
 import {
@@ -19,18 +19,18 @@ import { Separator } from "@/view/components/ui/separator";
 import React from "react";
 
 interface ClientStatisticsCardProps {
-  client: WWTClient;
+  wwtClient: IWanwayClient;
 }
 
-export function ClientStatisticsCard({ client }: ClientStatisticsCardProps) {
+export function ClientStatisticsCard({ wwtClient }: ClientStatisticsCardProps) {
   return (
-    <Card className="">
+    <Card className="!p-0 !pt-2 !pb-4 !border-0 !shadow-none">
       <CardContent className="flex flex-col gap-2">
         <Alert>
           <Users2Icon />
           <AlertTitle>Subcontas</AlertTitle>
           <AlertDescription className="text-lg">
-            {client.isLeaf}
+            {wwtClient.isLeaf}
           </AlertDescription>
         </Alert>
 
@@ -40,35 +40,35 @@ export function ClientStatisticsCard({ client }: ClientStatisticsCardProps) {
           <TabletSmartphoneIcon />
           <AlertTitle>Total de dispositivos (dele e de subcontas)</AlertTitle>
           <AlertDescription className="text-lg">
-            {client.accountStatsBean.deviceTotalNo}
+            {wwtClient.accountStatsBean.deviceTotalNo}
           </AlertDescription>
         </Alert>
         <Alert>
           <SmartphoneIcon />
           <AlertTitle>Dispositivos proprios</AlertTitle>
           <AlertDescription className="text-lg">
-            {client.accountStatsBean.deviceNo}
+            {wwtClient.accountStatsBean.deviceNo}
           </AlertDescription>
         </Alert>
         <Alert>
           <WifiIcon />
           <AlertTitle>Dispositivos dele online</AlertTitle>
           <AlertDescription className="text-lg">
-            {client.accountStatsBean.onlineDeviceNo}
+            {wwtClient.accountStatsBean.onlineDeviceNo}
           </AlertDescription>
         </Alert>
         <Alert>
           <WifiOffIcon />
           <AlertTitle>Dispositivos dele offline</AlertTitle>
           <AlertDescription className="text-lg">
-            {client.accountStatsBean.offlineDeviceNo}
+            {wwtClient.accountStatsBean.offlineDeviceNo}
           </AlertDescription>
         </Alert>
         <Alert>
           <PowerOffIcon />
           <AlertTitle>Dispositivos dele sem uso</AlertTitle>
           <AlertDescription className="text-lg">
-            {client.accountStatsBean.unUsedDeviceNo}
+            {wwtClient.accountStatsBean.unUsedDeviceNo}
           </AlertDescription>
         </Alert>
       </CardContent>

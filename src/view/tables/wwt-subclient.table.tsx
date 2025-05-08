@@ -1,14 +1,13 @@
 "use client";
 
-import { WWTClient } from "@/@shared/interfaces/wwt-client";
+import { IWanwaySubclient } from "@/@shared/interfaces";
 import { ColumnDef } from "@tanstack/react-table";
 import { useRouter } from "next/navigation";
-import { WWTSubclient } from "@/@shared/interfaces/wwt-subclient";
 import { DataTable } from "@/view/components/ui/data-table";
 import { DataTablePagination } from "@/view/components/ui/data-table-pagination";
 import { ExternalLinkIcon } from "lucide-react";
 
-const columns: Array<ColumnDef<WWTSubclient>> = [
+const columns: Array<ColumnDef<IWanwaySubclient>> = [
   {
     id: "action",
     header: "#",
@@ -37,7 +36,7 @@ const columns: Array<ColumnDef<WWTSubclient>> = [
 ];
 
 interface WWTClientTableProps {
-  data: Array<WWTSubclient>;
+  data: Array<IWanwaySubclient>;
   pagination?: {
     count: number;
     pageSize: number;
@@ -48,7 +47,7 @@ interface WWTClientTableProps {
 export function WWTSubclientTable({ data, pagination }: WWTClientTableProps) {
   const router = useRouter();
 
-  function handleTableRowClick(data: WWTClient) {
+  function handleTableRowClick(data: IWanwaySubclient) {
     router.push(`/wwt/clients/${data.accountId}`);
   }
 

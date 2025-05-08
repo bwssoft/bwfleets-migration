@@ -1,6 +1,5 @@
 "use client";
 
-import { WWTClient } from "@/@shared/interfaces/wwt-client";
 import {
   Dialog,
   DialogContent,
@@ -15,12 +14,12 @@ import { useUpsertBwfleetHandler } from "./upsert-bwfleet.handler";
 import { Button } from "@/view/components/ui/button";
 import { PencilIcon } from "lucide-react";
 import { useDisclosure } from "@/@shared/hooks/use-disclosure";
-import { BFleetClient, BFleetUser } from "@prisma/client";
 import { ContactsForm } from "./contacts.form";
+import { IBFleetClient, IWanwayClient } from "@/@shared/interfaces";
 
 interface UpsertBWFleetFormProps {
-  bfleetClient: (BFleetClient & { user: BFleetUser }) | null;
-  wwtClient: WWTClient;
+  bfleetClient: IBFleetClient | null;
+  wwtClient: IWanwayClient;
 }
 
 export function UpsertBWFleetForm({

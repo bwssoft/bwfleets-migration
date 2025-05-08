@@ -1,5 +1,5 @@
 import { generateUserSummary } from "@/@shared/actions/wwt-client.actions";
-import { WWTClient } from "@/@shared/interfaces/wwt-client";
+import { IWanwayClient } from "@/@shared/interfaces/wwt-client";
 import {
   Card,
   CardHeader,
@@ -13,11 +13,11 @@ import { SparklesIcon } from "lucide-react";
 import { ClientInfoCopyButton } from "./client-info-copy-button";
 
 interface ClientInfoCardProps {
-  client: WWTClient;
+  wwtClient: IWanwayClient;
 }
 
-export async function ClientInfoCard({ client }: ClientInfoCardProps) {
-  const summary = await generateUserSummary(client);
+export async function ClientInfoCard({ wwtClient }: ClientInfoCardProps) {
+  const summary = await generateUserSummary(wwtClient);
 
   return (
     <div className="flex gap-4 w-full">
@@ -29,12 +29,12 @@ export async function ClientInfoCard({ client }: ClientInfoCardProps) {
           </CardDescription>
         </CardHeader>
         <CardContent className="grid grid-cols-2 2xl:grid-cols-3 gap-4 my-4">
-          <LabelValue label="Nome" value={client.userName} />
-          <LabelValue label="Login" value={client.accountName} />
-          <LabelValue label="Email" value={client.email} />
-          <LabelValue label="Contato digital" value={client.contactUser} />
-          <LabelValue label="Contato telefonico" value={client.contactTel} />
-          <LabelValue label="Endereco" value={client.address} />
+          <LabelValue label="Nome" value={wwtClient.userName} />
+          <LabelValue label="Login" value={wwtClient.accountName} />
+          <LabelValue label="Email" value={wwtClient.email} />
+          <LabelValue label="Contato digital" value={wwtClient.contactUser} />
+          <LabelValue label="Contato telefonico" value={wwtClient.contactTel} />
+          <LabelValue label="Endereco" value={wwtClient.address} />
         </CardContent>
       </Card>
       <Card className="w-full">

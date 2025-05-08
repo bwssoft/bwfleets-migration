@@ -1,7 +1,8 @@
 "use server";
 
 import { findOneBFleetClient } from "@/@shared/actions/bwfleet-client.actions";
-import { WWTClient } from "@/@shared/interfaces/wwt-client";
+import { IBFleetClient } from "@/@shared/interfaces";
+import { IWanwayClient } from "@/@shared/interfaces/wwt-client";
 import {
   Card,
   CardHeader,
@@ -10,10 +11,9 @@ import {
   CardAction,
 } from "@/view/components/ui/card";
 import { UpsertBWFleetForm } from "@/view/forms/upsert-bwfleet/upsert-bwfleet.form";
-import { BFleetClient, BFleetUser } from "@prisma/client";
 
 interface ClientFleetsCardProps {
-  wwtClient: WWTClient;
+  wwtClient: IWanwayClient;
 }
 
 export async function ClientFleetsCard({ wwtClient }: ClientFleetsCardProps) {
@@ -22,9 +22,14 @@ export async function ClientFleetsCard({ wwtClient }: ClientFleetsCardProps) {
       wwtAccountId: wwtClient.accountId,
     },
     include: {
+      migration: {
+        include: {
+          assigned: true,
+        },
+      },
       user: true,
     },
-  })) as (BFleetClient & { user: BFleetUser }) | null;
+  })) as IBFleetClient | null;
 
   return (
     <Card>

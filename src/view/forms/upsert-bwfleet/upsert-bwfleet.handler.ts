@@ -9,11 +9,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { generateFormData } from "@/@shared/utils/parse-form-data";
-import { WWTClient } from "@/@shared/interfaces/wwt-client";
 import { cleanObject } from "@/@shared/utils/clean-object";
-import { BFleetClient, BFleetUser } from "@prisma/client";
 import { toast } from "sonner";
 import { countries } from "@/@shared/constants/countries";
+import { IBFleetClient, IWanwayClient } from "@/@shared/interfaces";
+import { updateOneMigration } from "@/@shared/actions/migration.action";
 
 const contactSchema = z.object({
   name: z.string().min(1, "Informe o nome de contato"),
@@ -49,17 +49,12 @@ const schema = z.object({
   street: z.string().optional(),
   city: z.string().optional(),
   state: z.string().optional(),
-  cep: z
-    .string({ required_error: "Código postal não pode ser vazio" })
-    .optional(),
+  cep: z.string().optional(),
   user: z
     .object({
       name: z.string().optional(),
       contact: z.string().optional(),
-      email: z
-        .string()
-        .email({ message: "Insira um e-mail válido" })
-        .optional(),
+      email: z.string().optional(),
     })
     .optional(),
 
@@ -75,8 +70,8 @@ export type BWFleetUpsertClientContactFieldArray = z.infer<
 >;
 
 interface UseUpsertBwfleetHandlerParams {
-  wwtClient: WWTClient;
-  bfleetClient: (BFleetClient & { user: BFleetUser }) | null;
+  wwtClient: IWanwayClient;
+  bfleetClient: IBFleetClient | null;
 }
 
 export function useUpsertBwfleetHandler({
@@ -87,33 +82,38 @@ export function useUpsertBwfleetHandler({
     resolver: zodResolver(schema),
     defaultValues: {
       uuid: bfleetClient?.uuid,
-      enterprise_uuid: bfleetClient?.enterprise_uuid ?? "",
-      subdomain: bfleetClient?.subdomain ?? "",
+      enterprise_uuid: bfleetClient?.enterprise_uuid ?? undefined,
+      subdomain: bfleetClient?.subdomain ?? undefined,
       tenant: bfleetClient?.tenant ?? [],
       name: bfleetClient?.name ?? wwtClient.userName,
       document: bfleetClient?.document?.value,
       document_type: bfleetClient?.document?.type as "cpf" | "cnpj",
       contacts: bfleetClient?.contacts ?? [],
-      user_uuid: bfleetClient?.user_uuid ?? "",
+      user_uuid: bfleetClient?.user_uuid ?? undefined,
       country: countries.find(
         (element) => element.name === bfleetClient?.address?.country
       ),
-      cep: bfleetClient?.address?.cep ?? "",
-      street: bfleetClient?.address?.street ?? "",
-      district: bfleetClient?.address?.district ?? "",
-      number: bfleetClient?.address?.number ?? "",
-      city: bfleetClient?.address?.city ?? "",
-      state: bfleetClient?.address?.state ?? "",
+      cep: bfleetClient?.address?.cep ?? undefined,
+      street: bfleetClient?.address?.street ?? undefined,
+      district: bfleetClient?.address?.district ?? undefined,
+      number: bfleetClient?.address?.number ?? undefined,
+      city: bfleetClient?.address?.city ?? undefined,
+      state: bfleetClient?.address?.state ?? undefined,
       user: {
-        name: bfleetClient?.user?.name ?? "",
-        email: bfleetClient?.user?.email ?? "",
-        contact: bfleetClient?.user?.contact ?? "",
+        name: bfleetClient?.user?.name ?? undefined,
+        email: bfleetClient?.user?.email ?? undefined,
+        contact: bfleetClient?.user?.contact ?? undefined,
       },
     },
   });
 
   const handleSubmit = form.handleSubmit(
     async (data: BWFleetUpsertClientFormData) => {
+      if (!wwtClient.migration) {
+        toast.error("Não encontramos uma migração para esse cliente");
+        throw new Error("Não encontramos uma migração para esse cliente");
+      }
+
       const address = {
         cep: data.cep,
         city: data.city,
@@ -134,13 +134,16 @@ export function useUpsertBwfleetHandler({
         days: 60,
       };
 
-      const tenant = data.tenant?.length !== 0 ? data.tenant : [nanoid(21)];
+      const tenant =
+        data.tenant && data.tenant?.length !== 0 ? data.tenant : [nanoid(21)];
       const enterprise_uuid =
-        data.enterprise_uuid?.length !== 0
+        data.enterprise_uuid && data.enterprise_uuid?.length !== 0
           ? data.enterprise_uuid
           : crypto.randomUUID();
       const user_uuid =
-        data.user_uuid?.length !== 0 ? data.user_uuid : crypto.randomUUID();
+        data.user_uuid && data.user_uuid?.length !== 0
+          ? data.user_uuid
+          : crypto.randomUUID();
 
       const clientPayload = generateFormData({
         uuid: data.uuid,
@@ -181,6 +184,11 @@ export function useUpsertBwfleetHandler({
           })
         );
       }
+
+      await updateOneMigration({
+        uuid: wwtClient.migration.uuid,
+        bfleet_client_uuid: data.uuid,
+      });
 
       toast.success("Dados do cliente atualizados com sucesso!");
     },
