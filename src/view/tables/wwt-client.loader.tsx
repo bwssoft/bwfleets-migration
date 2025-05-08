@@ -37,7 +37,10 @@ export async function WWTClientTableLoader({
     orderBy: [
       {
         accountStatsBean: {
-          deviceTotalNo: params.devicesOrderBy as never,
+          deviceTotalNo:
+            params.devicesOrderBy !== "none"
+              ? (params.devicesOrderBy as never)
+              : undefined,
         },
       },
     ],
