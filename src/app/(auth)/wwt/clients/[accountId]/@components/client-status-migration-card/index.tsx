@@ -21,6 +21,10 @@ export const ClientStatusMigrationCard: React.FC<IClientStatusMigrationCard> = (
       label: "Em Andamento"      
     },
     {
+      value: "INACTIVE",
+      label: "Cliente inativo"
+    },
+    {
       value: 'WAITING',
       label: "Aguardando resposta"
     },

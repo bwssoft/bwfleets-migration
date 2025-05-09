@@ -20,6 +20,7 @@ import {
   CircleEllipsis,
   Hourglass,
   PhoneOff,
+  UserRoundX,
   UserX,
 } from "lucide-react";
 import React from "react";
@@ -77,6 +78,11 @@ const ALERT_DATA: MigrationMapper = {
     title: "Pendente",
     description:
       "Atualmente esse cliente não está marcado para ser migrado para a nova plataforma. Inicie o processo de migração abaixo para continuar.",
+  },
+  INACTIVE: {
+    icon: <UserRoundX />,
+    title: "Cliente Inativo",
+    description: "Atualmente esse cliente se encontra com status inativo"
   },
   PENDING: {
     icon: <CircleEllipsis />,
