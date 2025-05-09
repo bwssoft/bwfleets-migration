@@ -110,6 +110,7 @@ model Comment {
 
 enum MigrationStatus {
   TO_DO             @map("TO-DO")
+  INACTIVE
   PENDING
   WAITING
   DONE

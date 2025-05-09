@@ -17,6 +17,7 @@ import {
   CircleDashed,
   CircleEllipsis,
   CircleX,
+  UserRoundX,
 } from "lucide-react";
 import { MigrationStatus } from "@prisma/client";
 
@@ -33,6 +34,11 @@ export const CLIENT_MIGRATION_STATUS_OPTIONS: Array<{ label: string, value: Migr
     label: "Pendente",
     value: "TO_DO",
     icon: <CircleDashed />,
+  },
+  {
+    label: "Cliente inativo",
+    value: "INACTIVE",
+    icon: <UserRoundX />,
   },
   {
     label: "Em andamento",

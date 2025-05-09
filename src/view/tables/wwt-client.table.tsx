@@ -106,6 +106,8 @@ export function WWTClientTable({ data, pagination }: WWTClientTableProps) {
         switch (data.migration?.migration_status) {
           case "TO_DO":
             return <Badge>Pendente</Badge>;
+          case "INACTIVE":
+            return <Badge variant="red">Cliente inativo</Badge>
           case "WAITING":
             return <Badge variant="yellow">Aguardando</Badge>;
           case "FAILED_BY_CLIENT":
