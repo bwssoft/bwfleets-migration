@@ -44,6 +44,7 @@ export async function upsertBfleetClient(formData: FormData) {
 
 interface UpsertBfleetUserParams {
   name: string;
+  full_name: string;
   email: string;
   contact: string;
   client: BFleetClient;
@@ -59,6 +60,7 @@ export async function upsertBfleetUser(formData: FormData) {
     name: data.name,
     email: data.email,
     contact: data.contact,
+    full_name: data.full_name
   };
 
   const clientData = {

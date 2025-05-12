@@ -291,6 +291,7 @@ type Contact {
   name    String
   email   String
   contact String
+  role    String
 }
 
 type Address {
@@ -322,6 +323,7 @@ type Validate {
 model BFleetUser {
   id           String             @id @default(auto()) @map("_id") @db.ObjectId
   uuid         String             @unique
+  full_name    String?
   name         String?
   email        String?
   client       ClientUserRelation

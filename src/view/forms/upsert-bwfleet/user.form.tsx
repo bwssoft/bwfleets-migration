@@ -26,7 +26,8 @@ export function UserForm({ form }: UserFormProps) {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 gap-2">
-          <Input label="Nome do usuário" {...form.register("user.name")} />
+          <Input label="Nome completo" {...form.register("user.full_name")} />
+          <Input label="Username (login)" {...form.register("user.name")} />
           <Input
             label="E-mail"
             type="email"
@@ -39,7 +40,7 @@ export function UserForm({ form }: UserFormProps) {
             name="user.contact"
             render={({ field }) => (
               <div>
-                <label className="text-sm font-medium">Contato principal</label>
+                <label className="text-sm font-medium">Número de telefone</label>
                 <InputWithMask
                   mask="(__) _____-____"
                   replacement={{ _: /\d/ }}

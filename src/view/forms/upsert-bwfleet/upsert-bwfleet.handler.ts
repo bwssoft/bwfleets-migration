@@ -20,6 +20,7 @@ const contactSchema = z.object({
   email: z.string().min(1, "Informe um e-mail válido de contato").email({
     message: "Informe um e-mail válido para contato",
   }),
+  role: z.string().min(1, "informe a posição do cliente"),
   contact: z.string().min(1, "Informe o numero de contato"),
 });
 
@@ -52,6 +53,7 @@ const schema = z.object({
   cep: z.string().optional(),
   user: z
     .object({
+      full_name: z.string().optional(),
       name: z.string().optional(),
       contact: z.string().optional(),
       email: z.string().optional(),
@@ -100,6 +102,7 @@ export function useUpsertBwfleetHandler({
       city: bfleetClient?.address?.city ?? undefined,
       state: bfleetClient?.address?.state ?? undefined,
       user: {
+        full_name: bfleetClient?.user?.full_name ?? undefined,
         name: bfleetClient?.user?.name ?? undefined,
         email: bfleetClient?.user?.email ?? undefined,
         contact: bfleetClient?.user?.contact ?? undefined,
@@ -168,6 +171,7 @@ export function useUpsertBwfleetHandler({
       const client = await upsertBfleetClient(clientPayload);
 
       const userPayload = cleanObject({
+        full_name: data.user?.full_name,
         name: data.user?.name,
         email: data.user?.email,
         contact: data.user?.contact,

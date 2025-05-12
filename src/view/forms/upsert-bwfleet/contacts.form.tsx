@@ -77,6 +77,12 @@ export function ContactsForm({ form, contactsFieldArray }: Props) {
                 )}
               />
 
+              <Input
+                label="Cargo do usuario"
+                {...form.register(`contacts.${index}.role`)}
+                error={form.formState.errors.contacts?.[index]?.role?.message}
+              />
+
               <Button
                 onClick={() => contactsFieldArray.remove(index)}
                 size="icon"
@@ -94,6 +100,7 @@ export function ContactsForm({ form, contactsFieldArray }: Props) {
                 name: "",
                 email: "",
                 contact: "",
+                role: ""
               })
             }
           >
