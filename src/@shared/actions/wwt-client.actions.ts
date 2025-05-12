@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
-import { Prisma } from "@prisma/client";
+import { WanwayClient, Prisma } from "@prisma/client";
 import { cleanObject } from "../utils/clean-object";
 import { prisma } from "../lib/prisma/prisma-client";
 import { IWanwayClient } from "../interfaces/wwt-client";
@@ -95,6 +95,7 @@ export async function findOneClient(params: FindOneClientParams): Promise<
 export type ITemplateParameters =
   | "client_name"
   | "time"
+  | "qnt_all_device"
   | "qnt_device"
   | "qnt_device_online_pctg"
   | "qnt_device_ofline_pctg"
@@ -104,9 +105,68 @@ export type IParametersValue = {
   onError?: (template: string) => string | void;
 };
 
+export type ICustomTree = {
+  accountId: number;
+    accountStatsBean: {
+        accountId: number;
+        deviceNo: number;
+        deviceTotalNo: number;
+        offlineDeviceNo: number;
+        onlineDeviceNo: number;
+        success: boolean;
+        unUsedDeviceNo: number;
+    };
+    isLeaf: number;
+}
+
 export async function generateUserSummary(data: IWanwayClient) {
+
+  const findSubClients = async (accountId: number) => {
+    const subClients = await prisma.wanwayClient.findMany({
+      where: {
+        parentId: {
+          equals: accountId
+        }
+      },
+      select: {
+        accountStatsBean: true,
+        isLeaf: true,
+        accountId: true,
+      },
+    })
+
+    return subClients;
+  }
+
+  const getRecursiveTree = async (data: Partial<WanwayClient>) : Promise<Array<ICustomTree>> => {
+    const hasSubClient = (data.isLeaf ?? 0 )> 0;
+
+    if(!hasSubClient) return []
+
+    const response = await findSubClients(data.accountId!);
+
+    for (const client of response) {
+      const subClients = await getRecursiveTree(client);
+      response.push(...subClients)
+    }
+
+    return response;
+  }
+
+  const allClients = await getRecursiveTree(data);
+
+  const { offline, online, quantity } = allClients.reduce((acc, value) => {
+    const { accountStatsBean: { onlineDeviceNo, offlineDeviceNo, unUsedDeviceNo, deviceNo } } = value;
+    acc['online'] += onlineDeviceNo
+    acc['offline'] += offlineDeviceNo + unUsedDeviceNo;
+    acc['quantity'] += deviceNo;
+    return acc;
+  }, { online: 0, offline: 0, quantity: 0 })
+
   const TEMPLATE_MESSAGE =
-    "Olá, {client_name}. Tudo bem? Você está com a gente desde {time} e durante todo esse tempo você atingiu os valores de {qnt_device} dispositivos, sendo {qnt_device_online_pctg} ativo e {qnt_device_ofline_pctg} inativos nos últimos meses e {qnt_client} clientes.";
+    "Olá, {client_name}. Tudo bem? Você está com a gente desde {time} e durante todo esse tempo você atingiu o volume de {qnt_client} clientes, e {qnt_all_device} dispositivos, sendo {qnt_device} na sua própria conta. Dentro desses, {qnt_device_online_pctg} estão ativos e {qnt_device_ofline_pctg} estão inativos nos últimos meses.";
+
+    
 
   const formatTime = (value?: number): string | undefined => {
     if (!value) return;
@@ -115,17 +175,27 @@ export async function generateUserSummary(data: IWanwayClient) {
   };
 
   const calcPercentage = (value: number, total: number) => {
-    return Math.round((value * 100) / total);
+    const response = (value * 100) / total;
+    const arrounded = Math.round(response);
+
+    if(arrounded === 0 && response > 0 ) return 1
+
+    if(arrounded > 100) return 100
+
+    return arrounded
   };
 
   const calculateDeviceStatistics = () => {
     const { offlineDeviceNo, onlineDeviceNo, unUsedDeviceNo, deviceNo } =
       data.accountStatsBean;
+    const offlineQuantity = offlineDeviceNo + unUsedDeviceNo + offline
+    const deviceTotalNo = deviceNo + quantity;
     const oflinePercentage = calcPercentage(
-      offlineDeviceNo + unUsedDeviceNo,
-      deviceNo
+      offlineQuantity,
+      deviceTotalNo 
     );
-    const onlinePercentage = calcPercentage(onlineDeviceNo, deviceNo);
+    const onlineQuantity = onlineDeviceNo + online;
+    const onlinePercentage = calcPercentage(onlineQuantity, deviceTotalNo);
 
     return {
       oflinePercentage,
@@ -134,7 +204,6 @@ export async function generateUserSummary(data: IWanwayClient) {
   };
 
   const { oflinePercentage, onlinePercentage } = calculateDeviceStatistics();
-
   const templateParameters: Record<ITemplateParameters, IParametersValue> = {
     client_name: {
       value: data.userName,
@@ -148,11 +217,19 @@ export async function generateUserSummary(data: IWanwayClient) {
         return template.replace(excludeTime, valueToReplace);
       },
     },
+    qnt_all_device: {
+      value: data.accountStatsBean.deviceTotalNo?.toString(),
+      onError: (template: string) => {
+        const excludeDevice = "{qnt_all_device} dispositivos, sendo {qnt_device} na sua própria conta. Dentro desses, {qnt_device_online_pctg} estão ativos e {qnt_device_ofline_pctg} estão inativos nos últimos meses."
+        const valueToReplace = "";
+        return template.replace(excludeDevice, valueToReplace);
+      },
+    },
     qnt_device: {
-      value: data.accountStatsBean.deviceNo?.toString(),
+      value: data.accountStatsBean.deviceNo?.toString() === data.accountStatsBean.deviceTotalNo.toString() ? "todos" : data.accountStatsBean.deviceNo?.toString(),
       onError: (template: string) => {
         const excludeDevice =
-          "{qnt_device} dispositivos, sendo {qnt_device_online_pctg} ativo e {qnt_device_ofline_pctg} inativos nos últimos meses e";
+          ", sendo {qnt_device} na sua própria conta";
         const valueToReplace = "";
         return template.replace(excludeDevice, valueToReplace);
       },
@@ -160,7 +237,7 @@ export async function generateUserSummary(data: IWanwayClient) {
     qnt_device_online_pctg: {
       value: onlinePercentage ? `${onlinePercentage}%` : undefined,
       onError: (template: string) => {
-        const exclude = "{qnt_device_online_pctg} ativo e";
+        const exclude = "{qnt_device_online_pctg} estão ativos e";
         const valueToReplace = "";
         return template.replace(exclude, valueToReplace);
       },
@@ -168,17 +245,24 @@ export async function generateUserSummary(data: IWanwayClient) {
     qnt_device_ofline_pctg: {
       value: oflinePercentage ? `${oflinePercentage}%` : undefined,
       onError: (template: string) => {
-        const exclude = "{qnt_device_ofline_pctg} desativados";
+        const excludeParts = [
+          "e {qnt_device_ofline_pctg} estão inativos nos últimos meses.",
+          " e {qnt_device_ofline_pctg} estão inativos nos últimos meses.",
+          "{qnt_device_ofline_pctg} estão inativos nos últimos meses."
+        ]
         const valueToReplace = "";
-        return template.replace(exclude, valueToReplace);
+        excludeParts.map(
+          (exclude) => (template = template.replace(exclude, valueToReplace))
+        );
+        return valueToReplace
       },
     },
     qnt_client: {
       value: data.isLeaf.toString(),
       onError: (template: string) => {
         const excludeParts = [
-          " e {qnt_client} clientes",
-          "{qnt_client} clientes",
+          "{qnt_client} clientes, e",
+          " {qnt_client} clientes, e",
         ];
         const valueToReplace = "";
         excludeParts.map(
@@ -205,7 +289,6 @@ export async function generateUserSummary(data: IWanwayClient) {
   parameterskey.forEach((key) => {
     const parameter = templateParameters[key];
     const isValid = isValidValue(parameter.value);
-    console.log({ key, value: parameter.value, isValid });
     if (!isValid) {
       const reply = parameter.onError?.(response);
       if (reply) {
@@ -216,15 +299,19 @@ export async function generateUserSummary(data: IWanwayClient) {
   });
 
   const refineMessage = () => {
-    const { qnt_client, qnt_device } = templateParameters;
+    const { qnt_client, qnt_all_device } = templateParameters;
     const clientIsValid = isValidValue(qnt_client.value);
-    const deviceIsValid = isValidValue(qnt_device.value);
+    const deviceIsValid = isValidValue(qnt_all_device.value);
 
     if (!clientIsValid && !deviceIsValid) {
       response = response.replace(
-        "e durante todo esse tempo você atingiu os valores de",
-        ""
+        "{qnt_client} clientes, e",
+        " {qnt_client} clientes, e"
       );
+      response = response.replace(
+        " e durante todo esse tempo você atingiu o volume de",
+        "."
+      )
     }
   };
 
