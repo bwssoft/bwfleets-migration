@@ -103,7 +103,7 @@ export function useUpsertBwfleetHandler({
       state: bfleetClient?.address?.state ?? undefined,
       user: {
         full_name: bfleetClient?.user?.full_name ?? undefined,
-        name: bfleetClient?.user?.name ?? undefined,
+        name: bfleetClient?.user?.name ?? wwtClient.accountName,
         email: bfleetClient?.user?.email ?? undefined,
         contact: bfleetClient?.user?.contact ?? undefined,
       },
