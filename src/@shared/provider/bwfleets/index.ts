@@ -5,6 +5,7 @@ import { IServiceHookHelper, IServiceHookHelperResponse } from "@/@shared/interf
 import { ServiceAPIHelper } from "@/@shared/utils/ServiceHookHelper";
 import { NAuthService } from "./@base/@types";
 import LocalStorageAdapter from "./@base/LocalStorageAdapter";
+import { BFleetClient } from "@prisma/client";
 
 export class BWFleetsProvider {
   protected _httpClient: HttpClient
@@ -34,6 +35,17 @@ export class BWFleetsProvider {
 		if (ttoken) {
 			LocalStorageAdapter.set('ACCESS_TOKEN', { ttoken })
 		}
+
+		return response
+	}
+
+	async createOneClient(data: { data: Partial<BFleetClient> }) {
+		const { serviceHookHelper } = this._serviceHelper
+
+		const response = await serviceHookHelper("POST")({
+			url: `/client/create-one`,
+			data: data,
+		})
 
 		return response
 	}

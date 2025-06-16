@@ -8,6 +8,7 @@ import { InputWithAddons, InputWithAddonsProps } from "./input-with-addon";
 interface InputWithMaskProps extends InputWithAddonsProps {
   mask?: string;
   replacement?: Replacement;
+  error?: string;
 }
 
 export function InputWithMask({

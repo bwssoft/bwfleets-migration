@@ -11,7 +11,7 @@ import {
   SidebarMenuItem,
 } from "@/view/components/ui/sidebar";
 import { LogoutForm } from "@/view/forms/logout.form";
-import { UserIcon, Users2Icon } from "lucide-react";
+import { UserIcon, UserRoundPlusIcon, Users2Icon } from "lucide-react";
 import { headers } from "next/headers";
 import Link from "next/link";
 
@@ -59,6 +59,14 @@ export async function AppSidebar() {
                 <Link href="/wwt/clients">
                   <UserIcon />
                   <span>Clientes</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link href="/wwt/create">
+                  <UserRoundPlusIcon />
+                  <span>Criar cliente</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

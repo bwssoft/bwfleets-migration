@@ -39,6 +39,7 @@ export type InputWithAddonsProps = {
   leftAddon?: React.ReactNode;
   rightAddon?: React.ReactNode;
   className?: string;
+  error?: string;
 } & React.InputHTMLAttributes<HTMLInputElement>;
 
 export const InputWithAddons = React.forwardRef<
@@ -58,6 +59,7 @@ export const InputWithAddons = React.forwardRef<
         {...props}
       />
       {rightAddon && <InputRightAddon>{rightAddon}</InputRightAddon>}
+      
     </div>
   );
 });

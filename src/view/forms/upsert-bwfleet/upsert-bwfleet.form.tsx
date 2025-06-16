@@ -7,15 +7,12 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/view/components/ui/dialog";
-import { AddressForm } from "./address.form";
-import { UserForm } from "./user.form";
-import { GeneralForm } from "./general.form";
 import { useUpsertBwfleetHandler } from "./upsert-bwfleet.handler";
 import { Button } from "@/view/components/ui/button";
 import { PencilIcon } from "lucide-react";
 import { useDisclosure } from "@/@shared/hooks/use-disclosure";
-import { ContactsForm } from "./contacts.form";
 import { IBFleetClient, IWanwayClient } from "@/@shared/interfaces";
+import { ContentForm } from "./content.form";
 
 interface UpsertBWFleetFormProps {
   bfleetClient: IBFleetClient | null;
@@ -47,19 +44,11 @@ export function UpsertBWFleetForm({
           <DialogDescription>Atualize os dados a seguir</DialogDescription>
         </DialogHeader>
 
-        <div className="flex flex-col my-4 gap-4">
-          <GeneralForm form={form} />
-          <ContactsForm form={form} contactsFieldArray={contactsFieldArray} />
-          <AddressForm form={form} />
-          <UserForm form={form} />
-        </div>
-        <Button
-          className="w-fit"
-          disabled={form.formState.isSubmitting}
-          onClick={() => handleSubmit()}
-        >
-          Salvar
-        </Button>
+        <ContentForm 
+          form={form}
+          handleSubmit={handleSubmit}
+          contactsFieldArray={contactsFieldArray}
+        />
       </DialogContent>
     </Dialog>
   );
