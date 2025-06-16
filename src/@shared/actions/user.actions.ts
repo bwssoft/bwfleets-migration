@@ -17,8 +17,6 @@ export async function signIn(formData: FormData) {
   await auth.api.signInEmail({
     body: data,
   });
-
-  redirect("/home");
 }
 
 export async function signOut() {
