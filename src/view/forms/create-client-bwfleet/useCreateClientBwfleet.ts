@@ -1,5 +1,7 @@
+import {  createBfleetClientEntity, ICreateBfleetClientEntityParams } from "@/@shared/actions/bwfleet-client-entity.actions";
 import { authClient } from "@/@shared/lib/better-auth/auth-client";
 import { BWFleetsProvider } from "@/@shared/provider/bwfleets";
+import { generateFormData } from "@/@shared/utils/parse-form-data";
 import { removeSpecialCharacters } from "@/@shared/utils/removeSpecialCharacters";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMemo } from "react";
@@ -106,11 +108,6 @@ export const useCreateClientBwfleet = (): IUseCreateClientBwfleetResponse => {
       days: 60,
     };
 
-    const migration = {
-      assignee_id: session!.user.id,
-      name: session!.user.name,
-    }
-    
     const address = {
       cep: removeSpecialCharacters(data.cep),
       city: data.city,
@@ -151,10 +148,22 @@ export const useCreateClientBwfleet = (): IUseCreateClientBwfleetResponse => {
         email: data.user.email,
         contact: removeSpecialCharacters(`+55 ${data.user.contact}`),
       },
-      migration
     };
 
-    await _BWFleetsProvider.createOneClient({ data: clientPayload as any }).then(() => {
+
+
+    await _BWFleetsProvider.createOneClient({ data: clientPayload as any }).then(async ({ response }) => {
+      const clientLocalEntity: ICreateBfleetClientEntityParams = {
+        assigned_uuid: session?.user?.id ?? "",
+        assigned_name: session?.user?.name ?? "",
+        bwfleet: {
+          email: clientPayload.user.email,
+          name: clientPayload.name,
+          uuid: response.data.uuid,
+        }
+      }
+      const formData = generateFormData(clientLocalEntity) as FormData;
+      await createBfleetClientEntity(formData);
       clearFields();
       toast.success("Cliente criado com sucesso!");
     });

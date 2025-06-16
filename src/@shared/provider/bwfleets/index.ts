@@ -7,6 +7,13 @@ import { NAuthService } from "./@base/@types";
 import LocalStorageAdapter from "./@base/LocalStorageAdapter";
 import { BFleetClient } from "@prisma/client";
 
+export type ICreateOneClientReply = {
+	response: {
+		data: {
+			uuid: string;
+		}
+	}
+}
 export class BWFleetsProvider {
   protected _httpClient: HttpClient
   protected _httpProvider: AxiosInstance
@@ -42,12 +49,12 @@ export class BWFleetsProvider {
 	async createOneClient(data: { data: Partial<BFleetClient> }) {
 		const { serviceHookHelper } = this._serviceHelper
 
-		const response = await serviceHookHelper("POST")({
+		const response = await serviceHookHelper("POST")<ICreateOneClientReply>({
 			url: `/client/create-one`,
 			data: data,
 		})
 
-		return response
+		return response.data
 	}
   
 }

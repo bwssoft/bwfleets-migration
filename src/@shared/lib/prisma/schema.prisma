@@ -250,6 +250,19 @@ model Verification {
   @@map("verification")
 }
 
+type ClientEntity {
+  uuid  String
+  name  String?
+  email String?
+}
+
+model BFleetClientEntity {
+  id            String       @id @map("_id")
+  bwfleet       ClientEntity
+  assigned_uuid String?
+  assigned_name String?
+}
+
 model BFleetClient {
   id                     String       @id @default(auto()) @map("_id") @db.ObjectId
   uuid                   String       @unique
