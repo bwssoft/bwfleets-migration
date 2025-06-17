@@ -22,7 +22,10 @@ import { CustomError } from "./custom.error";
 
 interface Props {
   form: UseFormReturn<BWFleetCreateClientFormData>;
-  contactsFieldArray: UseFieldArrayReturn<BWFleetCreateClientFormData, "contacts">;
+  contactsFieldArray: UseFieldArrayReturn<
+    BWFleetCreateClientFormData,
+    "contacts"
+  >;
   errors: FieldErrors<BWFleetCreateClientFormData>;
 }
 
@@ -33,8 +36,10 @@ export function ContactsForm({ form, contactsFieldArray, errors }: Props) {
         <CardTitle>Contatos</CardTitle>
         <CardDescription>
           Principais meios de contato ao cliente
-          <CustomError 
-            errors={[errors.contacts?.message]}
+          <CustomError
+            errors={[
+              errors.contacts?.root?.message ?? errors.contacts?.message,
+            ]}
           />
         </CardDescription>
       </CardHeader>
@@ -106,7 +111,7 @@ export function ContactsForm({ form, contactsFieldArray, errors }: Props) {
                 name: "",
                 email: "",
                 contact: "",
-                role: ""
+                role: "",
               })
             }
           >
