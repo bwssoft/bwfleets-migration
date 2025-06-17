@@ -251,7 +251,7 @@ model Verification {
 }
 
 type ClientEntity {
-  uuid  String
+  uuid  String?
   name  String?
   email String?
 }

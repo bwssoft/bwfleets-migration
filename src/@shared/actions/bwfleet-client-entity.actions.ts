@@ -36,7 +36,6 @@ export async function findBwfleetClientEntity(params: FindManyBClientsParams) {
   const formattedOrderBy = cleanObject(orderBy);
 
   const skip = !!page ? pageSize * Number(page - 1) : 0;
-
   const count = await prisma.bFleetClientEntity.count({
     where: formattedWhere,
   });
@@ -46,18 +45,6 @@ export async function findBwfleetClientEntity(params: FindManyBClientsParams) {
     take: pageSize,
     where: formattedWhere,
     orderBy: formattedOrderBy as Prisma.WanwayClientOrderByWithRelationInput[],
-    include: {
-      migration: {
-        include: {
-          assigned: true,
-          comments: {
-            include: {
-              user: true,
-            },
-          },
-        },
-      },
-    },
   });
 
   return {
