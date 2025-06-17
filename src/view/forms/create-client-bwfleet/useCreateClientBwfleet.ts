@@ -146,7 +146,7 @@ export const useCreateClientBwfleet = (): IUseCreateClientBwfleetResponse => {
       user: {
         name: data.user.name,
         email: data.user.email,
-        contact: removeSpecialCharacters(`+55 ${data.user.contact}`),
+        contact: removeSpecialCharacters(`+55 ${data.user.contact}`)
       },
     };
 

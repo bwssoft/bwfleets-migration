@@ -45,9 +45,12 @@ export function BFleetClientsTable({ data, pagination }: BFleetClientTableProps)
           uuid: client.bwfleet.uuid!,
         }
       }).then((response) => {
+        const url = `https://bwfleets.com/welcome?token=${response.response.ttoken}`;
         accessLinkDisclosure.setData({
           isLoading: false,
-          data: response.response,
+          data: {
+            ttoken: url,
+          },
         });
       })
 
@@ -93,7 +96,7 @@ export function BFleetClientsTable({ data, pagination }: BFleetClientTableProps)
       id: "action",
       header: "#",
       cell: ({ row }) => (
-        <Button onClick={() => handleGenAccessLink(row.original)} >
+        <Button disabled className='hidden' onClick={() => handleGenAccessLink(row.original)} >
           <ScanTextIcon />
           <span>Gerar link de acesso</span>
         </Button>
