@@ -1,7 +1,7 @@
 import React from 'react';
 import { BFleetClientsTable } from './bfleet-clients.table';
 import { findBwfleetClientEntity } from '@/@shared/actions/bwfleet-client-entity.actions';
-import { IBFleetClientsPageParams } from '@/app/(auth)/wwt/create/params';
+import { IBFleetClientsPageParams } from '@/app/(auth)/bwfleets/params';
 
 
 export interface BFleetClientsTableLoaderProps {

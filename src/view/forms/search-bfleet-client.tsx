@@ -10,7 +10,7 @@ import { FilterClearButton } from "../components/ui/filter-clear-button";
 
 export function SearchBfleetClient() {
 
-  const { form, handleClearFilters, handleSucceededSubmit, isPending, searchParams } = useBfleetClientFormHandler();
+  const { form, handleClearFilters, handleSucceededSubmit, isPending, searchParams, handleCreateClient } = useBfleetClientFormHandler();
 
   return (
     <form
@@ -56,7 +56,7 @@ export function SearchBfleetClient() {
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <Button>Cadastrar</Button>
+        <Button type="button" onClick={handleCreateClient} >Cadastrar</Button>
       </div>
     </form>
   )

@@ -11,7 +11,7 @@ import {
   SidebarMenuItem,
 } from "@/view/components/ui/sidebar";
 import { LogoutForm } from "@/view/forms/logout.form";
-import { UserIcon, UserRoundPlusIcon, Users2Icon } from "lucide-react";
+import { UserIcon, Users2Icon, UsersIcon } from "lucide-react";
 import { headers } from "next/headers";
 import Link from "next/link";
 
@@ -62,11 +62,22 @@ export async function AppSidebar() {
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
+            {/* <SidebarMenuItem>
+              <SidebarMenuButton>
+                <SmartphoneIcon />
+                <span>Dispositivos</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem> */}
+          </SidebarMenu>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>BWFleets</SidebarGroupLabel>
+          <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link href="/wwt/create">
-                  <UserRoundPlusIcon />
-                  <span>Criar cliente</span>
+                <Link href="/bwfleets">
+                  <UsersIcon />
+                  <span>Meus clientes</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

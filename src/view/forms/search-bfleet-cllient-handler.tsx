@@ -18,7 +18,7 @@ const schema = z.object({
 export type SearchBFleetClientFormData = z.infer<typeof schema>;
 
 export function useBfleetClientFormHandler() {
-const { refresh } = useRouter();
+const { refresh, replace } = useRouter();
 
 const [isPending, startTransition] = React.useTransition();
 
@@ -57,11 +57,16 @@ const [isPending, startTransition] = React.useTransition();
     });
   }
 
+  function handleCreateClient() {
+    replace("/bwfleets/create");
+  }
+
   return {
     form,
     isPending,
     handleSucceededSubmit,
     handleClearFilters,
     searchParams,
+    handleCreateClient
   }
 }

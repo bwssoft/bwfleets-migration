@@ -15,8 +15,8 @@ export type IContentFormProps = {
 }
 export const ContentForm: React.FC<IContentFormProps> = ({ contactsFieldArray, form, errors, handleSubmit }) => {
   return (
-    <div className='flex flex-col relative max-h-[98vh] h-full overflow-hidden w-full'>
-      <div className="flex flex-col overflow-y-auto my-4 gap-4">
+    <div className='flex flex-col max-h-[10%] h-full overflow-hidden w-full'>
+      <div className="flex flex-col max-h-full overflow-y-auto my-4 gap-4">
         <GeneralForm errors={errors} form={form} />
         <ContactsForm form={form} errors={errors} contactsFieldArray={contactsFieldArray} />
         <AddressForm errors={errors} form={form} />
