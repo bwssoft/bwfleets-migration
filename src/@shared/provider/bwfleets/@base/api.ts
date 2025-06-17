@@ -4,7 +4,6 @@ import qs from "qs"
 
 import { HttpClient } from "./HttpClient"
 import LocalStorageAdapter from "./LocalStorageAdapter"
-console.log("API_HOST", process.env.NEXT_PUBLIC_API_HOST)
 export const customAxios = axios.create({
 	baseURL: `${process.env.NEXT_PUBLIC_API_HOST}`,
 	headers: {
@@ -42,7 +41,6 @@ customAxios.interceptors.response.use(
 		const status = request?.status
 
 		if (status === 401 || status === 403) {
-			console.log("Aqui")
 			localStorage.clear()
 			window.location.reload()
 		}
