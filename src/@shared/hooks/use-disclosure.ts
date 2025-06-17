@@ -8,9 +8,13 @@ export interface IDisclosureComponentProps {
 
 export type IUseDisclosureHook<TData> = ReturnType<typeof useDisclosure<TData>>;
 
-export function useDisclosure<TData>() {
+export type IDisclosureParams<TData> = {
+  default?: TData
+}
+
+export function useDisclosure<TData>(params?: IDisclosureParams<TData>) {
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
-  const [data, setData] = React.useState<TData>();
+  const [data, setData] = React.useState<TData | undefined>(params?.default);
 
   const onOpen = React.useCallback(function openDisclosure(_data?: TData) {
     setIsOpen(true);
@@ -30,5 +34,6 @@ export function useDisclosure<TData>() {
     onOpen,
     onClose,
     data,
+    setData
   };
 }

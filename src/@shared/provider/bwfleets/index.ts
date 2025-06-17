@@ -14,6 +14,12 @@ export type ICreateOneClientReply = {
 		}
 	}
 }
+
+export type IGenerateAccessLinkReply = {
+	response: {
+		ttoken: string;
+	}
+}
 export class BWFleetsProvider {
   protected _httpClient: HttpClient
   protected _httpProvider: AxiosInstance
@@ -52,6 +58,17 @@ export class BWFleetsProvider {
 		const response = await serviceHookHelper("POST")<ICreateOneClientReply>({
 			url: `/client/create-one`,
 			data: data,
+		})
+
+		return response.data
+	}
+
+	async generateAccessLink(data: { query: { uuid: string } }) {
+		const { serviceHookHelper } = this._serviceHelper
+
+		const response = await serviceHookHelper("GET")<IGenerateAccessLinkReply>({
+			url: `/client/init-validating-process`,
+			data,
 		})
 
 		return response.data
