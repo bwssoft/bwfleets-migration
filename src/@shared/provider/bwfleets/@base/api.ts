@@ -42,6 +42,7 @@ customAxios.interceptors.response.use(
 		const status = request?.status
 
 		if (status === 401 || status === 403) {
+			console.log("Aqui")
 			localStorage.clear()
 			window.location.reload()
 		}

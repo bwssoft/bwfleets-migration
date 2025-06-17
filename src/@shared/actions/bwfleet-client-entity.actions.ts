@@ -3,6 +3,8 @@ import { BFleetClientEntity, Prisma } from "@prisma/client";
 import { parseFormData } from "../utils/parse-form-data";
 import { prisma } from "../lib/prisma/prisma-client";
 import { cleanObject } from "../utils/clean-object";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 
 export type ICreateBfleetClientEntityParams = Omit<BFleetClientEntity, 'id'>;
@@ -14,12 +16,15 @@ export async function createBfleetClientEntity(
 
   const uuid = crypto.randomUUID();
 
-  return await prisma.bFleetClientEntity.create({
+  await prisma.bFleetClientEntity.create({
     data: {
       id: uuid,
       ...data,
     }
   });
+
+  revalidatePath(`/bwfleets`);
+  redirect(`/bwfleets`);
 }
 
 interface FindManyBClientsParams {

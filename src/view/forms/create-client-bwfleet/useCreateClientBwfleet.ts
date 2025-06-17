@@ -163,9 +163,9 @@ export const useCreateClientBwfleet = (): IUseCreateClientBwfleetResponse => {
         }
       }
       const formData = generateFormData(clientLocalEntity) as FormData;
-      await createBfleetClientEntity(formData);
-      clearFields();
       toast.success("Cliente criado com sucesso!");
+      clearFields();
+      await createBfleetClientEntity(formData);
     });
   });
 
