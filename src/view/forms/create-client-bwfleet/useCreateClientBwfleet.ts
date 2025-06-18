@@ -8,6 +8,7 @@ import { generateFormData } from "@/@shared/utils/parse-form-data";
 import { removeSpecialCharacters } from "@/@shared/utils/removeSpecialCharacters";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
+import { addDays } from "date-fns";
 import { useMemo } from "react";
 import {
   FieldErrors,
@@ -153,7 +154,7 @@ export const useCreateClientBwfleet = (): IUseCreateClientBwfleetResponse => {
   const handleSubmit = form.handleSubmit(async (data) => {
     const _BWFleetsProvider = new BWFleetsProvider();
     const valid = {
-      date: new Date(),
+      date: addDays(new Date(), 60),
       days: 60,
     };
 
