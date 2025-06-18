@@ -7,12 +7,20 @@ import { Badge } from "@/view/components/ui/badge";
 import { DataTable } from "@/view/components/ui/data-table";
 import { DataTablePagination } from "@/view/components/ui/data-table-pagination";
 import { ColumnDef } from "@tanstack/react-table";
-import { ExternalLinkIcon, LoaderIcon, User } from "lucide-react";
+import { ClipboardIcon, ExternalLinkIcon, LoaderIcon, User } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useMemo, useState, useTransition } from "react";
+import { useCallback, useMemo, useState, useTransition } from "react";
 import { Avatar, AvatarFallback } from "../components/ui/avatar";
 import { Button } from "../components/ui/button";
 import { startMigration } from "@/@shared/actions/migration.action";
+import { Dialog, DialogContent, DialogDescription,  DialogFooter,  DialogHeader, DialogTitle } from "../components/ui/dialog";
+import { useDisclosure } from "@/@shared/hooks/use-disclosure";
+import MigrationProcess from "./@components/migration-process";
+import { MigrationAccessToken } from "@prisma/client";
+import LoadingAcessLink from "../forms/access-link/loading";
+import { toast } from "sonner";
+import { BWFleetsProvider } from "@/@shared/provider/bwfleets";
+import { differenceInHours } from "date-fns";
 
 interface WWTClientTableProps {
   data: Array<IWanwayClient>;
@@ -28,6 +36,10 @@ export function WWTClientTable({ data, pagination }: WWTClientTableProps) {
 
   const [isPending, startTransition] = useTransition();
   const [peddingId, setPeddingId] = useState<string>();
+  const processMigrationDisclousure = useDisclosure<{ accountId: number, id?: string }>();
+  const migrationTokenDisclousure = useDisclosure<MigrationAccessToken>();
+  const [pendingToken, setPendingToken] = useState<boolean>(true);
+  const bWFleetsProvider = new BWFleetsProvider();
 
   const currentUser = useMemo(() => {
     const user = session.data?.user;
@@ -118,6 +130,8 @@ export function WWTClientTable({ data, pagination }: WWTClientTableProps) {
             return <Badge variant="blue">Em Andamento</Badge>;
           case "DONE":
             return <Badge variant="green">Aceitou migrar</Badge>;
+          case "SUCCESS":
+            return <Badge variant="green">Migração Concluída</Badge>;
           default:
             return <Badge>Pendente</Badge>;
         }
@@ -131,6 +145,18 @@ export function WWTClientTable({ data, pagination }: WWTClientTableProps) {
           data.migration?.migration_status !== "TO_DO" &&
           data.migration?.migration_status !== null &&
           data.migration?.migration_status !== undefined;
+
+        if(data.migration?.migration_status === 'DONE') {
+          return (
+            <Button id="action-button" onClick={() => processMigrationDisclousure.onOpen({ accountId: data.accountId, id: data.migration?.uuid })} size={"sm"}>Migrar dados</Button>
+          )
+        }
+
+        if(data.migration?.migration_status === 'SUCCESS') {
+          return (
+            <Button id="action-button" onClick={() => handleGenLink(data.migration!.migration_token!, data.migration!.uuid)} >Link de acesso</Button>
+          )
+        }
 
         return (
           <Button
@@ -153,6 +179,89 @@ export function WWTClientTable({ data, pagination }: WWTClientTableProps) {
     },
   ];
 
+  const handleGenLink = async (data: MigrationAccessToken, id: string) => {
+    setPendingToken(true)
+    migrationTokenDisclousure.onOpen(data)
+    try {
+      const { created_at, bfleet_uuid } = data
+      const diffHours = differenceInHours(new Date(), created_at)
+      console.log({ diffHours })
+      if(diffHours >= 7) {
+        const replyToken = await bWFleetsProvider.generateAccessLink({
+          query: { uuid: bfleet_uuid }
+        })
+        const { ttoken } = replyToken.response
+        const body = {
+          token: ttoken,
+          uuid: id,
+          bfleet_uuid
+        }
+        
+        await fetch('/api/migration/finish', {
+          method: 'POST',
+          body: JSON.stringify(body),
+          headers: {
+            "Content-Type": "application/json",
+          }
+        })
+
+        migrationTokenDisclousure.setData({
+          ...data,
+          created_at: new Date(),
+          token: ttoken
+        })
+      }
+    }
+    finally {
+      setPendingToken(false)
+    }
+  }
+
+  const onInternalClose = () => {
+    processMigrationDisclousure.onClose()
+    router.refresh()
+  }
+
+  const getAccessLink = useCallback((token?: string) => {
+    const url = `https://bwfleets.com/welcome?token=${token}`;
+    return url;
+  }, [])
+
+  const handleURLCopy = (url: string | undefined) => {
+    if (!url) return
+
+    navigator.clipboard.writeText(url)
+    toast.success("Link de acesso copiado com sucesso!")
+  }
+
+  const AccessLinkContent = () => {
+    return (
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Link gerado com sucesso!</DialogTitle>
+          <DialogDescription>
+            Use esse link para fazer o primeiro acesso ao cliente.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="mt-3 flex flex-col space-y-2 overflow-hidden">
+          <button
+						onClick={() => handleURLCopy(getAccessLink(migrationTokenDisclousure.data?.token))}
+						className="flex items-center cursor-pointer justify-between gap-4 rounded-md border border-border bg-accent p-2 px-3 text-left text-muted-foreground transition-all hover:bg-accent/50"
+					>
+						<div className="w-full overflow-hidden text-ellipsis whitespace-nowrap">
+							<span>{getAccessLink(migrationTokenDisclousure.data?.token) ?? "--"}</span>
+						</div>
+
+						<ClipboardIcon className="h-4 w-4" />
+					</button>
+          </div>
+          <DialogFooter>
+            <Button onClick={migrationTokenDisclousure.onClose} >Fechar</Button>
+          </DialogFooter>
+      </DialogContent>
+    )
+  }
+
   return (
     <section className="space-y-4 bg-card">
       <DataTable
@@ -167,6 +276,28 @@ export function WWTClientTable({ data, pagination }: WWTClientTableProps) {
           pageSize={pagination.pageSize}
         />
       )}
+
+      <Dialog
+        open={migrationTokenDisclousure.isOpen}
+        onOpenChange={migrationTokenDisclousure.onClose}
+      >
+        {pendingToken ? <LoadingAcessLink /> : <AccessLinkContent />}
+      </Dialog>
+
+      <Dialog
+        open={processMigrationDisclousure.isOpen}
+        onOpenChange={processMigrationDisclousure.onClose}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Processo de migração</DialogTitle>
+            <DialogDescription>
+              Aguarde as etapas serem finalizadas
+            </DialogDescription>
+          </DialogHeader>
+          <MigrationProcess onClose={onInternalClose} id={processMigrationDisclousure.data?.id}   accountId={processMigrationDisclousure.data?.accountId} />
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }

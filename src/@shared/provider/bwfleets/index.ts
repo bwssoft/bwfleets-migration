@@ -3,9 +3,10 @@ import api, { customAxios } from "./@base/api";
 import { HttpClient } from "./@base/HttpClient";
 import { IServiceHookHelper, IServiceHookHelperResponse } from "@/@shared/interfaces/ServiceHookHelper";
 import { ServiceAPIHelper } from "@/@shared/utils/ServiceHookHelper";
-import { NAuthService } from "./@base/@types";
+import { NAuthService, NFindDtos, NUpdateDtos } from "./@base/@types";
 import LocalStorageAdapter from "./@base/LocalStorageAdapter";
 import { BFleetClient } from "@prisma/client";
+import { ClientEntity, UserEntity } from "./@base/entities/client.entity";
 
 export type ICreateOneClientReply = {
 	response: {
@@ -44,7 +45,6 @@ export class BWFleetsProvider {
 		})
 
 		const { ttoken } = response.data.response
-    console.log("ttoken", ttoken)
 		if (ttoken) {
 			LocalStorageAdapter.set('ACCESS_TOKEN', { ttoken })
 		}
@@ -73,5 +73,40 @@ export class BWFleetsProvider {
 
 		return response.data
 	}
+
+	async findOneClient(params: NFindDtos.FindOne.Params<ClientEntity>) {
+		const { serviceHookHelper } = this._serviceHelper
+
+		const response = await serviceHookHelper("GET")<NFindDtos.FindOne.Response<ClientEntity>>({
+			url: `/client/find-one`,
+			data: params,
+		})
+
+		return response.data
+	}
+
+	async updateOneClient(params: NUpdateDtos.UpdateOne.Params<ClientEntity>) {
+		const { serviceHookHelper } = this._serviceHelper
+
+		const response = await serviceHookHelper("PUT")<NUpdateDtos.UpdateOne.Response>({
+			url: `/client/update-one`,
+			data: params,
+		})
+
+		return response.data
+	}
+
+	async updateOneUser(params: NUpdateDtos.UpdateOne.Params<UserEntity>) {
+		const { serviceHookHelper } = this._serviceHelper
+
+		const response = await serviceHookHelper("PUT")<IGenerateAccessLinkReply>({
+			url: `/user/update-one`,
+			data: params,
+		})
+
+		return response.data
+	}
+
+
   
 }

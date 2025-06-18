@@ -19,6 +19,7 @@ import {
   CircleDashed,
   CircleEllipsis,
   Hourglass,
+  MailCheck,
   PhoneOff,
   UserRoundX,
   UserX,
@@ -108,7 +109,12 @@ const ALERT_DATA: MigrationMapper = {
   },
   DONE: {
     icon: <CircleCheck />,
-    title: "Concluído",
-    description: "Esse cliente foi migrado com sucesso.",
+    title: "Aceitou migrar",
+    description: "Esse cliente aceitou a migração com sucesso.",
   },
+  SUCCESS: {
+    icon: <MailCheck />,
+    title: 'Migração Concluída',
+    description: "Esse cliente foi migrado para a BWFleets com successo"
+  }
 };

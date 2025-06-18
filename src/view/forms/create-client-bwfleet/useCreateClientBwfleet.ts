@@ -40,7 +40,7 @@ const contactSchema = z.object({
   contact: z.string().min(1, "Informe o numero de contato"),
 });
 
-const schema = z.object({
+export const schema = z.object({
   uuid: z.string().optional(),
   name: z.string().min(1, "Informe o nome do cliente"),
   document_type: z

@@ -116,6 +116,7 @@ enum MigrationStatus {
   DONE
   FAILED_BY_CLIENT  @map("FAIELD-BY-CLIENT")
   FAILED_BY_CONTACT @map("FAIELD-BY-CONTACT")
+  SUCCESS
 }
 
 model WanwayClient {
@@ -352,6 +353,12 @@ type ClientUserRelation {
   name String
 }
 
+type MigrationAccessToken {
+  token       String
+  created_at  DateTime @default(now())
+  bfleet_uuid String
+}
+
 model Migration {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   uuid       String   @unique
@@ -368,7 +375,8 @@ model Migration {
   bfleet_client_uuid String?       @unique
 
   comments         Comment[]
-  migration_status MigrationStatus? @default(PENDING)
+  migration_status MigrationStatus?      @default(PENDING)
+  migration_token  MigrationAccessToken?
 
   @@map("migration_audit")
 }
