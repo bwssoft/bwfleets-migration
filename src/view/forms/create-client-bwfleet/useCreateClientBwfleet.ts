@@ -18,7 +18,7 @@ const contactSchema = z.object({
   contact: z.string().min(1, "Informe o numero de contato"),
 });
 
-const schema = z.object({
+export const schema = z.object({
   uuid: z.string().optional(),
   name: z.string().min(1, "Informe o nome do cliente"),
   document_type: z.enum(["cpf", "cnpj"], { required_error: "Informe o tipo do documento", message: "O tipo informado não é valido" }).default("cnpj"),
@@ -43,10 +43,16 @@ const schema = z.object({
   cep: z.string({ required_error: "Informe o CEP do cliente" }).min(1, "Informe o CEP do cliente"),
   user: z
     .object({
-      full_name: z.string().min(1, "Informe o nome completo do usuário"),
-      name: z.string().min(1, "Informe o nome do usuário"),
+      full_name: z.string({
+        required_error: "Informe o nome completo do usuário"
+      }).min(1, "Informe o nome completo do usuário"),
+      name: z.string({
+        required_error: "Informe o nome do usuário"
+      }).min(1, "Informe o nome do usuário"),
       contact: z.string({ required_error: "Informe o número de contato do usuário" }).min(1, "Informe o número de contato do usuário"),
-      email: z.string().email({
+      email: z.string({
+        required_error: "Informe o e-mail do usuario" 
+      }).email({
         message: "Informe um e-mail válido para o usuário",
       }),
     }),

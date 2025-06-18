@@ -1,6 +1,6 @@
 "use server";
 
-import { Migration, MigrationStatus } from "@prisma/client";
+import { Migration, MigrationAccessToken, MigrationStatus } from "@prisma/client";
 import { prisma } from "../lib/prisma/prisma-client";
 import { revalidatePath } from "next/cache";
 import { User } from "better-auth";
@@ -41,15 +41,30 @@ export async function startMigration(data: StartMigration) {
 interface UpdateMigrationStatus {
   uuid: string;
   status: MigrationStatus;
+  token?: string
+  bfleet_uuid?: string
 }
 
 export async function updateMigrationStatus({
   status,
   uuid,
+  token,
+  bfleet_uuid
 }: UpdateMigrationStatus) {
+  let migration_token = undefined as MigrationAccessToken | undefined;
+
+  if(token && bfleet_uuid) {
+    migration_token = {
+      token,
+      created_at: new Date(),
+      bfleet_uuid
+    }
+  }
+
   return await prisma.migration.update({
     data: {
       migration_status: status,
+      ...{ migration_token }
     },
     where: {
       uuid,

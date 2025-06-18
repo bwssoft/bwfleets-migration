@@ -38,7 +38,11 @@ export const ClientStatusMigrationCard: React.FC<IClientStatusMigrationCard> = (
     },
     {
       value: 'DONE',
-      label: "Migração concluida"
+      label: "Migração aceita"
+    },
+    {
+      value: 'SUCCESS',
+      label: "Migração concluída"
     }
   ]
 

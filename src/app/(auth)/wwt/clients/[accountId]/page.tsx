@@ -38,6 +38,7 @@ import {
   AccordionTrigger,
 } from "@/view/components/ui/accordion";
 import { Badge } from "@/view/components/ui/badge";
+import { MigrationCard } from "./@components/migration-card";
 
 interface PageProps {
   params: Promise<{
@@ -133,6 +134,13 @@ export default async function WWTClientDetailsPage({
               migration_uuid={client.migration?.uuid}
               hidden={!isMigrating}
               status={client.migration?.migration_status}
+            />
+
+            <MigrationCard 
+              id={client.migration?.uuid}
+              migration_token={client.migration?.migration_token}
+              status={client.migration?.migration_status}
+              account_id={client.accountId}
             />
 
             <Card className="!p-0">
