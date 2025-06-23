@@ -11,6 +11,7 @@ import { BWFleetsProvider } from "@/@shared/provider/bwfleets"
 import { ClientBfleetsMapper } from "./data-mapper/client-bfleets.mapper"
 import { toast } from "sonner"
 import { UserBfleetsMapper } from "./data-mapper/user-bfleets.mapper"
+import { addDays } from "date-fns"
 
 type StepStatus = "pending" | "active" | "completed" | "error"
 
@@ -186,7 +187,13 @@ export default function MigrationProcess({ accountId, onClose, id }: { accountId
         query: {
           ww_account_id: accountId?.toString()
         },
-        value: clientEntity
+        value: {
+          ...clientEntity,
+          validate: {
+            date: addDays(new Date(), 90),
+            days: 90
+          }
+        }
       })
       const client = await bWFleetsProvider.findOneClient({
         query: {

@@ -200,6 +200,7 @@ model User {
   accounts      Account[]
   comments      Comment[]
   migrations    Migration[]
+  Meeting       Meeting[]
 
   @@unique([email])
   @@map("user")
@@ -379,4 +380,36 @@ model Migration {
   migration_token  MigrationAccessToken?
 
   @@map("migration_audit")
+}
+
+model ScheduleSlot {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  start     DateTime
+  end       DateTime
+  status    SlotStatus @default(AVAILABLE)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  Meeting   Meeting?
+}
+
+enum SlotStatus {
+  AVAILABLE
+  BOOKED
+  CANCELED
+}
+
+model Meeting {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  accountId   String // ID do cliente
+  organizerId String
+  description String?
+  meetingLink String?
+  slotId      String  @unique
+
+  // Relacionamento com ScheduleSlot
+  slot      ScheduleSlot @relation(fields: [slotId], references: [id])
+  organizer User         @relation(fields: [organizerId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
