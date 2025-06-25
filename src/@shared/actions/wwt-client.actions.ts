@@ -61,7 +61,9 @@ export async function findOneClient(params: FindOneClientParams): Promise<
     include: {
       Meeting: {
         include: {
-          slot: true
+          slot: true,
+          account: true,
+          organizer: true,
         }
       }
       migration: {
@@ -84,7 +86,9 @@ export async function findOneClient(params: FindOneClientParams): Promise<
     include: {
       Meeting: {
         include: {
-          slot: true
+          slot: true,
+          account: true,
+          organizer: true,
         }
       },
       migration: {
