@@ -185,7 +185,6 @@ export function WWTClientTable({ data, pagination }: WWTClientTableProps) {
     try {
       const { created_at, bfleet_uuid } = data
       const diffHours = differenceInHours(new Date(), created_at)
-      console.log({ diffHours })
       if(diffHours >= 7) {
         const replyToken = await bWFleetsProvider.generateAccessLink({
           query: { uuid: bfleet_uuid }

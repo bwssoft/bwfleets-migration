@@ -105,7 +105,6 @@ export function DataTablePagination({
                 <PaginationLink
                   isActive={currentPage === button}
                   onClick={() => {
-                    console.log("on click trigger");
                     handlePageNumberClick(button);
                   }}
                 >

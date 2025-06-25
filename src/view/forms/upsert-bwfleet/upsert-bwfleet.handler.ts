@@ -199,9 +199,6 @@ export function useUpsertBwfleetHandler({
       toast.success("Dados do cliente atualizados com sucesso!");
       refresh();
     },
-    (error) => {
-      console.log("🚀 ~ handleSubmit ~ error:", error, form.getValues());
-    }
   );
 
   const contactsFieldArray = useFieldArray({
