@@ -39,6 +39,7 @@ import {
 } from "@/view/components/ui/accordion";
 import { Badge } from "@/view/components/ui/badge";
 import { MigrationCard } from "./@components/migration-card";
+import { MeetingCard } from "./@components/meeting-card";
 
 interface PageProps {
   params: Promise<{
@@ -59,6 +60,10 @@ export default async function WWTClientDetailsPage({
       accountId: Number(accountId),
     },
   });
+
+  console.log({ 
+    meeting: client.Meeting
+   })
 
   const isMigrating =
     client.migration && client.migration?.migration_status !== "TO_DO";
@@ -127,7 +132,7 @@ export default async function WWTClientDetailsPage({
           <ClientMigrationCard wwtClient={client} />
         </div>
         <div className="col-span-2">
-          <div className="flex flex-col gap-4 sticky top-0">
+          <div className="flex flex-col gap-4 overflow-y-auto max-h-[calc(95vh-60px)] sticky top-0">
             <ClientAssignedCard wwtClient={client} />
 
             <ClientStatusMigrationCard
@@ -141,6 +146,18 @@ export default async function WWTClientDetailsPage({
               migration_token={client.migration?.migration_token}
               status={client.migration?.migration_status}
               account_id={client.accountId}
+            />
+
+            <MeetingCard 
+              customer={{
+                company: client.migration?.bfleet_client?.name ?? client.accountName,
+                email: client.email ?? "",
+                id: client.id,
+                name: client.migration?.bfleet_client?.name ?? client.accountName,
+                phone: client.contactTel,
+              }}
+              meeting={client.Meeting[0]}
+              wwt_account_id={client.accountId}
             />
 
             <Card className="!p-0">

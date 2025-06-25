@@ -142,6 +142,7 @@ model WanwayClient {
   type                    Int
   userName                String
   migration               Migration?
+  Meeting                 Meeting[]
 
   @@map("client")
 }
@@ -400,14 +401,14 @@ enum SlotStatus {
 
 model Meeting {
   id          String  @id @default(auto()) @map("_id") @db.ObjectId
-  accountId   String // ID do cliente
+  accountId   String  @db.ObjectId
   organizerId String
   description String?
-  meetingLink String?
-  slotId      String  @unique
+  slotId      String  @unique @db.ObjectId
 
   // Relacionamento com ScheduleSlot
   slot      ScheduleSlot @relation(fields: [slotId], references: [id])
+  account   WanwayClient @relation(fields: [accountId], references: [id])
   organizer User         @relation(fields: [organizerId], references: [id])
 
   createdAt DateTime @default(now())

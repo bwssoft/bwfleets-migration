@@ -11,7 +11,7 @@ import {
   SidebarMenuItem,
 } from "@/view/components/ui/sidebar";
 import { LogoutForm } from "@/view/forms/logout.form";
-import { UserIcon, Users2Icon, UsersIcon } from "lucide-react";
+import { Calendar, UserIcon, Users2Icon, UsersIcon } from "lucide-react";
 import { headers } from "next/headers";
 import Link from "next/link";
 
@@ -81,6 +81,19 @@ export async function AppSidebar() {
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
+            {
+              isAdmin && (
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/meeting">
+                    <Calendar />
+                    <span>Reuniões</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              )
+            }
+            
             {/* <SidebarMenuItem>
               <SidebarMenuButton>
                 <SmartphoneIcon />

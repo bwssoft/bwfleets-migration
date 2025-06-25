@@ -59,6 +59,11 @@ interface FindOneClientParams {
 export async function findOneClient(params: FindOneClientParams): Promise<
   Prisma.WanwayClientGetPayload<{
     include: {
+      Meeting: {
+        include: {
+          slot: true
+        }
+      }
       migration: {
         include: {
           assigned: true;
@@ -77,6 +82,11 @@ export async function findOneClient(params: FindOneClientParams): Promise<
   return await prisma.wanwayClient.findFirstOrThrow({
     where,
     include: {
+      Meeting: {
+        include: {
+          slot: true
+        }
+      },
       migration: {
         include: {
           assigned: true,
