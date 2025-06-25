@@ -2,7 +2,6 @@ import { findAllMeetings } from "@/@shared/actions/meeting.actions";
 import { IMeetingPageParams } from "@/app/(auth)/meeting/params";
 import { Prisma } from "@prisma/client";
 import { MeetingTable } from "./meeting.table";
-import { setHours } from "date-fns";
 
 export interface MeetingTableLoaderProps {
   params: IMeetingPageParams
