@@ -1,4 +1,5 @@
 'use client'
+import React from 'react';
 import { Button } from '@/view/components/ui/button';
 import { Calendar } from '@/view/components/ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/view/components/ui/card';
@@ -9,7 +10,6 @@ import { Separator } from '@radix-ui/react-select';
 import { ptBR } from 'date-fns/locale';
 import { format, setDefaultOptions } from 'date-fns'
 import { CalendarIcon, CheckCircle, Clock, User, Video } from 'lucide-react';
-import React, { useState } from 'react';
 import { useMeetingCard } from './useMeetingCard';
 import { Controller } from 'react-hook-form';
 import { IMeeting } from '@/@shared/interfaces/Meeting';
