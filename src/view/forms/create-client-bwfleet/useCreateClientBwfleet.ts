@@ -190,7 +190,7 @@ export const useCreateClientBwfleet = (): IUseCreateClientBwfleetResponse => {
       depth: 2,
       document: {
         type: data.document_type,
-        value: data.document,
+        value: removeSpecialCharacters(data.document),
       },
       profile_uuid: [],
       created_at: new Date(),
@@ -225,6 +225,12 @@ export const useCreateClientBwfleet = (): IUseCreateClientBwfleetResponse => {
           const error = e as AxiosError<UsecaseError>;
           const errors = error.response?.data.error.errors ?? [];
           errors.forEach((e: any) => {
+            if (e.context === "user") {
+              form.setError(`${e.context}.${e.path}` as any, {
+                message: e.message,
+              });
+              return;
+            }
             form.setError(e.path, { message: e.message });
           });
         }
