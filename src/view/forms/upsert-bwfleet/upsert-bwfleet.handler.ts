@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { countries } from "@/@shared/constants/countries";
 import { IBFleetClient, IWanwayClient } from "@/@shared/interfaces";
 import { updateOneMigration } from "@/@shared/actions/migration.action";
+import { useRouter } from "next/navigation";
 
 const contactSchema = z.object({
   name: z.string().min(1, "Informe o nome de contato"),
@@ -80,6 +81,7 @@ export function useUpsertBwfleetHandler({
   wwtClient,
   bfleetClient,
 }: UseUpsertBwfleetHandlerParams) {
+  const { refresh } = useRouter();
   const form = useForm<BWFleetUpsertClientFormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -195,10 +197,8 @@ export function useUpsertBwfleetHandler({
       });
 
       toast.success("Dados do cliente atualizados com sucesso!");
+      refresh();
     },
-    (error) => {
-      console.log("🚀 ~ handleSubmit ~ error:", error, form.getValues());
-    }
   );
 
   const contactsFieldArray = useFieldArray({

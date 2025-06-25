@@ -201,12 +201,10 @@ export default function MigrationProcess({ accountId, onClose, id }: { accountId
         }
       })
 
-      console.log({ client })
 
       if(client.response.data.user_uuid) {
         const userEntity = UserBfleetsMapper.formatter(clientRef.current?.user)
 
-        console.log({ userEntity })
         await bWFleetsProvider.updateOneUser({
           query: {
             uuid: client.response.data.user_uuid

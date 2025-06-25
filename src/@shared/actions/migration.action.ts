@@ -70,6 +70,7 @@ export async function updateMigrationStatus({
       uuid,
     },
   });
+
 }
 
 export interface WriteMigrationComment {

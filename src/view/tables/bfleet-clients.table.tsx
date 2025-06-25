@@ -66,7 +66,6 @@ export function BFleetClientsTable({ data, pagination }: BFleetClientTableProps)
   }
 
   const isLoadingGenAccessLink = useMemo(() => {
-    console.log("isLoadingGenAccessLink", accessLinkDisclosure.data?.isLoading)
     return accessLinkDisclosure.data?.isLoading ?? true;
   }, [accessLinkDisclosure.data?.isLoading]);
 

@@ -4,6 +4,7 @@ import { updateMigrationStatus } from '@/@shared/actions/migration.action';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/view/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/view/components/ui/select';
 import { MigrationStatus } from '@prisma/client';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 import { toast } from 'sonner';
 
@@ -14,7 +15,7 @@ export interface IClientStatusMigrationCard {
 }
 
 export const ClientStatusMigrationCard: React.FC<IClientStatusMigrationCard> = ({ status, migration_uuid, hidden = false }) => {
-  
+  const { refresh } = useRouter();
   const options: Array<{ value: MigrationStatus, label: string }> = [
     {
       value: 'PENDING',
@@ -54,6 +55,7 @@ export const ClientStatusMigrationCard: React.FC<IClientStatusMigrationCard> = (
       });
   
       toast.success("Status atualizado com sucesso")
+      refresh()
     }
   }
 

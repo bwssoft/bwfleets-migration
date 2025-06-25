@@ -61,10 +61,6 @@ export default async function WWTClientDetailsPage({
     },
   });
 
-  console.log({ 
-    meeting: client.Meeting
-   })
-
   const isMigrating =
     client.migration && client.migration?.migration_status !== "TO_DO";
 

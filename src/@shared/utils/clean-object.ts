@@ -9,20 +9,23 @@ export const cleanObject = <T>(
       .map((item) => cleanObject(item, ignoredKeys))
       .filter(
         (item) =>
-          (!_.isEmpty(item) || _.isNumber(item)) &&
+          (!_.isEmpty(item) || _.isNumber(item) || _.isDate(item)) &&
           item !== null &&
           item !== undefined
       ) as T;
-  } else if (_.isObject(obj)) {
+  } else if(_.isDate(obj)) {
+    return obj;
+  } 
+  else if (_.isObject(obj)) {
     return _(obj)
       .mapValues((value, key) =>
         ignoredKeys.includes(key) ? value : cleanObject(value, ignoredKeys)
       )
       .pickBy((value, key) => {
         if (ignoredKeys.includes(key)) return true;
-
+        
         return (
-          (!_.isEmpty(value) || _.isBoolean(value) || _.isNumber(value)) &&
+          (!_.isEmpty(value) || _.isBoolean(value) || _.isNumber(value) || _.isDate(value)) &&
           value !== null &&
           value !== undefined
         );
