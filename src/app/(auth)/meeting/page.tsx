@@ -10,8 +10,17 @@ import { Card, CardContent } from "@/view/components/ui/card";
 
 import { Skeleton } from "@/view/components/ui/skeleton";
 import { Suspense } from "react";
+import { MeetingLoader } from "@/view/tables/meeting.loader";
+import { SearchParams } from "nuqs";
+import { loadMeetingPageParams } from "./params";
+import { SearchMeeting } from "@/view/forms/search-meeting";
 
-export default async function MeetingPage() {
+interface PageProps {
+  searchParams: Promise<SearchParams>;
+}
+
+export default async function MeetingPage({ searchParams }: PageProps) {
+  const nuqsParams = await loadMeetingPageParams(searchParams);
 
   return (
     <main className="grid grid-rows-[min-content_1fr] w-full h-screen overflow-y-hidden">
@@ -27,6 +36,8 @@ export default async function MeetingPage() {
         <Card className="w-full">
           <CardContent className="space-y-4">
             <Suspense fallback={<Skeleton className="w-full h-96" />}>
+              <SearchMeeting />
+              <MeetingLoader params={nuqsParams} />
             </Suspense>
           </CardContent>
         </Card>

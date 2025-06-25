@@ -47,7 +47,7 @@ export const MeetingCard: React.FC<CustomerMeetingSchedulerProps> = ({ customer,
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2">
           <CalendarIcon className="w-5 h-5" />
-          {meeting ? "Reuniõa agendada" : "Agendar Reunião"}
+          {meeting ? "Reunião agendada" : "Agendar Reunião"}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
