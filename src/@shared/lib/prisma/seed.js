@@ -6,8 +6,8 @@ const prisma = new PrismaClient()
 async function main() {
   console.log('🌱 Iniciando Seed de ScheduleSlots (pulando almoço)...')
 
-  const startDate = new Date('2025-06-24')
-  const numberOfDays = 10 // Quantos dias úteis criar
+  const startDate = new Date('2025-07-07')
+  const numberOfDays = 15
 
   const slotsData = []
 
@@ -19,7 +19,7 @@ async function main() {
 
     // Segunda (1) a sexta (5)
     if (dayOfWeek >= 1 && dayOfWeek <= 5) {
-      for (let hour = 8; hour < 17; hour++) {
+      for (let hour = 14; hour < 17; hour++) {
         // Pula o horário do almoço: não cria slot das 12:00 às 13:00
         if (hour === 12) continue
 
