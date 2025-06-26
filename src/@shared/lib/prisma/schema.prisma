@@ -299,8 +299,8 @@ model BFleetClient {
 }
 
 type Document {
-  type  String // could be enum, but MongoDB composite types need String
-  value String
+  type  String? // could be enum, but MongoDB composite types need String
+  value String?
 }
 
 type Contact {

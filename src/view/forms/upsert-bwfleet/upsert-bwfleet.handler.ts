@@ -9,7 +9,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { generateFormData } from "@/@shared/utils/parse-form-data";
-import { cleanObject } from "@/@shared/utils/clean-object";
 import { toast } from "sonner";
 import { countries } from "@/@shared/constants/countries";
 import { IBFleetClient, IWanwayClient } from "@/@shared/interfaces";
@@ -90,7 +89,7 @@ export function useUpsertBwfleetHandler({
       subdomain: bfleetClient?.subdomain ?? undefined,
       tenant: bfleetClient?.tenant ?? [],
       name: bfleetClient?.name ?? wwtClient.userName,
-      document: bfleetClient?.document?.value,
+      document: bfleetClient?.document?.value ?? undefined,
       document_type: bfleetClient?.document?.type as "cpf" | "cnpj",
       contacts: bfleetClient?.contacts ?? [],
       user_uuid: bfleetClient?.user_uuid ?? undefined,
@@ -172,7 +171,7 @@ export function useUpsertBwfleetHandler({
 
       const client = await upsertBfleetClient(clientPayload);
 
-      const userPayload = cleanObject({
+      const userPayload = {
         full_name: data.user?.full_name,
         name: data.user?.name,
         email: data.user?.email,
@@ -180,7 +179,7 @@ export function useUpsertBwfleetHandler({
         user: {
           uuid: user_uuid,
         },
-      });
+      };
 
       if (Object.keys(userPayload).length !== 0) {
         await upsertBfleetUser(
@@ -199,6 +198,9 @@ export function useUpsertBwfleetHandler({
       toast.success("Dados do cliente atualizados com sucesso!");
       refresh();
     },
+    (errors: any) => {
+      console.log("errors", errors);
+    }
   );
 
   const contactsFieldArray = useFieldArray({
