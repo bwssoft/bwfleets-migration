@@ -21,7 +21,7 @@ export class ClientSchemaMapper {
         name: this.formatValue(data.address?.country)
       },
       district: this.formatValue(data.address?.district),
-      document: data.document?.value,
+      document: data.document?.value ?? undefined,
       document_type: this.formatValue(data.document?.type) as IClientSchemaType['document_type'],
       name: this.formatValue(data.name),
       number: this.formatValue(data.address?.number),
