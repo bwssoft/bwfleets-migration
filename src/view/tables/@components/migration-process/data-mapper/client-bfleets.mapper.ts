@@ -6,8 +6,10 @@ export class ClientBfleetsMapper {
   static fomater(data: IBFleetClient) : Partial<ClientEntity> {
     const mountObject: Partial<ClientEntity> = {
       ...data,
+      subdomain: (data.subdomain && data.subdomain.length > 0) ? data.subdomain : undefined,
       contacts: this.formatContact(data.contacts),
-      address: this.formatAdress(data.address)
+      address: this.formatAdress(data.address),
+      updated_at: new Date(),
     }
 
     const cleanObject = this.removeExtraFields(mountObject);
@@ -16,7 +18,6 @@ export class ClientBfleetsMapper {
 
   private static removeExtraFields(data: Partial<ClientEntity>): Partial<ClientEntity> {
     const keyFields = [
-      "updated_at",
       "theme",
       "id",
       "uuid",

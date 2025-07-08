@@ -8,6 +8,7 @@ export class UserBfleetsMapper {
       email: this.formatValue(data?.email),
       name: this.formatValue(data?.full_name),
       contact: removeSpecialCharacters(`+55 ${data?.contact}`),
+      updated_at: new Date(),
     }
   }
 

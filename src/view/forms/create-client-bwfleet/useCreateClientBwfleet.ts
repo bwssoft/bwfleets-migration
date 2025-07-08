@@ -88,7 +88,7 @@ export const schema = z.object({
     .string({ required_error: "Informe o CEP do cliente" })
     .min(1, "Informe o CEP do cliente"),
   user: z.object({
-    full_name: z.string().min(1, "Informe o nome completo do usuário"),
+    full_name: z.string().optional(),
     name: z.string().min(1, "Informe o nome do usuário"),
     contact: z
       .string({ required_error: "Informe o número de contato do usuário" })
@@ -221,6 +221,7 @@ export const useCreateClientBwfleet = (): IUseCreateClientBwfleetResponse => {
         await createBfleetClientEntity(formData);
       })
       .catch((e) => {
+        console.log({ e })
         if (e instanceof AxiosError) {
           const error = e as AxiosError<UsecaseError>;
           const errors = error.response?.data.error.errors ?? [];
@@ -235,7 +236,7 @@ export const useCreateClientBwfleet = (): IUseCreateClientBwfleetResponse => {
           });
         }
       });
-  });
+  }, (err) => console.log({ err }));
 
   const errors = useMemo(() => form.formState.errors, [form.formState.errors]);
 

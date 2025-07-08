@@ -19,4 +19,5 @@ export type UserEntity = {
 	contact: string
 	play_sound_on_alarm?: boolean
 	constraint_uuid?: string
+	updated_at?: Date
 }
