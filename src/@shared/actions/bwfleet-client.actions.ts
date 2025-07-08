@@ -37,7 +37,7 @@ export async function upsertBfleetClient(formData: FormData) {
     },
     update: client,
     where: {
-      uuid,
+      wwtAccountId: data.wwtAccountId,
     },
   });
 }
