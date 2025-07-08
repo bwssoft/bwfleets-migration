@@ -55,7 +55,7 @@ export const schema = z.object({
   subdomain: z.string().nullable().optional(),
   contacts: z
     .array(contactSchema)
-    .min(2, "Informe pelo menos dois contatos")
+    .min(1, "Informe pelo menos um contato")
     .default([]),
   country: z.object(
     {

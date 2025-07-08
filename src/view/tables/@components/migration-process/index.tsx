@@ -12,6 +12,8 @@ import { ClientBfleetsMapper } from "./data-mapper/client-bfleets.mapper"
 import { toast } from "sonner"
 import { UserBfleetsMapper } from "./data-mapper/user-bfleets.mapper"
 import { addDays } from "date-fns"
+import { AxiosError } from "axios"
+import { removeSpecialCharacters } from "@/@shared/utils/removeSpecialCharacters"
 
 type StepStatus = "pending" | "active" | "completed" | "error"
 
@@ -49,6 +51,18 @@ interface IHandleFetchData { success: boolean, data: IBFleetClient }
 
 type StepID = string
 type StepFunction = (() => void) | (() => Promise<void>);
+
+type IBWFleetsError = {
+  error: {
+    name: string
+    stack: string
+    errors: Array<{
+      context: string
+      message: string
+      path: string
+    }>
+  }
+}
 
 export default function MigrationProcess({ accountId, onClose, id }: { accountId: number | undefined, onClose: () => void; id?: string }) {
   const [steps, setSteps] = useState<Step[]>([
@@ -180,6 +194,20 @@ export default function MigrationProcess({ accountId, onClose, id }: { accountId
     }
   }
 
+  const DEFAULT_MESSAGE_ERROR = "Ocorreu um erro na request, contate um desenvolvedor"
+  const onHandlerError = (error: any, message: string = DEFAULT_MESSAGE_ERROR) => {
+    if(error instanceof AxiosError) {
+      const { response }: AxiosError<IBWFleetsError> = error
+      const erros = response?.data.error?.errors?.map((data) => {
+        const errorMessage = `[${data.path}] - ${data.message}`;
+        return errorMessage;
+      })
+
+      throw new MigrationProcessError(erros ?? [message])
+    }
+    throw new MigrationProcessError([message]);
+  }
+
   const handleStepSubmission = async () => {
     try {
       const clientEntity = ClientBfleetsMapper.fomater(clientRef.current!);
@@ -189,17 +217,23 @@ export default function MigrationProcess({ accountId, onClose, id }: { accountId
         },
         value: {
           ...clientEntity,
+          document: {
+            ...clientEntity['document'],
+            value: removeSpecialCharacters(clientEntity.document?.value ?? "")
+          },
           validate: {
             date: addDays(new Date(), 90),
             days: 90
           }
         }
-      })
+      }).catch(error => onHandlerError(error, "Ocorreu um erro ao salvar os dados de cliente, contate um desenvolvedor"))
+
       const client = await bWFleetsProvider.findOneClient({
         query: {
           ww_account_id: accountId?.toString()
         }
-      })
+      }).catch(error => onHandlerError(error, "Ocorreu um ao buscar os dados de cliente, contate um desenvolvedor"))
+      
 
 
       if(client.response.data.user_uuid) {
@@ -210,11 +244,15 @@ export default function MigrationProcess({ accountId, onClose, id }: { accountId
             uuid: client.response.data.user_uuid
           },
           value: userEntity
-        })
+        }).catch(error => onHandlerError(error, "Ocorreu um ao salvar os dados de usuario, contate um desenvolvedor"))
       }
       
     }
-    catch {
+    catch (error) {
+      if(error instanceof MigrationProcessError) {
+        console.log("Ta aqui", { error })
+        throw error
+      }
       throw new MigrationProcessError([
         "Ocorreu um erro, tente novamente mais tarde"
       ])
