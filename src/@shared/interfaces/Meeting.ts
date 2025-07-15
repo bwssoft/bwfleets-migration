@@ -4,6 +4,7 @@ export type IMeeting = Prisma.MeetingGetPayload<{
   include: {
     account: true,
     organizer: true,
-    slot: true
+    slot: true,
+    client: true,
   }
 }>

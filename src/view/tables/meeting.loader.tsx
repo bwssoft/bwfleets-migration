@@ -72,6 +72,11 @@ export async function MeetingLoader({ params }: MeetingTableLoaderProps) {
         account: {
           userName: params.clientNameOrderBy !== 'none' ? (params.clientNameOrderBy as never) : undefined,
         }
+      },
+      {
+        slot: {
+          start: params.dateOrderBy !== 'none' ? (params.dateOrderBy as never) : undefined,
+        }
       }
     ]
   })

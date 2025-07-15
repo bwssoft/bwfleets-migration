@@ -14,6 +14,7 @@ const schema = z.object({
   clientName: z.string().optional(),
   status: z.enum(['pedding', 'completed', 'in-progress']).optional(),
   clientNameOrderBy: z.enum(["asc", "desc", "none"]).optional(),
+  dateOrderBy: z.enum(["asc", "desc", "none"]).optional(),
 })
 
 export type SearchMeetingFormData = z.infer<typeof schema>;
@@ -32,6 +33,7 @@ export function useMeetingFormhandler() {
       clientName: searchParams.clientName ?? undefined,
       status: (searchParams.status as MeetingStatus) ?? undefined,
       clientNameOrderBy: (searchParams.clientNameOrderBy as never) ?? "none",
+      dateOrderBy: (searchParams.dateOrderBy as never) ?? "none",
     },
   });
 
@@ -51,6 +53,7 @@ export function useMeetingFormhandler() {
         clientName: null,
         status: null,
         clientNameOrderBy: null,
+        dateOrderBy: null,
       }).then(() => {
         refresh();
       });

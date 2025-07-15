@@ -6,8 +6,8 @@ const prisma = new PrismaClient()
 async function main() {
   console.log('🌱 Iniciando Seed de ScheduleSlots (pulando almoço)...')
 
-  const startDate = new Date('2025-07-07')
-  const numberOfDays = 15
+  const startDate = new Date('2025-07-15')
+  const numberOfDays = 120
 
   const slotsData = []
 

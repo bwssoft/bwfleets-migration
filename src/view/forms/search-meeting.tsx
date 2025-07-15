@@ -8,6 +8,7 @@ import { Button } from "../components/ui/button";
 import { SearchIcon } from "lucide-react";
 import { FilterClearButton } from "../components/ui/filter-clear-button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
+import { MeetingDialog } from "../dialog/MeetingDialog";
 
 export function SearchMeeting() {
   const { form, handleSucceededSubmit, isPending, handleClearFilters, searchParams } = useMeetingFormhandler();
@@ -65,6 +66,19 @@ export function SearchMeeting() {
             )}
           />
 
+          <Controller
+            control={form.control}
+            name="dateOrderBy"
+            render={({ field }) => (
+              <FilterSortButton
+                value={field.value}
+                onValueChange={field.onChange}
+              >
+                Data da reunião
+              </FilterSortButton>
+            )}
+          />
+
            <Button isLoading={isPending} size="icon">
             {!isPending && <SearchIcon />}
           </Button>
@@ -77,6 +91,9 @@ export function SearchMeeting() {
             />
           </div>
         </div>
+      </div>
+      <div>
+        <MeetingDialog />
       </div>
     </form>
   )

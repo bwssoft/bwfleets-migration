@@ -4,4 +4,5 @@ export const meetingSearchParams = {
   clientName: parseAsString,
   status: parseAsString,
   clientNameOrderBy: parseAsString,
+  dateOrderBy: parseAsString,
 }

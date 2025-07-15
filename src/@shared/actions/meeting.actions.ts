@@ -27,6 +27,7 @@ export async function findAllMeetings(params: FindManyMeetingParams) {
       slot: true,
       account: true,
       organizer: true,
+      client: true,
     },
     orderBy: formattedOrderBy as Prisma.MeetingOrderByWithRelationInput[],
   });

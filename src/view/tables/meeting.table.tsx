@@ -35,7 +35,7 @@ export const MeetingTable: React.FC<MeetingTableProps> = ({ data, pagination }) 
     {
       id: "client_id",
       cell: ({ row }) => {
-        return row.original.account.userName
+        return row.original.account?.userName ?? row.original.client?.bwfleet.name
       },
       header: "Reunião com"
     },
