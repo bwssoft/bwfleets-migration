@@ -31,7 +31,6 @@ export const useMeetingDialog = () => {
         formState: { errors },
         control,
         register,
-        handleSubmit,
         watch,
         getValues,
         reset,
