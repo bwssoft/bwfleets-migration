@@ -64,6 +64,7 @@ export async function findOneClient(params: FindOneClientParams): Promise<
           slot: true,
           account: true,
           organizer: true,
+          client: true,
         }
       }
       migration: {
@@ -89,6 +90,7 @@ export async function findOneClient(params: FindOneClientParams): Promise<
           slot: true,
           account: true,
           organizer: true,
+          client: true,
         }
       },
       migration: {
