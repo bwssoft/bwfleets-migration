@@ -11,7 +11,7 @@ export class ClientBfleetsMapper {
       address: this.formatAdress(data.address),
       updated_at: new Date(),
     }
-
+    delete mountObject.child_count
     const cleanObject = this.removeExtraFields(mountObject);
     return cleanObject
   }
