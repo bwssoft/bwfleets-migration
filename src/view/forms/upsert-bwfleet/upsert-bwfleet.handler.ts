@@ -154,7 +154,6 @@ export function useUpsertBwfleetHandler({
         name: data.name,
         address,
         subdomain: data.subdomain?.toLowerCase(),
-        child_count: 0,
         contacts: data.contacts,
         depth: 1,
         document,
