@@ -137,24 +137,28 @@ export default async function WWTClientDetailsPage({
               status={client.migration?.migration_status}
             />
 
-            <MigrationCard 
+            <MigrationCard
               id={client.migration?.uuid}
               migration_token={client.migration?.migration_token}
               status={client.migration?.migration_status}
               account_id={client.accountId}
             />
 
-            <MeetingCard 
-              customer={{
-                company: client.migration?.bfleet_client?.name ?? client.accountName,
-                email: client.email ?? "",
-                id: client.id,
-                name: client.migration?.bfleet_client?.name ?? client.accountName,
-                phone: client.contactTel,
-              }}
-              meeting={client.Meeting[0]}
-              wwt_account_id={client.accountId}
-            />
+            {client.migration?.migration_token?.bfleet_uuid ? (
+              <MeetingCard
+                customer={{
+                  company:
+                    client.migration?.bfleet_client?.name ?? client.accountName,
+                  email: client.email ?? "",
+                  id: client.id,
+                  name:
+                    client.migration?.bfleet_client?.name ?? client.accountName,
+                  phone: client.contactTel,
+                }}
+                meeting={client.Meeting[0]}
+                wwt_account_id={client.accountId}
+              />
+            ) : null}
 
             <Card className="!p-0">
               <CardContent className="!p-0">
