@@ -20,7 +20,7 @@ const contactSchema = z.object({
   email: z.string().min(1, "Informe um e-mail válido de contato").email({
     message: "Informe um e-mail válido para contato",
   }),
-  role: z.string().min(1, "informe a posição do cliente"),
+  role: z.string().min(1, "informe a posição do cliente").optional().nullable(),
   contact: z.string().min(1, "Informe o numero de contato"),
 });
 

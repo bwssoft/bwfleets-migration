@@ -3,7 +3,7 @@ import { Prisma } from "@prisma/client";
 type Contact = {
   name: string;
   email: string;
-  contact: string;
+  contact?: string;
 };
 
 interface ClientThemeColorVariable {
