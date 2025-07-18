@@ -149,7 +149,7 @@ export default async function WWTClientDetailsPage({
                 customer={{
                   company:
                     client.migration?.bfleet_client?.name ?? client.accountName,
-                  email: client.email ?? "",
+                  email: client.migration.bfleet_client?.user?.email ?? "",
                   id: client.id,
                   name:
                     client.migration?.bfleet_client?.name ?? client.accountName,

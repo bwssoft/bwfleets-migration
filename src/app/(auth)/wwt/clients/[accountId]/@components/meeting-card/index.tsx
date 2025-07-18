@@ -14,6 +14,11 @@ import { useMeetingCard } from './useMeetingCard';
 import { Controller } from 'react-hook-form';
 import { IMeeting } from '@/@shared/interfaces/Meeting';
 import { cn } from '@/@shared/utils/tw-merge';
+import { Input } from '@/view/components/ui/input';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
+import { useDisclosure } from '@/@shared/hooks/use-disclosure';
+import { MeetingCancel } from '@/view/dialog/MeetingCancel';
 
 setDefaultOptions({
   locale: ptBR
@@ -39,15 +44,48 @@ export const MeetingCard: React.FC<CustomerMeetingSchedulerProps> = ({ customer,
   const { control, register, onHandleSubmit, isModalOpen, setIsModalOpen, onHandleCancel, errors, disabledData, disabledTime, timeOptions, formatTime } = useMeetingCard({
     accountId: customer.id,
     meeting,
-    wwt_account_id
+    wwt_account_id,
+    email: customer.email
   });
+
+  const router = useRouter()
+
+
+  const meetingCancelDisclousure = useDisclosure();
+
+  const handleCancelMeeting = async () => {
+    try {
+      console.log({ meeting })
+      if(!meeting) return
+
+      const response = await fetch(`/api/meeting/cancel`, {
+        method: "POST",
+        body: JSON.stringify({ meeting_id: meeting.id }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+
+      const { success } = await response.json()
+      if(!success) {
+        toast.error("Falha ao cancelar agendamento!")
+        
+      }
+      
+      toast.success("Agendamento cancelado com sucesso!")
+    }
+    finally {
+      meetingCancelDisclousure.onClose()
+      router.refresh()
+    }
+  }
 
   return (
     <Card className="w-full">
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2">
           <CalendarIcon className="w-5 h-5" />
-          {meeting ? "Reunião agendada" : "Agendar Reunião"}
+          {meeting ? `Reunião ${meeting.status === 'CANCELED' ? "Cancelada" : "Agendada"}` : "Agendar Reunião"}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -61,7 +99,7 @@ export const MeetingCard: React.FC<CustomerMeetingSchedulerProps> = ({ customer,
           </div>
         </div>
 
-        {meeting ? (
+        {meeting && meeting.slot ? (
           /* Meeting Information Display */
           <div className="space-y-4">
             <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
@@ -93,6 +131,22 @@ export const MeetingCard: React.FC<CustomerMeetingSchedulerProps> = ({ customer,
                   </div>
                 )}
               </div>
+            </div>
+            <div>
+              <Button onClick={meetingCancelDisclousure.onOpen} className='w-full'>Cancelar Reunião</Button>
+              <Dialog open={meetingCancelDisclousure.isOpen} onOpenChange={meetingCancelDisclousure.onClose}>
+                <DialogContent className="w-full max-h-[30vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2">
+                      Cancelar agendamento com {customer.name}
+                    </DialogTitle>
+                      <MeetingCancel
+                        handleCancel={meetingCancelDisclousure.onClose}
+                        handleConfirm={handleCancelMeeting}
+                      />
+                  </DialogHeader>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
         ) : (
@@ -209,7 +263,9 @@ export const MeetingCard: React.FC<CustomerMeetingSchedulerProps> = ({ customer,
                       />
                       
                     </div>
-
+                    <div>
+                      <Input {...register('email')} label='Email' defaultValue={customer.email} placeholder='Email do cliente'  />
+                    </div>
 
                     <div>
                       <Label htmlFor="notes" className="text-sm font-medium">

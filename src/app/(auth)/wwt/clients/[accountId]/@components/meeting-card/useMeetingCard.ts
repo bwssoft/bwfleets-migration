@@ -12,13 +12,17 @@ import { toast } from "sonner"
 
 
 const schema = z.object({
+  meeting_id: z.string().optional(),
   date: z.date({
     required_error: "Informe a data da reunião",
   }),
   time: z.string({
     required_error: 'Informe o horario da reunião'
   }),
-  notes: z.string().optional()
+  notes: z.string().optional(),
+  email: z.string({
+    required_error: "Informe o e-mail do cliente"
+  })
 })
 
 export type IFetchSchedulesReply = {
@@ -29,9 +33,13 @@ export type IFetchSchedulesReply = {
 
 export type IMeetingFormData = z.infer<typeof schema>;
 
-export const useMeetingCard = ({ accountId, wwt_account_id }: {accountId: string, meeting?: IMeeting, wwt_account_id: number }) => {
+export const useMeetingCard = ({ accountId, wwt_account_id, meeting, email }: {accountId: string, meeting?: IMeeting, wwt_account_id: number, email: string }) => {
   const { formState: { errors }, control, register, handleSubmit, watch, getValues, reset } = useForm<IMeetingFormData>({
-    resolver: zodResolver(schema)
+    resolver: zodResolver(schema),
+    defaultValues: {
+      meeting_id: meeting?.id,
+      email
+    }
   })
   const [isModalOpen, setIsModalOpen] = useState(false)  
 
@@ -88,7 +96,9 @@ export const useMeetingCard = ({ accountId, wwt_account_id }: {accountId: string
       scheduleSlotId: data.time,
       accountId: accountId,
       userId,
-      wwt_account_id
+      wwt_account_id,
+      email: data.email,
+      meeting_id: meeting?.id
     })
 
     onResetForm()
@@ -127,6 +137,7 @@ export const useMeetingCard = ({ accountId, wwt_account_id }: {accountId: string
     formatTime,
     onHandleCancel,
     isModalOpen,
-    setIsModalOpen
+    setIsModalOpen,
+    watch
   }
 }

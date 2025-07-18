@@ -35,7 +35,9 @@ export interface ICreateSchedule {
   notes?: string
   accountId: string
   userId: string
-  wwt_account_id: number
+  wwt_account_id?: number
+  meeting_id?: string
+  email: string
 }
 
 export async function createSchedule(params: ICreateSchedule) {
@@ -46,17 +48,34 @@ export async function createSchedule(params: ICreateSchedule) {
       },
       data: {
         status: 'BOOKED',
-        Meeting: {
-          create: {
-            accountId: params.accountId,
-            description: params.notes,
-            organizerId: params.userId,
-            status: "BOOKED"
-          }
-        }
+      }
+    })
+
+    await client.meeting.upsert({
+      where: {
+        id: params.meeting_id,
+      },
+      create: {
+        accountId: params.accountId,
+        description: params.notes,
+        organizerId: params.userId,
+        email: params.email,
+        status: "BOOKED",
+        slotId: params.scheduleSlotId,
+      },
+      update: {
+        accountId: params.accountId,
+        description: params.notes,
+        organizerId: params.userId,
+        email: params.email,
+        status: "BOOKED",
+        slotId: params.scheduleSlotId,
       }
     })
   })
+  if(params.wwt_account_id) {
+    revalidatePath(`/wwt/clients/${params.wwt_account_id}`);
+  }
 
-  revalidatePath(`/wwt/clients/${params.wwt_account_id}`);
+  revalidatePath('/meeting')
 }

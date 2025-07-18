@@ -37,7 +37,10 @@ export default async function MeetingPage({ searchParams }: PageProps) {
           <CardContent className="space-y-4">
             <Suspense fallback={<Skeleton className="w-full h-96" />}>
               <SearchMeeting />
-              <MeetingLoader params={nuqsParams} />
+              <MeetingLoader params={{
+                ...nuqsParams,
+                dateOrderBy: nuqsParams.dateOrderBy ?? 'desc'
+              }} />
             </Suspense>
           </CardContent>
         </Card>

@@ -75,7 +75,11 @@ export async function findOneClient(params: FindOneClientParams): Promise<
               user: true;
             };
           };
-          bfleet_client: true;
+          bfleet_client: {
+            include: {
+              user: true
+            }
+          };
         };
       };
     };
@@ -101,7 +105,11 @@ export async function findOneClient(params: FindOneClientParams): Promise<
               user: true,
             },
           },
-          bfleet_client: true,
+          bfleet_client: {
+            include: {
+              user: true
+            }
+          },
         },
       },
     },

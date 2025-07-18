@@ -405,6 +405,7 @@ model Meeting {
   accountId   String?     @db.ObjectId
   organizerId String
   description String?
+  email       String?
   status      SlotStatus?
   slotId      String?     @unique @db.ObjectId
   clienteId   String?     @db.ObjectId

@@ -16,6 +16,8 @@ import { useDisclosure } from '@/@shared/hooks/use-disclosure';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
 import { MeetingCancel } from '../dialog/MeetingCancel';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
+import { MeetingReeschedule } from '../dialog/MeetingReeschedule';
 
 interface MeetingTableProps {
   data: Array<IMeeting>
@@ -37,6 +39,8 @@ export const MeetingTable: React.FC<MeetingTableProps> = ({ data, pagination }) 
   }
 
   const meetingCancelDisclousure = useDisclosure<IMeeting>();
+  const meetingRescheduleDisclousure = useDisclosure<IMeeting>();
+  const router = useRouter();
 
   const columns: Array<ColumnDef<IMeeting>> = [
     {
@@ -67,20 +71,26 @@ export const MeetingTable: React.FC<MeetingTableProps> = ({ data, pagination }) 
     {
       id: "data",
       cell: ({ row }) => {
-        return format(new Date(row.original.slot.start), "EEEE, MMMM dd, yyyy")
+        if(!row.original.slot) return '--'
+        return (
+          <div className='flex gap-1'>
+            <span>{format(new Date(row.original.slot.start), "dd/MM/yyyy")} /</span>
+            <span className='font-semibold'>{formatTime(row.original.slot)}</span>
+          </div>
+        )
       },
-      header: "Data"
+      header: "Data e Horario"
     },
     {
-      id: "time",
-      cell: ({ row }) => {
-        return formatTime(row.original.slot)
-      },
-      header: "Horário"
+      id: "email",
+      cell: ({ row }) => row.original.email ??'--',
+      header: "Email"
     },
     {
       id: "status",
       cell: ({ row }) => {
+        if(row.original.status === 'CANCELED') return <Badge variant={'destructive'}>Cancelada</Badge>
+         if(!row.original.slot) return '--'
         const startDate = new Date(row.original.slot.start)
         const endDate = new Date(row.original.slot.end)
         const withinInterval = isWithinInterval(new Date(), {
@@ -109,9 +119,9 @@ export const MeetingTable: React.FC<MeetingTableProps> = ({ data, pagination }) 
       header: "Ações",
       cell: ({ row }) => {
 
-        if(row.original.slot.status === 'CANCELED') {
+        if(row.original.status === 'CANCELED' || !row.original.slot) {
           return (
-            <Button size={"sm"} >Reagendar Reunião</Button>
+            <Button size={"sm"} onClick={() => meetingRescheduleDisclousure.onOpen(row.original)} >Reagendar Reunião</Button>
           )
         }
 
@@ -136,7 +146,7 @@ export const MeetingTable: React.FC<MeetingTableProps> = ({ data, pagination }) 
       const data = meetingCancelDisclousure.data;
       if(!data) return
 
-      const response = await fetch(`meeting/cancel`, {
+      const response = await fetch(`api/meeting/cancel`, {
         method: "POST",
         body: JSON.stringify({ meeting_id: data.id }),
         headers: {
@@ -154,6 +164,7 @@ export const MeetingTable: React.FC<MeetingTableProps> = ({ data, pagination }) 
     }
     finally {
       meetingCancelDisclousure.onClose()  
+      router.refresh()
     }
   }
 
@@ -183,6 +194,10 @@ export const MeetingTable: React.FC<MeetingTableProps> = ({ data, pagination }) 
           </DialogHeader>
         </DialogContent>
       </Dialog>
+      <MeetingReeschedule 
+        disclousure={meetingRescheduleDisclousure}
+        meeting={meetingRescheduleDisclousure.data}
+      />
     </section>
   )
 }

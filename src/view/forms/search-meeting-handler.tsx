@@ -33,7 +33,7 @@ export function useMeetingFormhandler() {
       clientName: searchParams.clientName ?? undefined,
       status: (searchParams.status as MeetingStatus) ?? undefined,
       clientNameOrderBy: (searchParams.clientNameOrderBy as never) ?? "none",
-      dateOrderBy: (searchParams.dateOrderBy as never) ?? "none",
+      dateOrderBy: (searchParams.dateOrderBy as never) ?? "desc",
     },
   });
 

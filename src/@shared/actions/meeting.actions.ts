@@ -50,7 +50,13 @@ export async function cancelMeeting({
           status: 'AVAILABLE'
         }
       },
-      slotId: undefined,
     }
   })
+
+  await prisma.meeting.update({
+    where: { id: meeting_id },
+    data: {
+      slotId: null
+    }
+  });
 }

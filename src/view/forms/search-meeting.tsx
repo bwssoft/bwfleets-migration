@@ -8,7 +8,6 @@ import { Button } from "../components/ui/button";
 import { SearchIcon } from "lucide-react";
 import { FilterClearButton } from "../components/ui/filter-clear-button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
-import { MeetingDialog } from "../dialog/MeetingDialog";
 
 export function SearchMeeting() {
   const { form, handleSucceededSubmit, isPending, handleClearFilters, searchParams } = useMeetingFormhandler();
@@ -21,7 +20,7 @@ export function SearchMeeting() {
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
           <Input
-            {...form.register("clientName")}
+          {...form.register("clientName")}
             placeholder="Pesquisar por nome do cliente"
             className="w-64"
           />
@@ -87,13 +86,16 @@ export function SearchMeeting() {
             <FilterClearButton
               isLoading={isPending}
               onClick={handleClearFilters}
-              nuqsParams={searchParams}
+              nuqsParams={{
+                ...searchParams,
+                dateOrderBy: 'desc'
+              }}
             />
           </div>
         </div>
       </div>
       <div>
-        <MeetingDialog />
+        {/* <MeetingDialog /> */}
       </div>
     </form>
   )
