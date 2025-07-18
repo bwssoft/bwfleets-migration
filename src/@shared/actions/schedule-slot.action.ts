@@ -50,7 +50,8 @@ export async function createSchedule(params: ICreateSchedule) {
           create: {
             accountId: params.accountId,
             description: params.notes,
-            organizerId: params.userId
+            organizerId: params.userId,
+            status: "BOOKED"
           }
         }
       }

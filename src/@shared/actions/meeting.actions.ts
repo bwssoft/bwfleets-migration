@@ -37,3 +37,20 @@ export async function findAllMeetings(params: FindManyMeetingParams) {
     count,
   }
 }
+
+export async function cancelMeeting({
+  meeting_id
+}: { meeting_id: string }) {
+  await prisma.meeting.update({
+    where: { id: meeting_id },
+    data: {
+      status: "CANCELED",
+      slot: {
+        update: {
+          status: 'AVAILABLE'
+        }
+      },
+      slotId: undefined,
+    }
+  })
+}

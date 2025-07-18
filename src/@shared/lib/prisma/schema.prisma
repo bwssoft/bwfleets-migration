@@ -401,15 +401,16 @@ enum SlotStatus {
 }
 
 model Meeting {
-  id          String  @id @default(auto()) @map("_id") @db.ObjectId
-  accountId   String? @db.ObjectId
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  accountId   String?     @db.ObjectId
   organizerId String
   description String?
-  slotId      String  @unique @db.ObjectId
-  clienteId   String? @db.ObjectId
+  status      SlotStatus?
+  slotId      String?     @unique @db.ObjectId
+  clienteId   String?     @db.ObjectId
 
   // Relacionamento com ScheduleSlot
-  slot      ScheduleSlot        @relation(fields: [slotId], references: [id])
+  slot      ScheduleSlot?       @relation(fields: [slotId], references: [id])
   account   WanwayClient?       @relation(fields: [accountId], references: [id])
   organizer User                @relation(fields: [organizerId], references: [id])
   client    BFleetClientEntity? @relation(fields: [clienteId], references: [id])

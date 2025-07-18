@@ -11,6 +11,11 @@ import { IScheduleSlot } from '@/@shared/interfaces/schedule-slot';
 import { Avatar, AvatarFallback } from '../components/ui/avatar';
 import { formatName, getInitials } from '@/@shared/utils/get-initials';
 import { DataTablePagination } from '../components/ui/data-table-pagination';
+import { Button } from '../components/ui/button';
+import { useDisclosure } from '@/@shared/hooks/use-disclosure';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
+import { MeetingCancel } from '../dialog/MeetingCancel';
+import { toast } from 'sonner';
 
 interface MeetingTableProps {
   data: Array<IMeeting>
@@ -30,6 +35,8 @@ export const MeetingTable: React.FC<MeetingTableProps> = ({ data, pagination }) 
     const endTime = format(end, 'HH:mm')
     return [startTime, endTime].join(' - ')
   }
+
+  const meetingCancelDisclousure = useDisclosure<IMeeting>();
 
   const columns: Array<ColumnDef<IMeeting>> = [
     {
@@ -96,8 +103,61 @@ export const MeetingTable: React.FC<MeetingTableProps> = ({ data, pagination }) 
         return <Badge variant={'default'}>Agendado</Badge>
       },
       header: "Status"
+    },
+    {
+      id: 'actions',
+      header: "Ações",
+      cell: ({ row }) => {
+
+        if(row.original.slot.status === 'CANCELED') {
+          return (
+            <Button size={"sm"} >Reagendar Reunião</Button>
+          )
+        }
+
+        const startDate = new Date(row.original.slot.start)
+        const endDate = new Date(row.original.slot.end)
+        const withinInterval = isWithinInterval(new Date(), {
+          start: startDate,
+          end: endDate
+        });
+
+        const disabled = withinInterval || endDate <= new Date()
+
+        return (
+          <Button size={"sm"} variant={disabled ? "outline" : "outline"} onClick={() => meetingCancelDisclousure.onOpen(row.original)} disabled={disabled} >Cancelar Reunião</Button>
+        )
+      } 
     }
   ]
+
+  const handleCancelMeeting = async () => {
+    try {
+      const data = meetingCancelDisclousure.data;
+      if(!data) return
+
+      const response = await fetch(`meeting/cancel`, {
+        method: "POST",
+        body: JSON.stringify({ meeting_id: data.id }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+
+      const { success } = await response.json()
+      if(!success) {
+        toast.error("Falha ao cancelar agendamento!")
+      }
+      
+      toast.success("Agendamento cancelado com sucesso!")
+    
+    }
+    finally {
+      meetingCancelDisclousure.onClose()  
+    }
+  }
+
+
   return (
     <section className="space-y-4 bg-card">
       <DataTable
@@ -110,6 +170,19 @@ export const MeetingTable: React.FC<MeetingTableProps> = ({ data, pagination }) 
           pageSize={pagination.pageSize}
         />
       )}
+      <Dialog open={meetingCancelDisclousure.isOpen} onOpenChange={meetingCancelDisclousure.onClose}>
+        <DialogContent className="w-full max-h-[30vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              Cancelar agendamento com {meetingCancelDisclousure.data?.account?.userName}
+            </DialogTitle>
+              <MeetingCancel 
+                handleCancel={meetingCancelDisclousure.onClose}
+                handleConfirm={handleCancelMeeting}
+              />
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </section>
   )
 }
