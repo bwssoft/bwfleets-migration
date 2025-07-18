@@ -308,7 +308,7 @@ type Contact {
   name    String
   email   String
   contact String
-  role    String
+  role    String?
 }
 
 type Address {
