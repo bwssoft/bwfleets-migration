@@ -86,6 +86,7 @@ export async function findOneClient(params: FindOneClientParams): Promise<
   }>
 > {
   const { where } = params;
+  console.log({ where })
   return await prisma.wanwayClient.findFirstOrThrow({
     where,
     include: {

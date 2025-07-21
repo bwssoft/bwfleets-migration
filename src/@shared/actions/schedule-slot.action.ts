@@ -1,6 +1,7 @@
 'use server'
 import { revalidatePath } from "next/cache";
 import { prisma } from "../lib/prisma/prisma-client";
+import { ObjectId } from 'mongodb';
 
 export async function FindAllScheduleSlot() {
   const schedules = await prisma.scheduleSlot.findMany({
@@ -53,7 +54,7 @@ export async function createSchedule(params: ICreateSchedule) {
 
     await client.meeting.upsert({
       where: {
-        id: params.meeting_id,
+        id: params.meeting_id ?? new ObjectId().toHexString(),
       },
       create: {
         accountId: params.accountId,
