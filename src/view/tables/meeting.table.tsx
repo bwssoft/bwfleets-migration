@@ -125,17 +125,8 @@ export const MeetingTable: React.FC<MeetingTableProps> = ({ data, pagination }) 
           )
         }
 
-        const startDate = new Date(row.original.slot.start)
-        const endDate = new Date(row.original.slot.end)
-        const withinInterval = isWithinInterval(new Date(), {
-          start: startDate,
-          end: endDate
-        });
-
-        const disabled = withinInterval || endDate <= new Date()
-
         return (
-          <Button size={"sm"} variant={disabled ? "outline" : "outline"} onClick={() => meetingCancelDisclousure.onOpen(row.original)} disabled={disabled} >Cancelar Reunião</Button>
+          <Button size={"sm"} variant={"outline"} onClick={() => meetingCancelDisclousure.onOpen(row.original)} >Cancelar Reunião</Button>
         )
       } 
     }
