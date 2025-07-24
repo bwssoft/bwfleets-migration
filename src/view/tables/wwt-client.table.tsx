@@ -153,6 +153,13 @@ export function WWTClientTable({ data, pagination }: WWTClientTableProps) {
         }
 
         if(data.migration?.migration_status === 'SUCCESS') {
+
+          if(data.migration.migration_token?.completed === true) {
+            return (
+              <Button variant={"outline"} onClick={() => handleTableRowClick(data)} >Visualizar</Button>
+            )
+          }
+
           return (
             <Button id="action-button" onClick={() => handleGenLink(data.migration!.migration_token!, data.migration!.uuid)} >Link de acesso</Button>
           )
