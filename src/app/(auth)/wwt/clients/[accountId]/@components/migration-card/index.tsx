@@ -113,8 +113,12 @@ export const MigrationCard: React.FC<IMigrationCardType> = ({ migration_token, s
     return (
       <div className="mt-3 flex flex-col space-y-2 overflow-hidden">
         {
-          migration_token?.completed === false ? (
-            <button
+          migration_token?.completed === true ? (
+           
+            <Button className='cursor-auto' variant={'secondary'} >Migração Concluída</Button>
+
+          ) : (
+             <button
               onClick={() => handleURLCopy(getAccessLink(currentToken?.token))}
               className="flex items-center cursor-pointer justify-between gap-4 rounded-md border border-border bg-accent p-2 px-3 text-left text-muted-foreground transition-all hover:bg-accent/50"
             >
@@ -124,8 +128,6 @@ export const MigrationCard: React.FC<IMigrationCardType> = ({ migration_token, s
 
               <ClipboardIcon className="h-4 w-4" />
             </button>
-          ) : (
-            <Button className='cursor-auto' variant={'secondary'} >Migração Concluída</Button>
           )
         }
         
