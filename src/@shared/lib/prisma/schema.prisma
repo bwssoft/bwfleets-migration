@@ -357,8 +357,9 @@ type ClientUserRelation {
 }
 
 type MigrationAccessToken {
-  token       String
+  token       String?
   created_at  DateTime @default(now())
+  completed   Boolean? @default(false)
   bfleet_uuid String
 }
 

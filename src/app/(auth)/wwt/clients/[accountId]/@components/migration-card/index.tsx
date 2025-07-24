@@ -33,11 +33,13 @@ export const MigrationCard: React.FC<IMigrationCardType> = ({ migration_token, s
 
   const cardTitle = useMemo(() => {
     if(status === 'DONE') return 'Migrar dados'
+    if(status === 'SUCCESS' && migration_token?.completed === true) return 'Cliente Atualizado'
     if(status === 'SUCCESS') return 'Gerar link de acesso'
   }, [status])
 
   const cardDescription = useMemo(() => {
     if(status === 'DONE') return 'Inicie o processo de migração dos dados para a BWFleets'
+    if(status === 'SUCCESS' && migration_token?.completed === true) return 'O Cliente concluiu o processo de migração da plataforma com sucesso'
     if(status === 'SUCCESS') return 'Gere o link de primeiro acesso a plataforma para o cliente'
   }, [status])
 
@@ -45,9 +47,9 @@ export const MigrationCard: React.FC<IMigrationCardType> = ({ migration_token, s
       setPedingToken(true)
       setCurrentToken(data)
       try {
-        const { created_at, bfleet_uuid } = data
+        const { created_at, bfleet_uuid, completed } = data
         const diffHours = differenceInHours(new Date(), created_at)
-        if(diffHours >= 7) {
+        if(diffHours >= 7 && completed === false) {
           const replyToken = await bWFleetsProvider.generateAccessLink({
             query: { uuid: bfleet_uuid }
           })
@@ -84,7 +86,7 @@ export const MigrationCard: React.FC<IMigrationCardType> = ({ migration_token, s
     }
   },[])
 
-  const getAccessLink = useCallback((token?: string) => {
+  const getAccessLink = useCallback((token?: string | null) => {
       const url = `https://bwfleets.com/welcome?token=${token}`;
       return url;
     }, [])
@@ -97,7 +99,7 @@ export const MigrationCard: React.FC<IMigrationCardType> = ({ migration_token, s
     }
 
   const AcessLinkContent = () => {
-    if(pedingToken) {
+    if(pedingToken && migration_token?.completed === false) {
       return (
         <div className='flex flex-col text-sm text-center gap-1 text-muted-foreground w-full h-full justify-center items-center'>
           Aguarde enquanto o link de acesso é gerado. Isso pode levar alguns segundos.
@@ -110,16 +112,23 @@ export const MigrationCard: React.FC<IMigrationCardType> = ({ migration_token, s
 
     return (
       <div className="mt-3 flex flex-col space-y-2 overflow-hidden">
-        <button
-          onClick={() => handleURLCopy(getAccessLink(currentToken?.token))}
-          className="flex items-center cursor-pointer justify-between gap-4 rounded-md border border-border bg-accent p-2 px-3 text-left text-muted-foreground transition-all hover:bg-accent/50"
-        >
-          <div className="w-full overflow-hidden text-ellipsis whitespace-nowrap">
-            <span>{getAccessLink(currentToken?.token) ?? "--"}</span>
-          </div>
+        {
+          migration_token?.completed === false ? (
+            <button
+              onClick={() => handleURLCopy(getAccessLink(currentToken?.token))}
+              className="flex items-center cursor-pointer justify-between gap-4 rounded-md border border-border bg-accent p-2 px-3 text-left text-muted-foreground transition-all hover:bg-accent/50"
+            >
+              <div className="w-full overflow-hidden text-ellipsis whitespace-nowrap">
+                <span>{getAccessLink(currentToken?.token) ?? "--"}</span>
+              </div>
 
-          <ClipboardIcon className="h-4 w-4" />
-        </button>
+              <ClipboardIcon className="h-4 w-4" />
+            </button>
+          ) : (
+            <Button className='cursor-auto' variant={'secondary'} >Migração Concluída</Button>
+          )
+        }
+        
       </div>
     )
   }

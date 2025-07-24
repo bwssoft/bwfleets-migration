@@ -183,9 +183,9 @@ export function WWTClientTable({ data, pagination }: WWTClientTableProps) {
     setPendingToken(true)
     migrationTokenDisclousure.onOpen(data)
     try {
-      const { created_at, bfleet_uuid } = data
+      const { created_at, bfleet_uuid, completed } = data
       const diffHours = differenceInHours(new Date(), created_at)
-      if(diffHours >= 7) {
+      if(diffHours >= 7 && completed === false) {
         const replyToken = await bWFleetsProvider.generateAccessLink({
           query: { uuid: bfleet_uuid }
         })
@@ -221,7 +221,7 @@ export function WWTClientTable({ data, pagination }: WWTClientTableProps) {
     router.refresh()
   }
 
-  const getAccessLink = useCallback((token?: string) => {
+  const getAccessLink = useCallback((token?: string | null) => {
     const url = `https://bwfleets.com/welcome?token=${token}`;
     return url;
   }, [])

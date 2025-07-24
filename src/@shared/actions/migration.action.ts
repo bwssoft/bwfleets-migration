@@ -6,12 +6,32 @@ import { revalidatePath } from "next/cache";
 import { User } from "better-auth";
 import { IBFleetClient, IWanwayClient } from "../interfaces";
 
+interface ICompleteMigrationParams {
+  wwt_account_id: string
+  bfleet_uuid: string
+}
+
+export async function completeMigration(data: ICompleteMigrationParams) {
+  const { wwt_account_id, bfleet_uuid } = data;
+  await prisma.migration.update({
+    where: {
+      wwt_account_id: Number(wwt_account_id)
+    },
+    data: {
+      migration_token: {
+        completed: true,
+        bfleet_uuid
+      }
+    }
+  })
+}
 interface StartMigration {
   wwtClient: IWanwayClient;
   status: MigrationStatus;
   bfleetClient?: IBFleetClient;
   user: User;
 }
+
 
 export async function startMigration(data: StartMigration) {
   const currentMigration = await prisma.migration.findFirst({
@@ -57,7 +77,8 @@ export async function updateMigrationStatus({
     migration_token = {
       token,
       created_at: new Date(),
-      bfleet_uuid
+      bfleet_uuid,
+      completed: false
     }
   }
 
