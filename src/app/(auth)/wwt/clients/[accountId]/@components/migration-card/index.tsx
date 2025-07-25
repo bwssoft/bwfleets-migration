@@ -49,7 +49,7 @@ export const MigrationCard: React.FC<IMigrationCardType> = ({ migration_token, s
       try {
         const { created_at, bfleet_uuid, completed } = data
         const diffHours = differenceInHours(new Date(), created_at)
-        if(diffHours >= 7 && completed === false) {
+        if(diffHours >= 7 && completed !== true) {
           const replyToken = await bWFleetsProvider.generateAccessLink({
             query: { uuid: bfleet_uuid }
           })
