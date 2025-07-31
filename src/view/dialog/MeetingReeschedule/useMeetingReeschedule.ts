@@ -93,22 +93,28 @@ export const useMeetingReeschedule = ({ disclousure, accountId, meeting }: IMeet
   }
 
   const onHandleSubmit = handleSubmit(async (data) => {
-    const { data: session } = await authClient.getSession();
-    const userId = session?.user.id;
-    if(!userId) return
+    try {
+      const { data: session } = await authClient.getSession();
+      const userId = session?.user.id;
+      if(!userId) return
 
-    await createSchedule({
-      notes: data.notes,
-      scheduleSlotId: data.time,
-      accountId: accountId!,
-      userId,
-      email: data.email,
-      meeting_id: meeting?.id
-    })
+      await createSchedule({
+        notes: data.notes,
+        scheduleSlotId: data.time,
+        accountId: accountId!,
+        userId,
+        email: data.email,
+        meeting_id: meeting?.id
+      })
 
-    onResetForm()
-    disclousure.onClose()
-    toast.success("Reunião agendada com sucesso")
+      onResetForm()
+      disclousure.onClose()
+      toast.success("Reunião agendada com sucesso")
+    }
+    catch(err :any) {
+      toast.error(err.message)
+      onResetForm()
+    }
   })
 
   const onHandleCancel = () => {

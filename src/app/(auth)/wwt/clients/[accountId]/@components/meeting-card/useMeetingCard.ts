@@ -87,23 +87,29 @@ export const useMeetingCard = ({ accountId, wwt_account_id, meeting, email }: {a
   }, [watch('date')])
 
   const onHandleSubmit = handleSubmit(async (data) => {
-    const { data: session } = await authClient.getSession();
-    const userId = session?.user.id;
-    if(!userId) return
+    try {
+      const { data: session } = await authClient.getSession();
+      const userId = session?.user.id;
+      if(!userId) return
 
-    await createSchedule({
-      notes: data.notes,
-      scheduleSlotId: data.time,
-      accountId: accountId,
-      userId,
-      wwt_account_id,
-      email: data.email,
-      meeting_id: meeting?.id
-    })
+      await createSchedule({
+        notes: data.notes,
+        scheduleSlotId: data.time,
+        accountId: accountId,
+        userId,
+        wwt_account_id,
+        email: data.email,
+        meeting_id: meeting?.id
+      })
 
-    onResetForm()
-    setIsModalOpen(false)
-    toast.success("Reunião agendada com sucesso")
+      onResetForm()
+      setIsModalOpen(false)
+      toast.success("Reunião agendada com sucesso")
+    }
+    catch(err: any) {
+      toast.error(err.message)
+      onResetForm()
+    }
   })
 
   const formatTime = ({ end, start }: Pick<IScheduleSlot, 'start' | 'end'>) => {

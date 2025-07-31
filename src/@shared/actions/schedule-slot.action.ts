@@ -42,6 +42,31 @@ export interface ICreateSchedule {
 }
 
 export async function createSchedule(params: ICreateSchedule) {
+
+  const client = await prisma.meeting.findFirst({
+    where: {
+      accountId: params.accountId,
+      slot: {
+        status: { in: ['BOOKED'] }
+      }
+    }
+  })
+
+  const slot = await prisma.scheduleSlot.findFirst({
+    where: {
+      id: params.scheduleSlotId,
+      status: { in: ['BOOKED'] }
+    }
+  })
+
+  if(slot) {
+    throw new Error("Já possui um agendamento nesse horário")
+  }
+
+  if(client) {
+    throw new Error("Esse cliente já possui um agendamento")
+  }
+
   await prisma.$transaction(async (client) => {
     await client.scheduleSlot.update({
       where: {
