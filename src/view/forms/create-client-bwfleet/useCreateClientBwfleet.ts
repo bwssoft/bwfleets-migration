@@ -192,8 +192,6 @@ export const useCreateClientBwfleet = (): IUseCreateClientBwfleetResponse => {
         type: data.document_type,
         value: removeSpecialCharacters(data.document),
       },
-      profile_uuid: [],
-      created_at: new Date(),
       free_period: valid,
       validate: valid,
       user: {
