@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
 import { WanwayClient, Prisma } from "@prisma/client";
@@ -61,12 +60,12 @@ export async function findOneClient(params: FindOneClientParams): Promise<
     include: {
       Meeting: {
         include: {
-          slot: true,
-          account: true,
-          organizer: true,
-          client: true,
-        }
-      }
+          slot: true;
+          account: true;
+          organizer: true;
+          client: true;
+        };
+      };
       migration: {
         include: {
           assigned: true;
@@ -77,8 +76,8 @@ export async function findOneClient(params: FindOneClientParams): Promise<
           };
           bfleet_client: {
             include: {
-              user: true
-            }
+              user: true;
+            };
           };
         };
       };
@@ -86,7 +85,7 @@ export async function findOneClient(params: FindOneClientParams): Promise<
   }>
 > {
   const { where } = params;
-  console.log({ where })
+  console.log({ where });
   return await prisma.wanwayClient.findFirstOrThrow({
     where,
     include: {
@@ -96,7 +95,7 @@ export async function findOneClient(params: FindOneClientParams): Promise<
           account: true,
           organizer: true,
           client: true,
-        }
+        },
       },
       migration: {
         include: {
@@ -108,8 +107,8 @@ export async function findOneClient(params: FindOneClientParams): Promise<
           },
           bfleet_client: {
             include: {
-              user: true
-            }
+              user: true,
+            },
           },
         },
       },
@@ -132,66 +131,75 @@ export type IParametersValue = {
 
 export type ICustomTree = {
   accountId: number;
-    accountStatsBean: {
-        accountId: number;
-        deviceNo: number;
-        deviceTotalNo: number;
-        offlineDeviceNo: number;
-        onlineDeviceNo: number;
-        success: boolean;
-        unUsedDeviceNo: number;
-    };
-    isLeaf: number;
-}
+  accountStatsBean: {
+    accountId: number;
+    deviceNo: number;
+    deviceTotalNo: number;
+    offlineDeviceNo: number;
+    onlineDeviceNo: number;
+    success: boolean;
+    unUsedDeviceNo: number;
+  };
+  isLeaf: number;
+};
 
 export async function generateUserSummary(data: IWanwayClient) {
-
   const findSubClients = async (accountId: number) => {
     const subClients = await prisma.wanwayClient.findMany({
       where: {
         parentId: {
-          equals: accountId
-        }
+          equals: accountId,
+        },
       },
       select: {
         accountStatsBean: true,
         isLeaf: true,
         accountId: true,
       },
-    })
+    });
 
     return subClients;
-  }
+  };
 
-  const getRecursiveTree = async (data: Partial<WanwayClient>) : Promise<Array<ICustomTree>> => {
-    const hasSubClient = (data.isLeaf ?? 0 )> 0;
+  const getRecursiveTree = async (
+    data: Partial<WanwayClient>
+  ): Promise<Array<ICustomTree>> => {
+    const hasSubClient = (data.isLeaf ?? 0) > 0;
 
-    if(!hasSubClient) return []
+    if (!hasSubClient) return [];
 
     const response = await findSubClients(data.accountId!);
 
     for (const client of response) {
       const subClients = await getRecursiveTree(client);
-      response.push(...subClients)
+      response.push(...subClients);
     }
 
     return response;
-  }
+  };
 
   const allClients = await getRecursiveTree(data);
 
-  const { offline, online, quantity } = allClients.reduce((acc, value) => {
-    const { accountStatsBean: { onlineDeviceNo, offlineDeviceNo, unUsedDeviceNo, deviceNo } } = value;
-    acc['online'] += onlineDeviceNo
-    acc['offline'] += offlineDeviceNo + unUsedDeviceNo;
-    acc['quantity'] += deviceNo;
-    return acc;
-  }, { online: 0, offline: 0, quantity: 0 })
+  const { offline, online, quantity } = allClients.reduce(
+    (acc, value) => {
+      const {
+        accountStatsBean: {
+          onlineDeviceNo,
+          offlineDeviceNo,
+          unUsedDeviceNo,
+          deviceNo,
+        },
+      } = value;
+      acc["online"] += onlineDeviceNo;
+      acc["offline"] += offlineDeviceNo + unUsedDeviceNo;
+      acc["quantity"] += deviceNo;
+      return acc;
+    },
+    { online: 0, offline: 0, quantity: 0 }
+  );
 
   const TEMPLATE_MESSAGE =
     "Olá, {client_name}. Tudo bem? Você está com a gente desde {time} e durante todo esse tempo você atingiu o volume de {qnt_client} clientes, e {qnt_all_device} dispositivos, sendo {qnt_device} na sua própria conta. Dentro desses, {qnt_device_online_pctg} estão ativos e {qnt_device_ofline_pctg} estão inativos nos últimos meses.";
-
-    
 
   const formatTime = (value?: number): string | undefined => {
     if (!value) return;
@@ -203,22 +211,19 @@ export async function generateUserSummary(data: IWanwayClient) {
     const response = (value * 100) / total;
     const arrounded = Math.round(response);
 
-    if(arrounded === 0 && response > 0 ) return 1
+    if (arrounded === 0 && response > 0) return 1;
 
-    if(arrounded > 100) return 100
+    if (arrounded > 100) return 100;
 
-    return arrounded
+    return arrounded;
   };
 
   const calculateDeviceStatistics = () => {
     const { offlineDeviceNo, onlineDeviceNo, unUsedDeviceNo, deviceNo } =
       data.accountStatsBean;
-    const offlineQuantity = offlineDeviceNo + unUsedDeviceNo + offline
+    const offlineQuantity = offlineDeviceNo + unUsedDeviceNo + offline;
     const deviceTotalNo = deviceNo + quantity;
-    const oflinePercentage = calcPercentage(
-      offlineQuantity,
-      deviceTotalNo 
-    );
+    const oflinePercentage = calcPercentage(offlineQuantity, deviceTotalNo);
     const onlineQuantity = onlineDeviceNo + online;
     const onlinePercentage = calcPercentage(onlineQuantity, deviceTotalNo);
 
@@ -245,16 +250,20 @@ export async function generateUserSummary(data: IWanwayClient) {
     qnt_all_device: {
       value: data.accountStatsBean.deviceTotalNo?.toString(),
       onError: (template: string) => {
-        const excludeDevice = "{qnt_all_device} dispositivos, sendo {qnt_device} na sua própria conta. Dentro desses, {qnt_device_online_pctg} estão ativos e {qnt_device_ofline_pctg} estão inativos nos últimos meses."
+        const excludeDevice =
+          "{qnt_all_device} dispositivos, sendo {qnt_device} na sua própria conta. Dentro desses, {qnt_device_online_pctg} estão ativos e {qnt_device_ofline_pctg} estão inativos nos últimos meses.";
         const valueToReplace = "";
         return template.replace(excludeDevice, valueToReplace);
       },
     },
     qnt_device: {
-      value: data.accountStatsBean.deviceNo?.toString() === data.accountStatsBean.deviceTotalNo.toString() ? "todos" : data.accountStatsBean.deviceNo?.toString(),
+      value:
+        data.accountStatsBean.deviceNo?.toString() ===
+        data.accountStatsBean.deviceTotalNo.toString()
+          ? "todos"
+          : data.accountStatsBean.deviceNo?.toString(),
       onError: (template: string) => {
-        const excludeDevice =
-          ", sendo {qnt_device} na sua própria conta";
+        const excludeDevice = ", sendo {qnt_device} na sua própria conta";
         const valueToReplace = "";
         return template.replace(excludeDevice, valueToReplace);
       },
@@ -273,13 +282,13 @@ export async function generateUserSummary(data: IWanwayClient) {
         const excludeParts = [
           "e {qnt_device_ofline_pctg} estão inativos nos últimos meses.",
           " e {qnt_device_ofline_pctg} estão inativos nos últimos meses.",
-          "{qnt_device_ofline_pctg} estão inativos nos últimos meses."
-        ]
+          "{qnt_device_ofline_pctg} estão inativos nos últimos meses.",
+        ];
         const valueToReplace = "";
         excludeParts.map(
           (exclude) => (template = template.replace(exclude, valueToReplace))
         );
-        return valueToReplace
+        return valueToReplace;
       },
     },
     qnt_client: {
@@ -336,7 +345,7 @@ export async function generateUserSummary(data: IWanwayClient) {
       response = response.replace(
         " e durante todo esse tempo você atingiu o volume de",
         "."
-      )
+      );
     }
   };
 
