@@ -31,21 +31,40 @@ export async function FindAllScheduleSlot() {
   return schedules
 }
 
-export interface ICreateSchedule {
+export type ICreateScheduleBase = {
   scheduleSlotId: string
   notes?: string
-  accountId: string
   userId: string
-  wwt_account_id?: number
   meeting_id?: string
   email: string
 }
+export interface ICreateScheduleWW extends ICreateScheduleBase {
+  accountId: string
+  wwt_account_id?: number
+  clientId?: undefined
+}
+export interface ICreateScheduleBFleet extends ICreateScheduleBase {
+  accountId?: undefined
+  wwt_account_id?: undefined
+  clientId: string
+}
+
+  
+
+export type ICreateSchedule = ICreateScheduleWW | ICreateScheduleBFleet;
 
 export async function createSchedule(params: ICreateSchedule) {
-
+  console.log({ params })
   const client = await prisma.meeting.findFirst({
     where: {
-      accountId: params.accountId,
+      OR: [
+        {
+          accountId: params.accountId,
+        },
+        {
+          clienteId: params.clientId
+        }
+      ],
       slot: {
         status: { in: ['BOOKED'] }
       }
@@ -88,6 +107,7 @@ export async function createSchedule(params: ICreateSchedule) {
         email: params.email,
         status: "BOOKED",
         slotId: params.scheduleSlotId,
+        clienteId: params.clientId,
       },
       update: {
         accountId: params.accountId,
@@ -96,6 +116,7 @@ export async function createSchedule(params: ICreateSchedule) {
         email: params.email,
         status: "BOOKED",
         slotId: params.scheduleSlotId,
+        clienteId: params.clientId,
       }
     })
   })

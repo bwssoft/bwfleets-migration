@@ -13,7 +13,6 @@ export async function findAllMeetings(params: FindManyMeetingParams) {
   const { page, pageSize = 100, where, orderBy } = params;
   const formattedWhere = cleanObject(where);
   const formattedOrderBy = cleanObject(orderBy);
-
   const skip = !!page ? pageSize * Number(page - 1) : 0;
   const count = await prisma.meeting.count({
     where: formattedWhere,

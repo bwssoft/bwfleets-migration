@@ -9,7 +9,6 @@ export interface BFleetClientsTableLoaderProps {
 }
 
 export async function BFleetClientsLoader({ params }: BFleetClientsTableLoaderProps) {
-  
   const { count, data } = await findBwfleetClientEntity({
     page: params.page,
     where: {

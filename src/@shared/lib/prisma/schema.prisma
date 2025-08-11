@@ -409,7 +409,7 @@ model Meeting {
   email       String?
   status      SlotStatus?
   slotId      String?     @unique @db.ObjectId
-  clienteId   String?     @db.ObjectId
+  clienteId   String?
 
   // Relacionamento com ScheduleSlot
   slot      ScheduleSlot?       @relation(fields: [slotId], references: [id])

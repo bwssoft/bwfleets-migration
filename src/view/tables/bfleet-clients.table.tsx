@@ -5,13 +5,16 @@ import React, { useMemo } from 'react';
 import { DataTable } from '../components/ui/data-table';
 import { DataTablePagination } from '../components/ui/data-table-pagination';
 import { ColumnDef } from '@tanstack/react-table';
-import { ClipboardIcon, ScanTextIcon } from 'lucide-react';
+import { ClipboardIcon, User, Video } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { useDisclosure } from '@/@shared/hooks/use-disclosure';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../components/ui/dialog';
 import { Spinner } from '../components/ui';
-import { BWFleetsProvider } from '@/@shared/provider/bwfleets';
 import { toast } from 'sonner';
+import { Avatar, AvatarFallback } from '../components/ui/avatar';
+import { formatName, getInitials } from '@/@shared/utils/get-initials';
+import { CreateMeeting } from '../forms/create-meeting.form';
+import { ViewMeetingForm } from '../forms/view-meeting.form';
 
 interface BFleetClientTableProps {
   data: Array<IBfleetClientEntity>
@@ -26,44 +29,45 @@ interface BFleetClientTableProps {
 export function BFleetClientsTable({ data, pagination }: BFleetClientTableProps) {
 
   const accessLinkDisclosure = useDisclosure<{ isLoading: boolean, data?: { ttoken: string } }>({ default: { isLoading: true } });
-  const bWFleetsProvider = new BWFleetsProvider();
+  const createMeetingDisclousure = useDisclosure<IBfleetClientEntity>();
+  const viewMeetingDisclousure = useDisclosure<IBfleetClientEntity>();
 
-  const waitTimeout = (ms: number) => {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
+  // const waitTimeout = (ms: number) => {
+  //   return new Promise(resolve => setTimeout(resolve, ms));
+  // }
 
-  const handleGenAccessLink = async (client: IBfleetClientEntity) => {
-    try {
-      accessLinkDisclosure.setData({
-        isLoading: true,
-        data: undefined
-      });
-      accessLinkDisclosure.onOpen();
-      await waitTimeout(1000);
-      await bWFleetsProvider.generateAccessLink({
-        query: {
-          uuid: client.bwfleet.uuid!,
-        }
-      }).then((response) => {
-        const url = `https://bwfleets.com/welcome?token=${response.response.ttoken}`;
-        accessLinkDisclosure.setData({
-          isLoading: false,
-          data: {
-            ttoken: url,
-          },
-        });
-      })
+  // const handleGenAccessLink = async (client: IBfleetClientEntity) => {
+  //   try {
+  //     accessLinkDisclosure.setData({
+  //       isLoading: true,
+  //       data: undefined
+  //     });
+  //     accessLinkDisclosure.onOpen();
+  //     await waitTimeout(1000);
+  //     await bWFleetsProvider.generateAccessLink({
+  //       query: {
+  //         uuid: client.bwfleet.uuid!,
+  //       }
+  //     }).then((response) => {
+  //       const url = `https://bwfleets.com/welcome?token=${response.response.ttoken}`;
+  //       accessLinkDisclosure.setData({
+  //         isLoading: false,
+  //         data: {
+  //           ttoken: url,
+  //         },
+  //       });
+  //     })
 
       
-    } catch {
-      toast.error("Erro ao gerar o link de acesso. Tente novamente mais tarde.");
-      accessLinkDisclosure.setData({
-        isLoading: false,
-        data: undefined,
-      });
-      accessLinkDisclosure.onClose();
-    }
-  }
+  //   } catch {
+  //     toast.error("Erro ao gerar o link de acesso. Tente novamente mais tarde.");
+  //     accessLinkDisclosure.setData({
+  //       isLoading: false,
+  //       data: undefined,
+  //     });
+  //     accessLinkDisclosure.onClose();
+  //   }
+  // }
 
   const isLoadingGenAccessLink = useMemo(() => {
     return accessLinkDisclosure.data?.isLoading ?? true;
@@ -85,6 +89,35 @@ export function BFleetClientsTable({ data, pagination }: BFleetClientTableProps)
       header: "Nome",
     },
     {
+      id: "assigned",
+      header: "Responsável",
+      cell: ({ row }) => {
+        const data = row.original;
+        return (
+          <div className="flex  gap-2 items-baseline">
+            {data.assigned_name ? (
+              <>
+                <Avatar className="size-7">
+                  <AvatarFallback className="text-xs">
+                    {data.assigned_name ? (
+                      getInitials(data.assigned_name)
+                    ) : (
+                      <User />
+                    )}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="text-xs font-semibold">
+                  {formatName(data.assigned_name)}
+                </span>
+              </>
+            ) : (
+              "--"
+            )}
+          </div>
+        )
+      }
+    },
+    {
       id: "client_email",
       cell: ({ row }) => {
         return row.original.bwfleet?.email ?? '--';
@@ -94,12 +127,29 @@ export function BFleetClientsTable({ data, pagination }: BFleetClientTableProps)
     {
       id: "action",
       header: "#",
-      cell: ({ row }) => (
-        <Button disabled className='hidden' onClick={() => handleGenAccessLink(row.original)} >
-          <ScanTextIcon />
-          <span>Gerar link de acesso</span>
+      cell: ({ row }) => {
+        const data = row.original;
+
+        if(data.Meeting[0] && data.Meeting[0].status !== "CANCELED") {
+          return (
+            <Button size={"sm"} variant={'outline'} onClick={() => {
+              viewMeetingDisclousure.onOpen(data)
+            }}>
+              <Video />
+              <span>Visualizar Reunião</span>
+            </Button>
+          )
+        }
+
+        return (
+        <Button size={"sm"} onClick={() => 
+          createMeetingDisclousure.onOpen(data)
+        }>
+          <Video />
+          <span>Agendar Reunião</span>
         </Button>
-      ),
+      )
+      },
     },
   ]
 
@@ -169,6 +219,23 @@ export function BFleetClientsTable({ data, pagination }: BFleetClientTableProps)
           {
             isLoadingGenAccessLink ? <LoadingAcessLink /> : <AccessLinkContent />
           }
+        </Dialog>
+
+        <Dialog
+          open={createMeetingDisclousure.isOpen}
+          onOpenChange={createMeetingDisclousure.onClose}
+        >
+          {
+            createMeetingDisclousure.data && (
+              <CreateMeeting onClose={createMeetingDisclousure.onClose} data={createMeetingDisclousure.data} />
+            )
+          }
+        </Dialog>
+        <Dialog
+          open={viewMeetingDisclousure.isOpen}
+          onOpenChange={viewMeetingDisclousure.onClose}
+        >
+          {viewMeetingDisclousure.data && <ViewMeetingForm onClose={viewMeetingDisclousure.onClose} data={viewMeetingDisclousure.data} />}
         </Dialog>
       </section>
     );

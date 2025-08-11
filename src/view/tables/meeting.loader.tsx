@@ -55,16 +55,24 @@ export async function MeetingLoader({ params }: MeetingTableLoaderProps) {
     }
   }
 
-
   const { count, data } = await findAllMeetings({
     page: params.page,
+    pageSize: 20,
     where: {
-      account: {
-        userName: {
-          contains: params?.clientName as string,
-          mode: 'insensitive'
+      OR: [
+        {
+          client: {
+            bwfleet: {
+              name: params?.clientName as string,
+            }
+          },
+        },
+        {
+          account: {
+            userName: params?.clientName as string,
+          },
         }
-      },
+      ],
       ...buildTimeClause(),
     },
     orderBy: [

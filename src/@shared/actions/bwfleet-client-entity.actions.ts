@@ -36,7 +36,6 @@ interface FindManyBClientsParams {
 
 export async function findBwfleetClientEntity(params: FindManyBClientsParams) {
   const { page, pageSize = 100, where, orderBy } = params;
-
   const formattedWhere = cleanObject(where);
   const formattedOrderBy = cleanObject(orderBy);
 
@@ -50,6 +49,17 @@ export async function findBwfleetClientEntity(params: FindManyBClientsParams) {
     take: pageSize,
     where: formattedWhere,
     orderBy: formattedOrderBy as Prisma.WanwayClientOrderByWithRelationInput[],
+    select: {
+      assigned_name: true,
+      assigned_uuid: true,
+      bwfleet: true,
+      id: true,
+      Meeting: {
+        include: {
+          slot: true
+        }
+      }
+    }
   });
 
   return {
