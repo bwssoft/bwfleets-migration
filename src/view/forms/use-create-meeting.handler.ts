@@ -134,7 +134,7 @@ export const useCreateMeetingFormHandler = ({
                 userId,
                 email: _data.email,
                 clientId: data.id,
-                meeting_id: data?.Meeting[0].id,
+                meeting_id: data?.Meeting[0]?.id,
             });
 
             onResetForm();
@@ -142,8 +142,9 @@ export const useCreateMeetingFormHandler = ({
             toast.success("Reunião agendada com sucesso");
             // router.refresh()
         } catch (err: any) {
+            console.log({ err })
             toast.error(err.message);
-            onResetForm();
+            // onResetForm();
         }
     });
 
