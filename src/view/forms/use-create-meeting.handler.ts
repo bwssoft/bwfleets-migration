@@ -42,7 +42,7 @@ export const useCreateMeetingFormHandler = ({
     } = useForm<IMeetingFormData>({
         resolver: zodResolver(schema),
         defaultValues: {
-            meeting_id: data?.Meeting[0].id,
+            meeting_id: data?.Meeting[0]?.id,
             email: data?.bwfleet.email ?? undefined,
         },
     });
