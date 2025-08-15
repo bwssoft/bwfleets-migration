@@ -142,9 +142,8 @@ export const useCreateMeetingFormHandler = ({
             toast.success("Reunião agendada com sucesso");
             // router.refresh()
         } catch (err: any) {
-            console.log({ err })
             toast.error(err.message);
-            // onResetForm();
+            onResetForm();
         }
     });
 
