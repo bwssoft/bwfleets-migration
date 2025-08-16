@@ -33,8 +33,8 @@ export default async function MeetingPage({ searchParams }: PageProps) {
       </Topbar>
 
       <PageLayout>
-        <Card className="w-full">
-          <CardContent className="space-y-4">
+        <Card className="w-full h-full overflow-hidden">
+          <CardContent className="flex flex-col space-y-4 max-h-[calc(100vh-154px)] overflow-hidden">
             <Suspense fallback={<Skeleton className="w-full h-96" />}>
               <SearchMeeting />
               <MeetingLoader params={{

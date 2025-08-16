@@ -46,15 +46,19 @@ export const MeetingTable: React.FC<MeetingTableProps> = ({ data, pagination }) 
     {
       id: "client_id",
       cell: ({ row }) => {
-        return row.original.account?.userName ?? row.original.client?.bwfleet.name
+        return (
+          <div className='truncate max-w-[350px]'>
+            {row.original.account?.userName ?? row.original.client?.bwfleet.name}
+          </div>
+        )
       },
-      header: "Reunião com"
+      header: "Reunião com",
     },
     {
       id: 'organizer_id',
       cell: ({ row }) => {
         return (
-          <div className="flex  gap-2 items-baseline">
+          <div className="flex  gap-2 items-baseline px-1">
             <Avatar className="size-7">
               <AvatarFallback className="text-xs">
                 {getInitials(row.original.organizer.name)}
@@ -83,7 +87,11 @@ export const MeetingTable: React.FC<MeetingTableProps> = ({ data, pagination }) 
     },
     {
       id: "email",
-      cell: ({ row }) => row.original.email ??'--',
+      cell: ({ row }) => (
+        <div className='truncate max-w-[250px]'>
+          {row.original.email ??'--'}
+        </div>
+      ),
       header: "Email"
     },
     {
@@ -161,7 +169,7 @@ export const MeetingTable: React.FC<MeetingTableProps> = ({ data, pagination }) 
 
 
   return (
-    <section className="space-y-4 bg-card">
+    <div className="flex flex-col space-y-4 h-full max-h-full overflow-hidden bg-card">
       <DataTable
         data={data}
         columns={columns}
@@ -189,6 +197,6 @@ export const MeetingTable: React.FC<MeetingTableProps> = ({ data, pagination }) 
         disclousure={meetingRescheduleDisclousure}
         meeting={meetingRescheduleDisclousure.data}
       />
-    </section>
+    </div>
   )
 }
