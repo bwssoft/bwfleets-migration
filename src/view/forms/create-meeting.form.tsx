@@ -63,7 +63,7 @@ export const CreateMeeting: React.FC<ICreateMeetingProps> = (params) => {
                             'text-xs text-destructive hidden mt-1',
                             errors.date?.message && "block"
                           )
-                        }>{"errors.date?.message"}</small>
+                        }>errors.date?.message</small>
                       </div>
                     </div>
                   </div>
@@ -119,7 +119,7 @@ export const CreateMeeting: React.FC<ICreateMeetingProps> = (params) => {
                               errors.time?.message && "block"
                             )
                           }>
-                            {"errors.time?.message"}
+                            errors.time?.message
                           </small>
                           </>
                         )}
@@ -130,7 +130,9 @@ export const CreateMeeting: React.FC<ICreateMeetingProps> = (params) => {
                       <Input 
                         label='Email' 
                         defaultValue={data?.bwfleet.email ?? undefined} 
-                        placeholder='Email do cliente'  
+                        placeholder='Email do cliente'
+                        className={cn(errors.email?.message && "border-destructive")}
+                        error={errors.email?.message}
                         {...register('email')} 
                       />
                     </div>

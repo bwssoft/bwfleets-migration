@@ -264,7 +264,7 @@ export const MeetingCard: React.FC<CustomerMeetingSchedulerProps> = ({ customer,
                       
                     </div>
                     <div>
-                      <Input {...register('email')} label='Email' defaultValue={customer.email} placeholder='Email do cliente'  />
+                      <Input {...register('email')} label='Email' defaultValue={customer.email} error={errors.email?.message} className={cn(errors.email?.message && "border-destructive")} placeholder='Email do cliente'  />
                     </div>
 
                     <div>
