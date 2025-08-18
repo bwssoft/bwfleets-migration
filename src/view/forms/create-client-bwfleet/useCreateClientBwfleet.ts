@@ -204,6 +204,10 @@ export const useCreateClientBwfleet = (): IUseCreateClientBwfleetResponse => {
           username: data.user.username,
           email: data.user.email,
           contact: removeSpecialCharacters(`+55 ${data.user.contact}`),
+          password_creation_method: data.user.password_creation_method,
+          magic_link: data.user?.magic_link,
+          password: data.user?.password,
+          blocked: data.user.blocked,
         },
       };
 

@@ -57,7 +57,9 @@ const schema = z.object({
       name: z.string().optional(),
       contact: z.string().optional(),
       email: z.string().optional(),
-      password_creation_method: z.enum(["manual", "magic-link", "none"]),
+      password_creation_method: z
+        .enum(["manual", "magic-link", "none"])
+        .optional(),
       magic_link: z
         .object({
           pin: z.string().min(6, "PIN deve ter pelo menos 6 caracteres"),
@@ -183,6 +185,10 @@ export function useUpsertBwfleetHandler({
         name: data.user?.name,
         email: data.user?.email,
         contact: data.user?.contact,
+        password_creation_method: data.user?.password_creation_method,
+        magic_link: data.user?.magic_link,
+        password: data.user?.password,
+        blocked: data.user?.blocked,
         user: {
           uuid: user_uuid,
         },
