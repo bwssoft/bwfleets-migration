@@ -6,7 +6,7 @@ import {
 } from "@/@shared/actions/bwfleet-client.actions";
 import { nanoid } from "nanoid";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
+import { Resolver, useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 import { generateFormData } from "@/@shared/utils/parse-form-data";
 import { toast } from "sonner";
@@ -53,10 +53,18 @@ const schema = z.object({
   cep: z.string().optional(),
   user: z
     .object({
-      full_name: z.string().optional(),
+      username: z.string().optional(),
       name: z.string().optional(),
       contact: z.string().optional(),
       email: z.string().optional(),
+      password_creation_method: z.enum(["manual", "magic-link", "none"]),
+      magic_link: z
+        .object({
+          pin: z.string().min(6, "PIN deve ter pelo menos 6 caracteres"),
+        })
+        .optional(),
+      password: z.string().optional(),
+      blocked: z.boolean().default(false),
     })
     .optional(),
 
@@ -82,7 +90,7 @@ export function useUpsertBwfleetHandler({
 }: UseUpsertBwfleetHandlerParams) {
   const { refresh } = useRouter();
   const form = useForm<BWFleetUpsertClientFormData>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema) as Resolver<BWFleetUpsertClientFormData>,
     defaultValues: {
       uuid: bfleetClient?.uuid,
       enterprise_uuid: bfleetClient?.enterprise_uuid ?? undefined,
@@ -103,7 +111,7 @@ export function useUpsertBwfleetHandler({
       city: bfleetClient?.address?.city ?? undefined,
       state: bfleetClient?.address?.state ?? undefined,
       user: {
-        full_name: bfleetClient?.user?.full_name ?? undefined,
+        username: bfleetClient?.user?.username ?? undefined,
         name: bfleetClient?.user?.name ?? wwtClient.accountName,
         email: bfleetClient?.user?.email ?? undefined,
         contact: bfleetClient?.user?.contact ?? undefined,
@@ -171,7 +179,7 @@ export function useUpsertBwfleetHandler({
       const client = await upsertBfleetClient(clientPayload);
 
       const userPayload = {
-        full_name: data.user?.full_name,
+        username: data.user?.username,
         name: data.user?.name,
         email: data.user?.email,
         contact: data.user?.contact,

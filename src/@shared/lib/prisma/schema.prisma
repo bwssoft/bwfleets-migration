@@ -257,6 +257,7 @@ type ClientEntity {
   uuid  String?
   name  String?
   email String?
+  username String?
 }
 
 model BFleetClientEntity {
@@ -340,7 +341,7 @@ type Validate {
 model BFleetUser {
   id           String             @id @default(auto()) @map("_id") @db.ObjectId
   uuid         String             @unique
-  full_name    String?
+  username     String?
   name         String?
   email        String?
   client       ClientUserRelation

@@ -32,7 +32,7 @@ export class ClientSchemaMapper {
         name: this.formatValue(data.user?.name),
         email: this.formatValue(data.user?.email),
         contact: this.formatValue(data.user?.contact),
-        full_name: this.formatValue(data.user?.full_name),
+        username: this.formatValue(data.user?.username),
       }
     }
   }

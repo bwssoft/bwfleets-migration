@@ -88,14 +88,18 @@ export const schema = z.object({
     .string({ required_error: "Informe o CEP do cliente" })
     .min(1, "Informe o CEP do cliente"),
   user: z.object({
-    full_name: z.string().optional(),
-    name: z.string().min(1, "Informe o nome do usuário"),
-    contact: z
-      .string({ required_error: "Informe o número de contato do usuário" })
-      .min(1, "Informe o número de contato do usuário"),
-    email: z.string().email({
-      message: "Informe um e-mail válido para o usuário",
-    }),
+    username: z.string().optional(),
+    name: z.string().optional(),
+    contact: z.string().optional(),
+    email: z.string().optional(),
+    password_creation_method: z.enum(["manual", "magic-link", "none"]),
+    magic_link: z
+      .object({
+        pin: z.string().min(6, "PIN deve ter pelo menos 6 caracteres"),
+      })
+      .optional(),
+    password: z.string().optional(),
+    blocked: z.boolean().default(false),
   }),
 
   tenant: z.array(z.string()).optional(),
@@ -143,7 +147,7 @@ export const useCreateClientBwfleet = (): IUseCreateClientBwfleetResponse => {
       state: "",
       cep: "",
       user: {
-        full_name: "",
+        username: "",
         name: "",
         contact: "",
         email: "",
@@ -151,90 +155,95 @@ export const useCreateClientBwfleet = (): IUseCreateClientBwfleetResponse => {
     });
   };
 
-  const handleSubmit = form.handleSubmit(async (data) => {
-    const _BWFleetsProvider = new BWFleetsProvider();
-    const valid = {
-      date: addDays(new Date(), 60),
-      days: 60,
-    };
-
-    const address = {
-      cep: removeSpecialCharacters(data.cep),
-      city: data.city,
-      state: data.state,
-      district: data.district,
-      country: data.country?.name,
-      street: data.street,
-      number: data.number,
-    };
-
-    const subdomain =
-      (data.subdomain?.length || 0) >= 1
-        ? data.subdomain?.toLowerCase()
-        : undefined;
-
-    const contacts = data.contacts.map((contact) => {
-      return {
-        name: contact.name,
-        email: contact.email,
-        contact: removeSpecialCharacters(`+55 ${contact.contact}`),
+  const handleSubmit = form.handleSubmit(
+    async (data) => {
+      const _BWFleetsProvider = new BWFleetsProvider();
+      const valid = {
+        date: addDays(new Date(), 60),
+        days: 60,
       };
-    });
 
-    const clientPayload = {
-      name: data.name,
-      address,
-      subdomain,
-      child_count: 0,
-      contacts,
-      depth: 2,
-      document: {
-        type: data.document_type,
-        value: removeSpecialCharacters(data.document),
-      },
-      free_period: valid,
-      validate: valid,
-      user: {
-        name: data.user.name,
-        email: data.user.email,
-        contact: removeSpecialCharacters(`+55 ${data.user.contact}`),
-      },
-    };
+      const address = {
+        cep: removeSpecialCharacters(data.cep),
+        city: data.city,
+        state: data.state,
+        district: data.district,
+        country: data.country?.name,
+        street: data.street,
+        number: data.number,
+      };
 
-    await _BWFleetsProvider
-      .createOneClient({ data: clientPayload as any })
-      .then(async ({ response }) => {
-        const clientLocalEntity: ICreateBfleetClientEntityParams = {
-          assigned_uuid: session?.user?.id ?? "",
-          assigned_name: session?.user?.name ?? "",
-          bwfleet: {
-            email: clientPayload.user.email,
-            name: clientPayload.name,
-            uuid: response.data.uuid,
-          },
+      const subdomain =
+        (data.subdomain?.length || 0) >= 1
+          ? data.subdomain?.toLowerCase()
+          : undefined;
+
+      const contacts = data.contacts.map((contact) => {
+        return {
+          name: contact.name,
+          email: contact.email,
+          contact: removeSpecialCharacters(`+55 ${contact.contact}`),
         };
-        const formData = generateFormData(clientLocalEntity) as FormData;
-        toast.success("Cliente criado com sucesso!");
-        clearFields();
-        await createBfleetClientEntity(formData);
-      })
-      .catch((e) => {
-        console.log({ e })
-        if (e instanceof AxiosError) {
-          const error = e as AxiosError<UsecaseError>;
-          const errors = error.response?.data.error.errors ?? [];
-          errors.forEach((e: any) => {
-            if (e.context === "user") {
-              form.setError(`${e.context}.${e.path}` as any, {
-                message: e.message,
-              });
-              return;
-            }
-            form.setError(e.path, { message: e.message });
-          });
-        }
       });
-  }, (err) => console.log({ err }));
+
+      const clientPayload = {
+        name: data.name,
+        address,
+        subdomain,
+        child_count: 0,
+        contacts,
+        depth: 2,
+        document: {
+          type: data.document_type,
+          value: removeSpecialCharacters(data.document),
+        },
+        free_period: valid,
+        validate: valid,
+        user: {
+          name: data.user.name,
+          username: data.user.username,
+          email: data.user.email,
+          contact: removeSpecialCharacters(`+55 ${data.user.contact}`),
+        },
+      };
+
+      await _BWFleetsProvider
+        .createOneClient({ data: clientPayload as any })
+        .then(async ({ response }) => {
+          const clientLocalEntity: ICreateBfleetClientEntityParams = {
+            assigned_uuid: session?.user?.id ?? "",
+            assigned_name: session?.user?.name ?? "",
+            bwfleet: {
+              username: clientPayload.user.username ?? null,
+              email: clientPayload.user.email ?? null,
+              name: clientPayload.name,
+              uuid: response.data.uuid,
+            },
+          };
+          const formData = generateFormData(clientLocalEntity) as FormData;
+          toast.success("Cliente criado com sucesso!");
+          clearFields();
+          await createBfleetClientEntity(formData);
+        })
+        .catch((e) => {
+          console.log({ e });
+          if (e instanceof AxiosError) {
+            const error = e as AxiosError<UsecaseError>;
+            const errors = error.response?.data.error.errors ?? [];
+            errors.forEach((e: any) => {
+              if (e.context === "user") {
+                form.setError(`${e.context}.${e.path}` as any, {
+                  message: e.message,
+                });
+                return;
+              }
+              form.setError(e.path, { message: e.message });
+            });
+          }
+        });
+    },
+    (err) => console.log({ err })
+  );
 
   const errors = useMemo(() => form.formState.errors, [form.formState.errors]);
 
