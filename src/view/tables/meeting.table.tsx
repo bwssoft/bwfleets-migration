@@ -98,7 +98,7 @@ export const MeetingTable: React.FC<MeetingTableProps> = ({ data, pagination }) 
       id: "status",
       cell: ({ row }) => {
         if(row.original.status === 'CANCELED') return <Badge variant={'destructive'}>Cancelada</Badge>
-         if(!row.original.slot) return '--'
+        if(!row.original.slot) return '--'
         const startDate = new Date(row.original.slot.start)
         const endDate = new Date(row.original.slot.end)
         const withinInterval = isWithinInterval(new Date(), {

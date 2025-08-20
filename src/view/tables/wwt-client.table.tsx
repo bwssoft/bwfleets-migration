@@ -9,7 +9,7 @@ import { DataTablePagination } from "@/view/components/ui/data-table-pagination"
 import { ColumnDef } from "@tanstack/react-table";
 import { ClipboardIcon, ExternalLinkIcon, LoaderIcon, User } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useCallback, useMemo, useState, useTransition } from "react";
+import { ComponentProps, ReactNode, useCallback, useMemo, useState, useTransition } from "react";
 import { Avatar, AvatarFallback } from "../components/ui/avatar";
 import { Button } from "../components/ui/button";
 import { startMigration } from "@/@shared/actions/migration.action";
@@ -20,7 +20,8 @@ import { MigrationAccessToken } from "@prisma/client";
 import LoadingAcessLink from "../forms/access-link/loading";
 import { toast } from "sonner";
 import { BWFleetsProvider } from "@/@shared/provider/bwfleets";
-import { differenceInHours } from "date-fns";
+import { differenceInHours, format, isWithinInterval } from "date-fns";
+import { IScheduleSlot } from "@/@shared/interfaces/schedule-slot";
 
 interface WWTClientTableProps {
   data: Array<IWanwayClient>;
@@ -63,6 +64,12 @@ export function WWTClientTable({ data, pagination }: WWTClientTableProps) {
     router.push(`/wwt/clients/${data.accountId}`);
   }
 
+  const formatTime = ({ end, start }: Pick<IScheduleSlot, 'start' | 'end'>) => {
+    const startTime = format(start, 'HH:mm');
+    const endTime = format(end, 'HH:mm')
+    return [startTime, endTime].join(' - ')
+  }
+
   const columns: Array<ColumnDef<IWanwayClient>> = [
     {
       id: "action",
@@ -84,6 +91,73 @@ export function WWTClientTable({ data, pagination }: WWTClientTableProps) {
     {
       accessorKey: "isLeaf",
       header: "Subclientes",
+    },
+    {
+      accessorKey: "migration",
+      header: "Treinamento",
+      cell: ({ row: { original: data } }) => {
+        if(!data.migration?.migration_token?.completed) {
+          return (
+            <Badge variant={"outline"} >Treinamento indisponível</Badge>
+          )
+        }
+
+        if(data.Meeting[0] && data.Meeting[0].status === 'BOOKED') {
+          let badgeTheme: ComponentProps<typeof Badge>['variant'] = 'default';
+          let label: string = "Reunião Agendada";
+          const meeting = data.Meeting[0];
+          
+          if(meeting.status === 'CANCELED') {
+            return (
+              <div className="flex flex-col justify-center gap-1">
+                <span className="font-semibold">Reunião cancelada</span>
+                  <Badge variant={'destructive'} >
+                    Cancelada
+                  </Badge>
+              </div>
+            )
+          }
+          if(!meeting.slot) return '--'
+
+          const { start, end } = meeting.slot;
+          const startDate = new Date(start)
+          const endDate = new Date(end)
+
+          const withinInterval = isWithinInterval(new Date(), {
+            start: startDate,
+            end: endDate
+          });
+          
+  
+          if(withinInterval) {
+            label = "Em andamento"
+            badgeTheme = 'blue'
+          }
+  
+          if(startDate > new Date()) {
+            label = "Reunião Agendada"
+            badgeTheme = 'default'
+          }
+  
+          if(endDate <= new Date()) {
+            label = "Reunião Concluída"
+            badgeTheme = 'green'
+          }
+  
+          
+          return (
+            <div className="flex flex-col justify-center gap-1">
+              <span className="font-semibold">{label}</span>
+                <Badge variant={badgeTheme} >
+                  <span>{format(new Date(start), "dd/MM/yyyy")} /</span>
+                  <span className='font-semibold'>{formatTime(meeting.slot)}</span>
+                </Badge>
+            </div>
+          )
+        }
+
+        return <Badge variant={"green"} >Treinamento disponível</Badge>
+      }
     },
     {
       accessorKey: "email",

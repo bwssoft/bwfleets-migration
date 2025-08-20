@@ -35,6 +35,7 @@ export async function findManyClients(params: FindManyClientsParams) {
       migration: {
         include: {
           assigned: true,
+          bfleet_client: true,
           comments: {
             include: {
               user: true,
@@ -42,6 +43,11 @@ export async function findManyClients(params: FindManyClientsParams) {
           },
         },
       },
+      Meeting: {
+        include: {
+          slot: true
+        }
+      }
     },
   });
 

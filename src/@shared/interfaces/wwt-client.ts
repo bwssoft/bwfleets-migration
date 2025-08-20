@@ -57,7 +57,13 @@ export type IWanwayClient = Prisma.WanwayClientGetPayload<{
       include: {
         assigned: true;
         comments: true;
+        
       };
     };
+    Meeting: {
+      include: {
+        slot: true
+      }
+    }
   };
 }>;
