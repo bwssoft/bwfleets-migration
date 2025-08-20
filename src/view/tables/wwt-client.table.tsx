@@ -9,7 +9,7 @@ import { DataTablePagination } from "@/view/components/ui/data-table-pagination"
 import { ColumnDef } from "@tanstack/react-table";
 import { ClipboardIcon, ExternalLinkIcon, LoaderIcon, User } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { ComponentProps, ReactNode, useCallback, useMemo, useState, useTransition } from "react";
+import { ComponentProps, useCallback, useMemo, useState, useTransition } from "react";
 import { Avatar, AvatarFallback } from "../components/ui/avatar";
 import { Button } from "../components/ui/button";
 import { startMigration } from "@/@shared/actions/migration.action";
