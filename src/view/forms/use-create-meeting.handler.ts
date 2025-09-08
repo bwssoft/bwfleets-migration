@@ -22,7 +22,7 @@ const schema = z.object({
     notes: z.string().optional(),
     email: z.string({
         required_error: "Informe o e-mail do cliente",
-    }),
+    }).email(),
 });
 
 export type IMeetingFormData = z.infer<typeof schema>;

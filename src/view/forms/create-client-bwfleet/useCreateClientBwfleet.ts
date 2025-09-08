@@ -90,14 +90,14 @@ export const schema = z.object({
     name: z.string().optional(),
     contact: z.string().optional(),
     email: z.string().optional(),
-    password_creation_method: z.enum(["manual", "magic-link", "none"]),
+    password_creation_method: z.enum(["manual", "magic-link", "none"]).default("manual").optional(),
     magic_link: z
       .object({
         pin: z.string().min(6, "PIN deve ter pelo menos 6 caracteres"),
       })
       .optional(),
     password: z.string().optional(),
-    blocked: z.boolean().default(false),
+    blocked: z.boolean().default(false).optional(),
   }),
 
   tenant: z.array(z.string()).optional(),
@@ -227,7 +227,7 @@ export const useCreateClientBwfleet = (): IUseCreateClientBwfleetResponse => {
           const formData = generateFormData(clientLocalEntity) as FormData;
           toast.success("Cliente criado com sucesso!");
           clearFields();
-          createBfleetClientEntity(formData, false);
+          await createBfleetClientEntity(formData, false);
          
           if(data.user.password_creation_method === 'magic-link') {
             const token = response.data.user.magic_link?.token

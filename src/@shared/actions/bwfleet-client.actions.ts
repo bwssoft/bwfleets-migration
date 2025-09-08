@@ -80,6 +80,12 @@ export async function upsertBfleetUser(formData: FormData) {
 
   const user = cleanObject(upsertData);
 
+  console.log({
+    ...(user as Prisma.BFleetUserCreateInput),
+      uuid,
+      client: clientData,
+  })
+
   return await prisma.bFleetUser.upsert({
     create: {
       ...(user as Prisma.BFleetUserCreateInput),

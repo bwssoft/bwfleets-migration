@@ -14,15 +14,19 @@ export async function createBfleetClientEntity(
   redirectRoute: boolean = true
 ) {
   const data = parseFormData(formData, true) as ICreateBfleetClientEntityParams;
-
   const uuid = crypto.randomUUID();
 
   await prisma.bFleetClientEntity.create({
     data: {
       id: uuid,
       ...data,
+      bwfleet: {
+        ...data['bwfleet'],
+        name: data.bwfleet.username
+      }
     }
   });
+
   if(redirectRoute) {
     revalidatePath(`/bwfleets`);
     redirect(`/bwfleets`);
