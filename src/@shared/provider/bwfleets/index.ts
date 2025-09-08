@@ -3,7 +3,7 @@ import api, { customAxios } from "./@base/api";
 import { HttpClient } from "./@base/HttpClient";
 import { IServiceHookHelper, IServiceHookHelperResponse } from "@/@shared/interfaces/ServiceHookHelper";
 import { ServiceAPIHelper } from "@/@shared/utils/ServiceHookHelper";
-import { NAuthService, NFindDtos, NUpdateDtos } from "./@base/@types";
+import { NAuthService, NFindDtos, NUpdateDtos, UsecaseResponse } from "./@base/@types";
 import LocalStorageAdapter from "./@base/LocalStorageAdapter";
 import { BFleetClient } from "@prisma/client";
 import { ClientEntity, UserEntity } from "./@base/entities/client.entity";
@@ -12,6 +12,13 @@ export type ICreateOneClientReply = {
 	response: {
 		data: {
 			uuid: string;
+			user: {
+				magic_link?: {
+					pin: string
+					token: string
+					expires_at: number
+				}
+			}
 		}
 	}
 }
@@ -20,6 +27,20 @@ export type IGenerateAccessLinkReply = {
 	response: {
 		ttoken: string;
 	}
+}
+
+export namespace NGenerateMagicLink {
+	export type Params = {
+		uuid: string
+	}
+
+	export interface Response
+		extends UsecaseResponse<{
+			magic_link: {
+				token: string
+				expires_at: number
+			}
+		}> {}
 }
 export class BWFleetsProvider {
   protected _httpClient: HttpClient
@@ -106,6 +127,26 @@ export class BWFleetsProvider {
 
 		return response.data
 	}
+
+	async generateMagicLink({
+		uuid,
+	}: NGenerateMagicLink.Params): Promise<
+		IServiceHookHelperResponse<NGenerateMagicLink.Response>
+	> {
+		const { serviceHookHelper } = this._serviceHelper
+
+		const response = await serviceHookHelper(
+			"PATCH"
+		)<NGenerateMagicLink.Response>({
+			url: `/user/generate-magic-link`,
+			data: {
+				uuid,
+			},
+		})
+
+		return response
+	}
+
 
 
   

@@ -1,7 +1,10 @@
+"use client"
+
 import {
   createBfleetClientEntity,
   ICreateBfleetClientEntityParams,
 } from "@/@shared/actions/bwfleet-client-entity.actions";
+import { IUseDisclosureHook, useDisclosure } from "@/@shared/hooks/use-disclosure";
 import { authClient } from "@/@shared/lib/better-auth/auth-client";
 import { BWFleetsProvider } from "@/@shared/provider/bwfleets";
 import { generateFormData } from "@/@shared/utils/parse-form-data";
@@ -9,6 +12,7 @@ import { removeSpecialCharacters } from "@/@shared/utils/removeSpecialCharacters
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import { addDays } from "date-fns";
+import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import {
   FieldErrors,
@@ -40,6 +44,20 @@ const contactSchema = z.object({
   contact: z.string().min(1, "Informe o numero de contato"),
 });
 
+const userFormSchema = z.object({
+	user: z.object({
+		username: z.string().min(1, "Username de login não pode ser vazio"),
+		password_creation_method: z.enum(["manual", "magic-link", "none"]),
+		magic_link: z
+			.object({
+				pin: z.string().min(6, "PIN deve ter pelo menos 6 caracteres"),
+			})
+			.optional(),
+		password: z.string().optional(),
+		blocked: z.boolean().optional(),
+	}),
+})
+
 export const schema = z.object({
   uuid: z.string().optional(),
   name: z.string().min(1, "Informe o nome do cliente"),
@@ -52,41 +70,21 @@ export const schema = z.object({
   document: z
     .string({ required_error: "Informe o documento do cliente" })
     .min(1, "Informe o documento do cliente"),
-  subdomain: z.string().nullable().optional(),
   contacts: z
     .array(contactSchema)
-    .min(1, "Informe pelo menos um contato")
+    .optional()
     .default([]),
-  country: z.object(
-    {
-      name: z.string().optional(),
-      code: z.string().optional(),
-      altCode: z.string().optional(),
-      numberCode: z.string().optional(),
-    },
-    {
-      required_error: "Informe o país do cliente",
-      invalid_type_error: "O país informado não é válido",
-    }
-  ),
-  district: z
-    .string({ required_error: "Informe o bairro do cliente" })
-    .min(1, "Informe o bairro do cliente"),
-  number: z
-    .string({ required_error: "Informe o número do cliente" })
-    .min(1, "Informe o número do cliente"),
-  street: z
-    .string({ required_error: "Informe a rua do cliente" })
-    .min(1, "Informe a rua do cliente"),
-  city: z
-    .string({ required_error: "Informe a cidade do cliente" })
-    .min(1, "Informe a cidade do cliente"),
-  state: z
-    .string({ required_error: "Informe o estado do cliente" })
-    .min(1, "Informe o estado do cliente"),
-  cep: z
-    .string({ required_error: "Informe o CEP do cliente" })
-    .min(1, "Informe o CEP do cliente"),
+  address: z
+		.object({
+			cep: z.string().optional(),
+			street: z.string().optional(),
+			district: z.string().optional(),
+			number: z.string().optional(),
+			city: z.string().optional(),
+			state: z.string().optional(),
+			country: z.string().optional(),
+		})
+		.optional(),
   user: z.object({
     username: z.string().optional(),
     name: z.string().optional(),
@@ -107,7 +105,10 @@ export const schema = z.object({
   user_uuid: z.string().optional(),
 });
 
-export type BWFleetCreateClientFormData = z.infer<typeof schema>;
+export type UserFormData = z.infer<typeof userFormSchema>
+export type ClientFormData = z.infer<typeof schema>
+
+export type BWFleetCreateClientFormData = UserFormData & ClientFormData;
 
 export type IUseCreateClientBwfleetResponse = {
   form: UseFormReturn<BWFleetCreateClientFormData>;
@@ -117,9 +118,16 @@ export type IUseCreateClientBwfleetResponse = {
     "contacts"
   >;
   errors: FieldErrors<BWFleetCreateClientFormData>;
+  handleMagicLinkClose: () => void;
+  magicLinkDisclosure: IUseDisclosureHook<{
+    magicLink: string;
+    pin: string;
+    name: string;
+  }>
 };
 
 export const useCreateClientBwfleet = (): IUseCreateClientBwfleetResponse => {
+  const { push } = useRouter()
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -132,20 +140,19 @@ export const useCreateClientBwfleet = (): IUseCreateClientBwfleetResponse => {
     name: "contacts",
   });
 
+  const magicLinkDisclosure = useDisclosure<{
+      magicLink: string;
+      pin: string;
+      name: string;
+  }>();
+
   const clearFields = () => {
     form.reset({
       name: "",
       document_type: "cnpj",
       document: "",
-      subdomain: null,
       contacts: [],
-      country: undefined,
-      district: "",
-      number: "",
-      street: "",
-      city: "",
-      state: "",
-      cep: "",
+      address: {},
       user: {
         username: "",
         name: "",
@@ -164,19 +171,14 @@ export const useCreateClientBwfleet = (): IUseCreateClientBwfleetResponse => {
       };
 
       const address = {
-        cep: removeSpecialCharacters(data.cep),
-        city: data.city,
-        state: data.state,
-        district: data.district,
-        country: data.country?.name,
-        street: data.street,
-        number: data.number,
+        cep: data.address?.cep && removeSpecialCharacters(data.address?.cep),
+        city: data.address?.city,
+        state: data.address?.state,
+        district: data.address?.district,
+        country: data.address?.country,
+        street: data.address?.street,
+        number: data.address?.number,
       };
-
-      const subdomain =
-        (data.subdomain?.length || 0) >= 1
-          ? data.subdomain?.toLowerCase()
-          : undefined;
 
       const contacts = data.contacts.map((contact) => {
         return {
@@ -189,7 +191,6 @@ export const useCreateClientBwfleet = (): IUseCreateClientBwfleetResponse => {
       const clientPayload = {
         name: data.name,
         address,
-        subdomain,
         child_count: 0,
         contacts,
         depth: 2,
@@ -203,7 +204,6 @@ export const useCreateClientBwfleet = (): IUseCreateClientBwfleetResponse => {
           name: data.user.name,
           username: data.user.username,
           email: data.user.email,
-          contact: removeSpecialCharacters(`+55 ${data.user.contact}`),
           password_creation_method: data.user.password_creation_method,
           magic_link: data.user?.magic_link,
           password: data.user?.password,
@@ -214,20 +214,32 @@ export const useCreateClientBwfleet = (): IUseCreateClientBwfleetResponse => {
       await _BWFleetsProvider
         .createOneClient({ data: clientPayload as any })
         .then(async ({ response }) => {
+          console.log({ response })
           const clientLocalEntity: ICreateBfleetClientEntityParams = {
             assigned_uuid: session?.user?.id ?? "",
             assigned_name: session?.user?.name ?? "",
             bwfleet: {
-              username: clientPayload.user.username ?? null,
               email: clientPayload.user.email ?? null,
-              name: clientPayload.name,
+              name: clientPayload.user.username ?? null,
               uuid: response.data.uuid,
             },
           };
           const formData = generateFormData(clientLocalEntity) as FormData;
           toast.success("Cliente criado com sucesso!");
           clearFields();
-          await createBfleetClientEntity(formData);
+          createBfleetClientEntity(formData, false);
+         
+          if(data.user.password_creation_method === 'magic-link') {
+            const token = response.data.user.magic_link?.token
+            const url = `https://bwfleets.com/magic-link?token=${token}`
+            return magicLinkDisclosure.onOpen({
+              magicLink: url,
+              pin: data.user.magic_link!.pin!,
+              name: data.name,
+            })
+          }
+
+          push('/bwfleets')
         })
         .catch((e) => {
           console.log({ e });
@@ -251,10 +263,16 @@ export const useCreateClientBwfleet = (): IUseCreateClientBwfleetResponse => {
 
   const errors = useMemo(() => form.formState.errors, [form.formState.errors]);
 
+  function handleMagicLinkClose() {
+    push('/bwfleets')
+	}
+
   return {
     form,
     handleSubmit,
     contactsFieldArray,
     errors,
+    magicLinkDisclosure,
+    handleMagicLinkClose
   } as IUseCreateClientBwfleetResponse;
 };

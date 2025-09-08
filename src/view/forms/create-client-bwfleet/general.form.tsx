@@ -42,14 +42,16 @@ export function GeneralForm({ form, errors }: GeneralFormProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Informações da empresa</CardTitle>
+        <CardTitle>Informações do cliente da plataforma *</CardTitle>
         <CardDescription>
           Preencha as informações abaixo de acordo com os dados da empresa do
           seu cliente
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-2">
+                  <Input label="Nome da empresa" error={errors.name?.message} {...form.register("name")} />
+
           <div className="flex gap-2">
 <Controller
             control={form.control}
@@ -113,8 +115,7 @@ export function GeneralForm({ form, errors }: GeneralFormProps) {
             ]}
           />
         </div>
-        <Input label="Nome da empresa" error={errors.name?.message} {...form.register("name")} />
-        <div>
+        {/* <div>
           <label className="text-sm font-medium">
             Subdomínio da plataforma do cliente
           </label>
@@ -124,7 +125,7 @@ export function GeneralForm({ form, errors }: GeneralFormProps) {
             rightAddon={<span>.bwfleets.com</span>}
             {...form.register("subdomain")}
           />
-        </div>
+        </div> */}
       </CardContent>
     </Card>
   );

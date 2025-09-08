@@ -9,10 +9,11 @@ function Input({
   readOnly,
   name,
   error,
+  containerClassName,
   ...props
-}: React.ComponentProps<"input"> & { label?: string; error?: string }) {
+}: React.ComponentProps<"input"> & { label?: string; error?: string; containerClassName?: string }) {
   return (
-    <div className={cn(label ? "space-y-1" : undefined, "w-full")}>
+    <div className={cn(label ? "space-y-1" : undefined, "w-full", containerClassName)}>
       {label && (
         <label htmlFor={name} className="font-medium text-sm">
           {label}
