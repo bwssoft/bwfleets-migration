@@ -20,6 +20,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { findAddressByPostalCode } from "@/@shared/actions/viacep.actions";
 import { BWFleetCreateClientFormData } from "./useCreateClientBwfleet";
 import { CustomError } from "./custom.error";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/view/components/ui/accordion";
 
 interface Props {
   form: UseFormReturn<BWFleetCreateClientFormData>;
@@ -31,117 +32,139 @@ export function AddressForm({ form, errors }: Props) {
 
   const formCountryCode = useWatch({
     control: form.control,
-    name: "country.code",
+    name: "address.country",
   });
 
+  const CACHE_TIME_IN_MS = 1296000000
+
+  function handlePostalCodeLoading() {
+		form.setValue("address.district", "Buscando endereço por CEP...")
+		form.setValue("address.city", "Buscando endereço por CEP...")
+		form.setValue("address.street", "Buscando endereço por CEP...")
+		form.setValue("address.state", "Buscando endereço por CEP...")
+	}
+
   async function handlePostalCodeChange(postalCode: string) {
-    const countryCode = form.getValues("country.code");
-    if (countryCode && countryCode !== "BR") return;
+    if (postalCode.length < 8) return
 
-    const result = await queryClient.fetchQuery({
-      queryKey: ["viacep", postalCode],
-      queryFn: () => findAddressByPostalCode(postalCode),
-    });
+		handlePostalCodeLoading()
 
-    form.setValue("street", result.logradouro);
-    form.setValue("district", result.bairro);
-    form.setValue("city", result.localidade);
-    form.setValue("state", result.uf);
+		const viaCepAddress = await queryClient.fetchQuery({
+			queryKey: ["viacep", postalCode],
+			queryFn: () => findAddressByPostalCode(postalCode),
+			staleTime: CACHE_TIME_IN_MS,
+			gcTime: CACHE_TIME_IN_MS,
+		})
+
+		if (!viaCepAddress) {
+			return
+		}
+
+		form.setValue("address.district", viaCepAddress.bairro)
+		form.setValue("address.city", viaCepAddress.localidade)
+		form.setValue("address.street", viaCepAddress.logradouro)
+		form.setValue("address.state", viaCepAddress.uf)
+
+		return viaCepAddress
   }
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Endereço</CardTitle>
-        <CardDescription>
-          Dados do endereço principal do cliente
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-2 gap-2">
-          <div className="col-span-2">
-            <Controller
-              control={form.control}
-              name="country"
-              render={({ field }) => (
-                <div>
-                  <Label>País</Label>
-                  <ComboBox
-                    placeholder="Selecione um país..."
-                    selectedItem={
-                      field.value
-                        ? `${field.value.name} (${field.value?.code})`
-                        : undefined
-                    }
-                    closeOnSelect
-                  >
-                    {countries.map((country) => {
-                      const isSelected = country.code === field.value?.code;
-
-                      return (
-                        <CommandItem
-                          onSelect={() => field.onChange(country)}
-                          key={country.code}
-                          value={country.code}
+      <Accordion type="single">
+        <AccordionItem value="address">
+          <AccordionTrigger className="w-full pr-5 items-center">
+            <CardHeader className="w-full gap-0">
+              <CardTitle className="text-lg font-semibold">Endereço <span className="text-muted-foreground text-base">(Opcional)</span></CardTitle>
+              <CardDescription>
+                Dados do endereço principal do cliente
+              </CardDescription>
+            </CardHeader>
+          </AccordionTrigger>
+          <AccordionContent>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="col-span-2">
+                  <Controller
+                    control={form.control}
+                    name="address.country"
+                    render={({ field }) => (
+                      <div>
+                        <Label>País</Label>
+                        <ComboBox
+                          placeholder="Selecione um país..."
+                          selectedItem={field.value}
+                          closeOnSelect
                         >
-                          <CheckIcon
-                            className={cn(
-                              "mr-2 h-4 w-4 transition-opacity",
-                              isSelected ? "opacity-100" : "opacity-0"
-                            )}
-                            aria-hidden="true"
-                          />
+                          {countries.map((country) => {
+                            const isSelected = country.code === field.value;
 
-                          {country.name}
-                        </CommandItem>
-                      );
-                    })}
-                  </ComboBox>
-                  <CustomError 
-                    errors={[
-                      errors.country?.message,
-                    ]}
+                            return (
+                              <CommandItem
+                                onSelect={() => field.onChange(country.code)}
+                                key={country.code}
+                                value={country.code}
+                              >
+                                <CheckIcon
+                                  className={cn(
+                                    "mr-2 h-4 w-4 transition-opacity",
+                                    isSelected ? "opacity-100" : "opacity-0"
+                                  )}
+                                  aria-hidden="true"
+                                />
+
+                                {country.name}
+                              </CommandItem>
+                            );
+                          })}
+                        </ComboBox>
+                        <CustomError 
+                          errors={[
+                            errors.address?.country?.message,
+                          ]}
+                        />
+                      </div>
+                    )}
                   />
                 </div>
-              )}
-            />
-          </div>
 
-          <Controller
-            control={form.control}
-            name="cep"
-            render={({ field }) => (
-              <div>
-                <label className="text-sm font-medium">Código-postal</label>
+                <Controller
+                  control={form.control}
+                  name="address.cep"
+                  render={({ field }) => (
+                    <div>
+                      <label className="text-sm font-medium">Código-postal</label>
 
-                {!formCountryCode || formCountryCode === "BR" ? (
-                  <InputWithMask
-                    mask="_____-___"
-                    value={field.value}
-                    replacement={{ _: /\d/ }}
-                    error={errors.cep?.message}
-                    onChange={(event) => {
-                      const _cep = event.target.value;
-                      field.onChange(_cep);
+                      {!formCountryCode || formCountryCode === "BR" ? (
+                        <InputWithMask
+                          mask="_____-___"
+                          value={field.value}
+                          replacement={{ _: /\d/ }}
+                          error={errors.address?.cep?.message}
+                          onChange={(event) => {
+                            const _cep = event.target.value;
+                            field.onChange(_cep);
 
-                      if (_cep.length === 9) {
-                        handlePostalCodeChange(_cep);
-                      }
-                    }}
-                  />
-                ) : (
-                  <Input error={errors.cep?.message} {...form.register("cep")} />
-                )}
+                            if (_cep.length === 9) {
+                              handlePostalCodeChange(_cep);
+                            }
+                          }}
+                        />
+                      ) : (
+                        <Input error={errors.address?.cep?.message} {...form.register("address.cep")} />
+                      )}
+                    </div>
+                  )}
+                />
+                <Input label="Rua" error={errors.address?.street?.message} {...form.register("address.street")} />
+                <Input label="Número" error={errors.address?.number?.message} {...form.register("address.number")} />
+                <Input label="Bairro" error={errors.address?.district?.message} {...form.register("address.district")} />
+                <Input label="Cidade" error={errors.address?.city?.message} {...form.register("address.city")} />
+                <Input label="Estado" error={errors.address?.state?.message} {...form.register("address.state")} />
               </div>
-            )}
-          />
-          <Input label="Rua" error={errors.street?.message} {...form.register("street")} />
-          <Input label="Número" error={errors.number?.message} {...form.register("number")} />
-          <Input label="Bairro" error={errors.district?.message} {...form.register("district")} />
-          <Input label="Cidade" error={errors.city?.message} {...form.register("city")} />
-          <Input label="Estado" error={errors.state?.message} {...form.register("state")} />
-        </div>
-      </CardContent>
+            </CardContent>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </Card>
   );
 }

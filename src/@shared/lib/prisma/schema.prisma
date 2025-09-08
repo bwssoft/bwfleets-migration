@@ -257,6 +257,7 @@ type ClientEntity {
   uuid  String?
   name  String?
   email String?
+  username String?
 }
 
 model BFleetClientEntity {
@@ -337,11 +338,19 @@ type Validate {
   days Int
 }
 
+type MagicLink {
+  pin     String
+}
+
 model BFleetUser {
   id           String             @id @default(auto()) @map("_id") @db.ObjectId
   uuid         String             @unique
-  full_name    String?
-  name         String?
+  username     String
+  blocked      Boolean
+  name         String
+  password_creation_method String
+  password     String?
+  magic_link   MagicLink?
   email        String?
   client       ClientUserRelation
   contact      String?

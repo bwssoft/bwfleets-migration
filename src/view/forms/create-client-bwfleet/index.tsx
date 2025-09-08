@@ -5,7 +5,7 @@ import { ContentForm } from './content.form';
 
 
 export const ClientFleetsForm: React.FC = () => {
-  const { form, contactsFieldArray, handleSubmit, errors } = useCreateClientBwfleet();
+  const { form, contactsFieldArray, handleSubmit, errors, handleMagicLinkClose, magicLinkDisclosure } = useCreateClientBwfleet();
   
   return (
     <ContentForm
@@ -13,6 +13,8 @@ export const ClientFleetsForm: React.FC = () => {
       errors={errors}
       handleSubmit={handleSubmit}
       contactsFieldArray={contactsFieldArray}
+      magicLinkDisclosure={magicLinkDisclosure}
+      handleMagicLinkClose={handleMagicLinkClose}
     />
   )
 }

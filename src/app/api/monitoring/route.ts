@@ -23,13 +23,33 @@ export async function GET() {
     // Transforma os dados em formato adequado para planilha
     const worksheetData = data.map((client) => ({
       Nome: client.accountName,
-      DispositivoDaConta: client.accountStatsBean?.deviceNo ?? 0,
+      DispositivosDaConta: client.accountStatsBean?.deviceNo ?? 0,
       TotalDispositivos: client.accountStatsBean?.deviceTotalNo ?? 0,
       Subclientes: client.isLeaf,
       StatusMigracao: client.migration?.migration_status,
       VendedorAssociado: client.migration?.assigned?.name,
+      ClienteAtualizouDados: client.migration?.migration_token?.completed
+        ? "SIM"
+        : "NÃO",
+      TeveTreinamento:
+        client.Meeting?.[0]?.slot &&
+        client.Meeting?.[0]?.slot?.status === "BOOKED" &&
+        new Date(client.Meeting?.[0]?.slot?.end).getTime() <
+          new Date().getTime()
+          ? "SIM"
+          : "NÃO",
+      DataTreinamento:
+        client.Meeting?.[0]?.slot &&
+        client.Meeting?.[0]?.slot?.status === "BOOKED" &&
+        new Date(client.Meeting?.[0]?.slot?.end).getTime() <
+          new Date().getTime()
+          ? `${new Date(
+              client.Meeting?.[0]?.slot.start
+            ).toLocaleDateString()} ${new Date(
+              client.Meeting?.[0]?.slot.start
+            ).toLocaleTimeString()}`
+          : "--",
       LinkSistemaMigracao: `https://bwfleets-migration.vercel.app/wwt/clients/${client.accountId}`,
-      // adicione outras colunas conforme necessário
     }));
 
     // Cria a planilha

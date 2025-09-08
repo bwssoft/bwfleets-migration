@@ -11,6 +11,7 @@ export type ICreateBfleetClientEntityParams = Omit<BFleetClientEntity, 'id'>;
 
 export async function createBfleetClientEntity(
   formData: FormData,
+  redirectRoute: boolean = true
 ) {
   const data = parseFormData(formData, true) as ICreateBfleetClientEntityParams;
 
@@ -22,9 +23,10 @@ export async function createBfleetClientEntity(
       ...data,
     }
   });
-
-  revalidatePath(`/bwfleets`);
-  redirect(`/bwfleets`);
+  if(redirectRoute) {
+    revalidatePath(`/bwfleets`);
+    redirect(`/bwfleets`);
+  }
 }
 
 interface FindManyBClientsParams {

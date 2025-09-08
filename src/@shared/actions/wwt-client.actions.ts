@@ -45,9 +45,9 @@ export async function findManyClients(params: FindManyClientsParams) {
       },
       Meeting: {
         include: {
-          slot: true
-        }
-      }
+          slot: true,
+        },
+      },
     },
   });
 
