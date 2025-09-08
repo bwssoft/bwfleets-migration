@@ -18,7 +18,6 @@ import { Button } from "@/view/components/ui/button";
 import { PlusIcon, TrashIcon } from "lucide-react";
 import { InputWithMask } from "@/view/components/ui/input-with-mask";
 import { BWFleetCreateClientFormData } from "./useCreateClientBwfleet";
-import { CustomError } from "./custom.error";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/view/components/ui/accordion";
 
 interface Props {
@@ -30,7 +29,7 @@ interface Props {
   errors: FieldErrors<BWFleetCreateClientFormData>;
 }
 
-export function ContactsForm({ form, contactsFieldArray, errors }: Props) {
+export function ContactsForm({ form, contactsFieldArray }: Props) {
   return (
     <Card>
       <Accordion type="single" collapsible>

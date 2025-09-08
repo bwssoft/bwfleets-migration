@@ -6,7 +6,7 @@ import { UserForm } from './user.form';
 import { Button } from '@/view/components/ui/button';
 import { FieldErrors, UseFieldArrayReturn, UseFormReturn } from 'react-hook-form';
 import { BWFleetCreateClientFormData } from '../create-client-bwfleet/useCreateClientBwfleet';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/view/components/ui/dialog';
+import { Dialog, DialogContent } from '@/view/components/ui/dialog';
 import { UpsertClientMagicLinkForm } from './magic-link.form';
 import { IUseDisclosureHook } from '@/@shared/hooks/use-disclosure';
 

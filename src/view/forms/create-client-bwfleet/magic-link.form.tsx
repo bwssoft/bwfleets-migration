@@ -25,7 +25,7 @@ export function UpsertClientMagicLinkForm({
 
 				<Alert>
 					<AlertTitle>Sobre o magic link</AlertTitle>
-					<AlertDescription>É possível conferir essas informações novamente na ação "Informações sobre o link de acesso" do botão direito na tabela de Acessos.</AlertDescription>
+					<AlertDescription>É possível conferir essas informações novamente na ação Informações sobre o link de acesso do botão direito na tabela de Acessos.</AlertDescription>
 				</Alert>
 				<Button onClick={onRequestClose}>Confirmar e fechar</Button>
 		</div>

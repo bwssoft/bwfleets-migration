@@ -7,7 +7,6 @@ import {
 } from "@/view/components/ui/card";
 import { Input } from "@/view/components/ui/input";
 import { Controller, FieldErrors, UseFormReturn } from "react-hook-form";
-import { InputWithMask } from "@/view/components/ui/input-with-mask";
 import { BWFleetCreateClientFormData } from "./useCreateClientBwfleet";
 import {
   UserAccessMethodGeneratedPassword,

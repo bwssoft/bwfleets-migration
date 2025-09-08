@@ -44,7 +44,7 @@ const contactSchema = z.object({
   contact: z.string().min(1, "Informe o numero de contato"),
 });
 
-const userFormSchema = z.object({
+export const userFormSchema = z.object({
 	user: z.object({
 		username: z.string().min(1, "Username de login não pode ser vazio"),
 		password_creation_method: z.enum(["manual", "magic-link", "none"]),
@@ -214,13 +214,13 @@ export const useCreateClientBwfleet = (): IUseCreateClientBwfleetResponse => {
       await _BWFleetsProvider
         .createOneClient({ data: clientPayload as any })
         .then(async ({ response }) => {
-          console.log({ response })
           const clientLocalEntity: ICreateBfleetClientEntityParams = {
             assigned_uuid: session?.user?.id ?? "",
             assigned_name: session?.user?.name ?? "",
             bwfleet: {
+              username: clientPayload.user.username ?? null,  
               email: clientPayload.user.email ?? null,
-              name: clientPayload.user.username ?? null,
+              name: clientPayload.user.name ?? null,
               uuid: response.data.uuid,
             },
           };
