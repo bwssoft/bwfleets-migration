@@ -34,13 +34,12 @@ export namespace NGenerateMagicLink {
 		uuid: string
 	}
 
-	export interface Response
-		extends UsecaseResponse<{
+	export type Response = UsecaseResponse<{
 			magic_link: {
 				token: string
 				expires_at: number
 			}
-		}> {}
+		}>
 }
 export class BWFleetsProvider {
   protected _httpClient: HttpClient
