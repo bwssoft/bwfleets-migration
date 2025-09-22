@@ -1,6 +1,6 @@
 import { IScheduleSlot } from "@/@shared/interfaces/schedule-slot";
 import { prisma } from "@/@shared/lib/prisma/prisma-client";
-import { Prisma } from "@prisma/client";
+import { $Enums, Prisma } from "@prisma/client";
 import { format, isWithinInterval } from "date-fns";
 import { NextResponse } from "next/server";
 import QuickChart from "quickchart-js";
@@ -48,13 +48,21 @@ export async function GET() {
         Meeting: undefined,
         parentId: 10160758,
       },
-      include: { Meeting: true },
+      include: { Meeting: true, migration: true, },
     })).filter(item => {
+
+      if(item.Meeting.length >= 1) return false;
+
       if(item.accountStatsBean.deviceTotalNo <= 1) {
         return false;
       }
 
       if(item.accountName.toLowerCase().includes('bws')) {
+        return false;
+      }
+      const filterStatus: $Enums.MigrationStatus[] = ['DONE', 'FAILED_BY_CLIENT', 'FAILED_BY_CONTACT', 'INACTIVE']
+
+      if(item.migration?.migration_status && filterStatus.includes(item.migration?.migration_status)) {
         return false;
       }
 
