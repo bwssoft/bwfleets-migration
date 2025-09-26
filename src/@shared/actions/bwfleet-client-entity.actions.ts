@@ -22,7 +22,7 @@ export async function createBfleetClientEntity(
       ...data,
       bwfleet: {
         ...data['bwfleet'],
-        name: data.bwfleet.username
+        name: data.bwfleet.name ??data.bwfleet.username
       }
     }
   });

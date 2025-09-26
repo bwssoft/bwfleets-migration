@@ -218,12 +218,13 @@ export const useCreateClientBwfleet = (): IUseCreateClientBwfleetResponse => {
             assigned_uuid: session?.user?.id ?? "",
             assigned_name: session?.user?.name ?? "",
             bwfleet: {
-              username: clientPayload.user.username ?? null,  
+              name: data.name ?? null,
+              username: data.user.username ?? null,  
               email: clientPayload.user.email ?? null,
-              name: clientPayload.name ?? null,
               uuid: response.data.uuid,
             },
           };
+          console.log({ clientLocalEntity })
           const formData = generateFormData(clientLocalEntity) as FormData;
           toast.success("Cliente criado com sucesso!");
           clearFields();
