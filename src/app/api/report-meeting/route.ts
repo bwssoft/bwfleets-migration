@@ -243,7 +243,7 @@ const imageBuffer = await chart.toBinary();
       });
 
       // bordas para todas as células
-      worksheet.eachRow((row, rowNumber) => {
+      worksheet.eachRow((row) => {
         row.eachCell((cell) => {
           cell.border = {
             top: { style: "thin" },
