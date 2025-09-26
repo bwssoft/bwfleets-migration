@@ -220,7 +220,7 @@ export const useCreateClientBwfleet = (): IUseCreateClientBwfleetResponse => {
             bwfleet: {
               username: clientPayload.user.username ?? null,  
               email: clientPayload.user.email ?? null,
-              name: clientPayload.user.name ?? null,
+              name: clientPayload.name ?? null,
               uuid: response.data.uuid,
             },
           };

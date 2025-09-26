@@ -93,7 +93,18 @@ export function BFleetClientsTable({ data, pagination }: BFleetClientTableProps)
     {
       id: "client_name",
       cell: ({ row }) => {
-        return row.original.bwfleet?.name ?? '--';
+        return (
+          <div className='flex flex-col gap-1'>
+            <div className='flex gap-1 text-xs'>
+            <span className='font-semibold'>Empresa: </span>
+            <span className=''>{row.original.bwfleet.name ?? '--'}</span>
+            </div>
+            <div className='flex gap-1 text-[10px] text-muted-foreground'>
+            <span className='font-semibold'>Username: </span>
+            <span className=''>{row.original.bwfleet.username ?? '--'}</span>
+            </div>
+          </div>
+        )
       },
       header: "Nome",
     },
