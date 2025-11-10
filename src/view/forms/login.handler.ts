@@ -36,7 +36,7 @@ export function useLoginFormHandler() {
       await signIn(formData).then(async () => {
         await _BWFleetsProvider.authenticate({
           email: "bws@bws.com",
-          password: "123456@",
+          password: "Bws@bws2025*",
         }); 
         router.push("/home");
       });
