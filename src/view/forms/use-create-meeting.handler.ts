@@ -1,5 +1,5 @@
 import { IScheduleSlot } from "@/@shared/interfaces/schedule-slot";
-import { format, isSameDay } from "date-fns";
+import { addDays, format, isSameDay } from "date-fns";
 import { z } from "zod";
 import { ICreateMeetingProps } from "./create-meeting.form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,9 +20,11 @@ const schema = z.object({
         required_error: "Informe o horario da reunião",
     }),
     notes: z.string().optional(),
-    email: z.string({
-        required_error: "Informe o e-mail do cliente",
-    }).email(),
+    email: z
+        .string({
+            required_error: "Informe o e-mail do cliente",
+        })
+        .email(),
 });
 
 export type IMeetingFormData = z.infer<typeof schema>;
@@ -62,7 +64,9 @@ export const useCreateMeetingFormHandler = ({
 
     const disabledData = useCallback(
         (date: Date): boolean => {
-            if (date < new Date() && !isSameDay(date, new Date())) return true;
+            const thesholdDate = addDays(new Date(), 2);
+            if (date < thesholdDate)
+                return true;
             const schedulesDate = schedulesQuery.data?.data;
             const onSchedule = schedulesDate?.find(
                 ({ start, status }) =>

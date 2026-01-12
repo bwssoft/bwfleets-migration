@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { useQuery } from '@tanstack/react-query'
 import { IScheduleSlot } from "@/@shared/interfaces/schedule-slot"
-import { format, isSameDay } from "date-fns"
+import { addDays, format, isSameDay } from "date-fns"
 import { useCallback, useMemo, useState } from "react"
 import { createSchedule } from "@/@shared/actions/schedule-slot.action"
 import { authClient } from "@/@shared/lib/better-auth/auth-client"
@@ -57,7 +57,8 @@ export const useMeetingCard = ({ accountId, wwt_account_id, meeting, email }: {a
   });
 
   const disabledData = useCallback((date: Date): boolean => {
-    if(date < new Date() && !isSameDay(date, new Date())) return true
+    const thesholdDate = addDays(new Date(), 2);
+    if(date < thesholdDate) return true
     const schedulesDate = schedulesQuery.data?.data;
     const onSchedule = schedulesDate?.find(({ start, status }) => isSameDay(start, date) && status === 'AVAILABLE');
     return !onSchedule

@@ -6,7 +6,7 @@ const prisma = new PrismaClient()
 async function main() {
   console.log('🌱 Iniciando Seed de ScheduleSlots (pulando almoço)...')
 
-  const startDate = new Date('2025-07-15')
+  const startDate = new Date('2026-01-05')
   const numberOfDays = 120
 
   const slotsData = []
@@ -45,9 +45,10 @@ async function main() {
   console.log(`👉 Total de slots para inserir: ${slotsData.length}`)
 
   if (slotsData.length > 0) {
-    const result = await prisma.scheduleSlot.createMany({
-      data: slotsData,
-    })
+    console.log(slotsData)
+    // const result = await prisma.scheduleSlot.createMany({
+    //   data: slotsData,
+    // })
 
     console.log(`✅ Slots criados: ${result.count}`)
   } else {

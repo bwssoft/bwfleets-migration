@@ -1,7 +1,7 @@
 import { IScheduleSlot } from "@/@shared/interfaces/schedule-slot";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
-import { format, isSameDay } from "date-fns";
+import { addDays, format, isSameDay } from "date-fns";
 import { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -53,7 +53,9 @@ export const useMeetingDialog = () => {
 
     const disabledData = useCallback(
         (date: Date): boolean => {
-            if (date < new Date() && !isSameDay(date, new Date())) return true;
+            console.log("Exec")
+            const thesholdDate = addDays(new Date(), 2);
+            if (date < thesholdDate) return true;
             const schedulesDate = schedulesQuery.data?.data;
             const onSchedule = schedulesDate?.find(
                 ({ start, status }) =>
